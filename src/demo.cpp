@@ -23,7 +23,7 @@ int main()
         std::puts("Logic error caught.");
     }
 
-    std::printf("%ld\n", jl::call("÷", 5, 2).get<long>());
+    std::printf("%d\n", jl::call("÷", 5, 2).get<int>());
 
     jl_atexit_hook(0);
 }

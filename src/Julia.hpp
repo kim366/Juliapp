@@ -19,13 +19,18 @@ public:
     template<typename TargT>
     TargT get()
     {
-        return impl::unbox<TargT>(_boxed_value);
+        if constexpr (std::is_integral_v<TargT>)
+            return static_cast<TargT>(impl::unbox<long>(_boxed_value));
+        else if constexpr (std::is_floating_point_v<TargT>)
+            return static_cast<TargT>(impl::unbox<double>(_boxed_value));
+        else
+            return impl::unbox<TargT>(_boxed_value);
     }
 
     template<typename TargT>
     operator TargT()
     {
-        return get<TargT>();
+        return impl::unbox<TargT>(_boxed_value);
     }
 
 private:
