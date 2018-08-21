@@ -10,6 +10,13 @@
 namespace jl
 {
 
+struct error : public std::runtime_error
+{
+    explicit error(const std::string& str_) : std::runtime_error{str_} {}
+    explicit error(const char* str_) : std::runtime_error{str_} {}
+    virtual ~error() {}
+};
+
 class value
 {
 public:
@@ -42,7 +49,12 @@ private:
 
 value exec(const char* src_str_)
 {
-    return jl_eval_string(src_str_);
+    jl_value_t* res{jl_eval_string(src_str_)};
+
+    if (jl_exception_occurred())
+        throw error{jl_typeof_str(jl_exception_occurred())};
+
+    return res;
 }
 
 value exec_from_file(const char* file_name_)
@@ -58,8 +70,17 @@ value call(const char* fn_name_, ArgTs... args_)
 {
     std::array<jl_value_t*, sizeof...(args_)> boxed_args{impl::box(args_)...};
 
-    jl_value_t* func = jl_eval_string(fn_name_);
-    return jl_call(func, boxed_args.data(), boxed_args.size());
+    jl_value_t* func{jl_eval_string(fn_name_)};
+
+    if (jl_exception_occurred())
+        throw error{jl_typeof_str(jl_exception_occurred())};
+
+    jl_value_t* res{jl_call(func, boxed_args.data(), boxed_args.size())};
+
+    if (jl_exception_occurred())
+        throw error{jl_typeof_str(jl_exception_occurred())};
+
+    return res;
 }
 
 void init()

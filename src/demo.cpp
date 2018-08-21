@@ -12,10 +12,6 @@ int main()
         end    
     )");
 
-    jl::exec(R"(
-        println("safd")    
-    )");
-
     long res;
     try
     {
@@ -27,7 +23,25 @@ int main()
         std::puts("Logic error caught.");
     }
 
-    jl::raise_error("Test");
+    try
+    {
+        jl::exec("nonexistent_function()");
+    }
+    catch (jl::error)
+    {
+        std::puts("Julia error caught.");
+    }
+
+    try
+    {
+        jl::call("nonexistent_function", 3);
+    }
+    catch (jl::error)
+    {
+        std::puts("Julia error caught.");
+    }
+
+    // jl::raise_error("Test");
 
     jl::exec_from_file("sample-script.jl");
 
