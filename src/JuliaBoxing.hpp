@@ -3,6 +3,9 @@
 #include <julia/julia.h>
 #include <stdexcept>
 
+namespace jl
+{
+
 namespace impl
 {
 
@@ -94,3 +97,5 @@ jl_value_t* box(ArgT arg_)
 }
 
 } // namespace impl
+
+} // namespace jl

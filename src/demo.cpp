@@ -5,7 +5,7 @@ int main()
 
     jl_init();
 
-    jl(R"(
+    jl::exec(R"(
         module Mod
           const a = 6.
           f(x) = a * x^3
@@ -15,7 +15,7 @@ int main()
     long res;
     try
     {
-        res = jl("Mod.f", 2.);
+        res = jl::call("Mod.f", 2.);
         std::printf("%ld\n", res);
     }
     catch (const std::logic_error&)
@@ -23,7 +23,7 @@ int main()
         std::puts("Logic error caught.");
     }
 
-    std::printf("%ld\n", jl("÷", 5, 2).get<long>());
+    std::printf("%ld\n", jl::call("÷", 5, 2).get<long>());
 
     jl_atexit_hook(0);
 }
