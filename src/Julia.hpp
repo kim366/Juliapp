@@ -66,9 +66,21 @@ void init()
 {
     jl_init();
 }
+
 void quit(int code_ = 0)
 {
     jl_atexit_hook(code_);
+}
+
+void raise_error(const char* content_)
+{
+    jl_error(content_);
+}
+
+template<typename... ArgTs>
+void raise_error(const char* content_, ArgTs... args_)
+{
+    jl_errorf(content_, args_...);
 }
 
 } // namespace jl

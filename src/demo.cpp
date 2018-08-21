@@ -27,6 +27,8 @@ int main()
         std::puts("Logic error caught.");
     }
 
+    jl::raise_error("Test");
+
     jl::exec_from_file("sample-script.jl");
 
     std::printf("%d\n", jl::call("÷", 5, 2).get<int>());
