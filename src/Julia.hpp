@@ -17,6 +17,15 @@ struct error : public std::runtime_error
     virtual ~error() {}
 };
 
+namespace impl
+{
+void check_err()
+{
+    if (jl_exception_occurred())
+        throw error{jl_typeof_str(jl_exception_occurred())};
+}
+} // namespace impl
+
 class value
 {
 public:
@@ -50,10 +59,7 @@ private:
 value exec(const char* src_str_)
 {
     jl_value_t* res{jl_eval_string(src_str_)};
-
-    if (jl_exception_occurred())
-        throw error{jl_typeof_str(jl_exception_occurred())};
-
+    impl::check_err();
     return res;
 }
 
@@ -71,15 +77,9 @@ value call(const char* fn_name_, ArgTs... args_)
     std::array<jl_value_t*, sizeof...(args_)> boxed_args{impl::box(args_)...};
 
     jl_value_t* func{jl_eval_string(fn_name_)};
-
-    if (jl_exception_occurred())
-        throw error{jl_typeof_str(jl_exception_occurred())};
-
+    impl::check_err();
     jl_value_t* res{jl_call(func, boxed_args.data(), boxed_args.size())};
-
-    if (jl_exception_occurred())
-        throw error{jl_typeof_str(jl_exception_occurred())};
-
+    impl::check_err();
     return res;
 }
 
