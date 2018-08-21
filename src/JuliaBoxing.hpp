@@ -15,34 +15,48 @@ RetT unbox(jl_value_t* arg_)
             return jl_unbox_float32(arg_);
         else if (jl_typeis(arg_, jl_float64_type))
             return jl_unbox_float64(arg_);
+
+        throw std::logic_error{
+            "jl - Incorrect result type. Floating-point type requested"};
     }
     else if constexpr (std::is_integral_v<RetT>)
     {
-        if constexpr (std::is_signed_v<RetT>)
-        {
-            if (jl_typeis(arg_, jl_int32_type))
-                return jl_unbox_int32(arg_);
-            else if (jl_typeis(arg_, jl_int64_type))
-                return jl_unbox_int64(arg_);
-        }
-        else
-        {
-            if (jl_typeis(arg_, jl_uint32_type))
-                return jl_unbox_uint32(arg_);
-            else if (jl_typeis(arg_, jl_uint64_type))
-                return jl_unbox_uint64(arg_);
-        }
+        if (jl_typeis(arg_, jl_int8_type))
+            return jl_unbox_int8(arg_);
+        if (jl_typeis(arg_, jl_uint8_type))
+            return jl_unbox_uint8(arg_);
+        if (jl_typeis(arg_, jl_int16_type))
+            return jl_unbox_int16(arg_);
+        if (jl_typeis(arg_, jl_uint16_type))
+            return jl_unbox_uint16(arg_);
+        if (jl_typeis(arg_, jl_int32_type))
+            return jl_unbox_int32(arg_);
+        else if (jl_typeis(arg_, jl_uint32_type))
+            return jl_unbox_uint32(arg_);
+        else if (jl_typeis(arg_, jl_int64_type))
+            return jl_unbox_int64(arg_);
+        else if (jl_typeis(arg_, jl_uint64_type))
+            return jl_unbox_uint64(arg_);
+
+        throw std::logic_error{
+            "jl - Incorrect result type. Integral type requested"};
     }
-    else if constexpr (std::is_same<RetT, bool>())
+    else if constexpr (std::is_same_v<RetT, bool>)
     {
         if (jl_typeis(arg_, jl_bool_type))
             return jl_unbox_bool(arg_);
+
+        throw std::logic_error{
+            "jl - Incorrect result type. Boolean type requested"};
+    }
+    else
+    {
+        assert(false &&
+               "jl - unsupported result type. "
+               "Use boolean, floating point or integral types.");
     }
 
-    throw std::runtime_error{
-        "jl - Unexpected result type. Supported types: "
-        "Float32, Float64, Int32, Int64, Bool"};
-}
+} // namespace impl
 
 template<typename ArgT>
 jl_value_t* box(ArgT arg_)
