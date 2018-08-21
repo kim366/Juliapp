@@ -12,8 +12,16 @@ int main()
         end    
     )");
 
-    float res{jl("Mod.f", 2.)};
-    std::printf("%f\n", res);
+    int res;
+    try
+    {
+        res = jl("Mod.f", 2.);
+        std::printf("%d\n", res);
+    }
+    catch (const std::logic_error&)
+    {
+        std::puts("Logic error caught.");
+    }
 
     jl_atexit_hook(0);
 }
