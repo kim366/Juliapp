@@ -21,8 +21,8 @@ RetT unbox(jl_value_t* arg_)
         return jl_unbox_bool(arg_);
 
     throw std::runtime_error{
-        R"(jl - Unexpected result type. Supported types: 
-        Float32, Float64, Int32, Int64, Bool)"};
+        "jl - Unexpected result type. Supported types: "
+        "Float32, Float64, Int32, Int64, Bool"};
 }
 
 template<typename ArgT>
