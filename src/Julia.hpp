@@ -2,7 +2,10 @@
 
 #include <JuliaBoxing.hpp>
 #include <array>
+#include <fstream>
 #include <julia/julia.h>
+#include <sstream>
+#include <string>
 
 namespace jl
 {
@@ -40,6 +43,14 @@ private:
 value exec(const char* src_str_)
 {
     return jl_eval_string(src_str_);
+}
+
+value exec_from_file(const char* file_name_)
+{
+    std::ifstream file{file_name_};
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return exec(buffer.str().c_str());
 }
 
 template<typename... ArgTs>

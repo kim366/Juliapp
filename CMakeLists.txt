@@ -6,6 +6,7 @@ add_executable(main ${sources})
 target_compile_options(main PUBLIC -DJULIA_ENABLE_THREADING=1 -fPIC)
 target_include_directories(main PUBLIC src)
 
+set_target_properties(main PROPERTIES RUNTIME_OUTPUT_DIRECTORY ..)
 set_target_properties(main PROPERTIES CXX_STANDARD 17)
 target_link_libraries(main -L'/usr/lib' -Wl,--export-dynamic -Wl,-rpath,'/usr/lib' -Wl,-rpath,'/usr/lib/julia' julia)
 

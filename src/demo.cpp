@@ -12,6 +12,10 @@ int main()
         end    
     )");
 
+    jl::exec(R"(
+        println("safd")    
+    )");
+
     long res;
     try
     {
@@ -22,6 +26,8 @@ int main()
     {
         std::puts("Logic error caught.");
     }
+
+    jl::exec_from_file("sample-script.jl");
 
     std::printf("%d\n", jl::call("÷", 5, 2).get<int>());
 
