@@ -49,12 +49,28 @@ jl_value_t* box(ArgT arg_)
 {
     if constexpr (std::is_same<ArgT, bool>())
         return jl_box_bool(arg_);
-    else if constexpr (std::is_floating_point_v<ArgT>)
-        return jl_box_float64(arg_);
-    else if constexpr (std::is_integral_v<ArgT> && std::is_signed_v<ArgT>)
+    else if constexpr (std::is_same<ArgT, std::int8_t>())
+        return jl_box_int8(arg_);
+    else if constexpr (std::is_same<ArgT, std::uint8_t>())
+        return jl_box_uint8(arg_);
+    else if constexpr (std::is_same<ArgT, std::int16_t>())
+        return jl_box_int16(arg_);
+    else if constexpr (std::is_same<ArgT, std::uint16_t>())
+        return jl_box_uint16(arg_);
+    else if constexpr (std::is_same<ArgT, std::int32_t>())
+        return jl_box_int32(arg_);
+    else if constexpr (std::is_same<ArgT, std::uint32_t>())
+        return jl_box_uint32(arg_);
+    else if constexpr (std::is_same<ArgT, std::int64_t>())
         return jl_box_int64(arg_);
-    else if constexpr (std::is_integral_v<ArgT> && !std::is_signed_v<ArgT>)
+    else if constexpr (std::is_same<ArgT, std::uint64_t>())
         return jl_box_uint64(arg_);
+    else if constexpr (std::is_same<ArgT, float>())
+        return jl_box_float32(arg_);
+    else if constexpr (std::is_same<ArgT, double>())
+        return jl_box_float64(arg_);
+    else if constexpr (std::is_same<ArgT, void*>())
+        return jl_box_voidpointer(arg_);
 }
 
 } // namespace impl
