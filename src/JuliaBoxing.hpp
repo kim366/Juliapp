@@ -21,22 +21,28 @@ RetT unbox(jl_value_t* arg_)
     }
     else if constexpr (std::is_integral_v<RetT>)
     {
-        if (jl_typeis(arg_, jl_int8_type))
-            return jl_unbox_int8(arg_);
-        if (jl_typeis(arg_, jl_uint8_type))
-            return jl_unbox_uint8(arg_);
-        if (jl_typeis(arg_, jl_int16_type))
-            return jl_unbox_int16(arg_);
-        if (jl_typeis(arg_, jl_uint16_type))
-            return jl_unbox_uint16(arg_);
-        if (jl_typeis(arg_, jl_int32_type))
-            return jl_unbox_int32(arg_);
-        else if (jl_typeis(arg_, jl_uint32_type))
-            return jl_unbox_uint32(arg_);
-        else if (jl_typeis(arg_, jl_int64_type))
-            return jl_unbox_int64(arg_);
-        else if (jl_typeis(arg_, jl_uint64_type))
-            return jl_unbox_uint64(arg_);
+        if constexpr (std::is_signed_v<RetT>)
+        {
+            if (jl_typeis(arg_, jl_int8_type))
+                return jl_unbox_int8(arg_);
+            else if (jl_typeis(arg_, jl_int16_type))
+                return jl_unbox_int16(arg_);
+            else if (jl_typeis(arg_, jl_int32_type))
+                return jl_unbox_int32(arg_);
+            else if (jl_typeis(arg_, jl_int64_type))
+                return jl_unbox_int64(arg_);
+        }
+        else
+        {
+            if (jl_typeis(arg_, jl_uint8_type))
+                return jl_unbox_uint8(arg_);
+            else if (jl_typeis(arg_, jl_uint16_type))
+                return jl_unbox_uint16(arg_);
+            else if (jl_typeis(arg_, jl_uint32_type))
+                return jl_unbox_uint32(arg_);
+            else if (jl_typeis(arg_, jl_uint64_type))
+                return jl_unbox_uint64(arg_);
+        }
 
         throw std::logic_error{
             "jl - Incorrect result type. Integral type requested"};
