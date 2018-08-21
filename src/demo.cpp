@@ -3,7 +3,7 @@
 int main()
 {
 
-    jl_init();
+    jl::init();
 
     jl::exec(R"(
         module Mod
@@ -31,5 +31,5 @@ int main()
 
     std::printf("%d\n", jl::call("÷", 5, 2).get<int>());
 
-    jl_atexit_hook(0);
+    jl::quit();
 }

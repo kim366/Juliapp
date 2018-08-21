@@ -62,4 +62,13 @@ value call(const char* fn_name_, ArgTs... args_)
     return jl_call(func, boxed_args.data(), boxed_args.size());
 }
 
+void init()
+{
+    jl_init();
+}
+void quit(int code_ = 0)
+{
+    jl_atexit_hook(code_);
+}
+
 } // namespace jl
