@@ -1,5 +1,7 @@
 #include "Julia.hpp"
 
+#include <algorithm>
+
 void fn(double) {}
 
 int main()
@@ -46,7 +48,11 @@ int main()
     jl::array<int> arr{5, 8, 1};
     jl::array<int> reversed_arr{jl::call("reverse", arr)};
     jl::call("println", arr);
+    std::reverse(reversed_arr.begin(), reversed_arr.end());
     jl::call("println", reversed_arr);
+
+    std::printf("2nd element: %d\n", arr[1]);
+    std::printf("Back element: %d\n", arr.back());
 
     fn(jl::call("Mod.f", 2.));
 

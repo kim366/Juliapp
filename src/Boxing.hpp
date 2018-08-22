@@ -100,7 +100,7 @@ jl_value_t* box(ArgT arg_)
     else if constexpr (std::is_same<ArgT, void*>())
         return jl_box_voidpointer(arg_);
     else if constexpr (is_array<ArgT>{})
-        return reinterpret_cast<jl_value_t*>(arg_.data());
+        return reinterpret_cast<jl_value_t*>(arg_.get_boxed_data());
     else
     {
         assert(false &&
