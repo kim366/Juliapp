@@ -42,6 +42,8 @@ int main()
     }
 
     jl::array arr{5, 8, 1};
+    jl::call("reverse!", arr);
+    jl::call("println", arr);
 
     // jl::raise_error("Test");
 

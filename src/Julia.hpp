@@ -75,7 +75,8 @@ public:
         _arr = jl_alloc_array_1d(array_type, size_);
     }
 
-    std::size_t size() { return _size; }
+    auto size() { return _size; }
+    auto data() { return _arr; }
 
 private:
     static constexpr std::size_t dimensions{1};
