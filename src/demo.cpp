@@ -41,6 +41,8 @@ int main()
         std::puts("Language error caught.");
     }
 
+    jl::array arr{5, 8, 1};
+
     // jl::raise_error("Test");
 
     jl::exec_from_file("sample-script.jl");

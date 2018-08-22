@@ -4,6 +4,7 @@
 
 #include <array>
 #include <fstream>
+#include <iostream>
 #include <julia/julia.h>
 #include <sstream>
 #include <string>
@@ -20,7 +21,67 @@ void check_err()
         throw language_error{jl_typeof_str(jl_exception_occurred())};
 }
 
+template<typename ElemT>
+jl_datatype_t* get_type()
+{
+    if constexpr (std::is_same_v<ElemT, std::int8_t>)
+        return jl_int8_type;
+    else if constexpr (std::is_same_v<ElemT, std::uint8_t>)
+        return jl_uint8_type;
+    else if constexpr (std::is_same_v<ElemT, std::int16_t>)
+        return jl_int16_type;
+    else if constexpr (std::is_same_v<ElemT, std::uint16_t>)
+        return jl_uint16_type;
+    else if constexpr (std::is_same_v<ElemT, std::int32_t>)
+        return jl_int32_type;
+    else if constexpr (std::is_same_v<ElemT, std::uint32_t>)
+        return jl_uint32_type;
+    else if constexpr (std::is_same_v<ElemT, std::int64_t>)
+        return jl_int64_type;
+    else if constexpr (std::is_same_v<ElemT, std::uint64_t>)
+        return jl_uint64_type;
+    else if constexpr (std::is_same_v<ElemT, float>)
+        return jl_float32_type;
+    else if constexpr (std::is_same_v<ElemT, double>)
+        return jl_float64_type;
+    else if constexpr (std::is_same_v<ElemT, bool>)
+        return jl_bool_type;
+    else
+    {
+        assert(false &&
+               "jl - unsupported array type. "
+               "Use boolean, floating point or integral types.");
+    }
+}
+
 } // namespace impl
+
+class array
+{
+public:
+    template<typename ElemT>
+    array(std::initializer_list<ElemT> elems_)
+        : array{impl::get_type<ElemT>(), elems_.size()}
+    {
+        ElemT* arr_data = reinterpret_cast<ElemT*>(jl_array_data(_arr));
+        std::copy(elems_.begin(), elems_.end(), arr_data);
+    }
+
+    array(jl_datatype_t* type_, std::size_t size_) : _size{size_}
+    {
+        jl_value_t* array_type{jl_apply_array_type(
+            reinterpret_cast<jl_value_t*>(type_), dimensions)};
+
+        _arr = jl_alloc_array_1d(array_type, size_);
+    }
+
+    std::size_t size() { return _size; }
+
+private:
+    static constexpr std::size_t dimensions{1};
+    jl_array_t* _arr;
+    const std::size_t _size;
+};
 
 class value
 {
