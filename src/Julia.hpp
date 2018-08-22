@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Boxing.hpp"
+#include "Helpers.hpp"
 
 #include <array>
 #include <fstream>
@@ -12,54 +13,10 @@
 namespace jl
 {
 
-namespace impl
-{
-
-void check_err()
-{
-    if (jl_exception_occurred())
-        throw language_error{jl_typeof_str(jl_exception_occurred())};
-}
-
 template<typename ElemT>
-jl_datatype_t* get_type()
-{
-    if constexpr (std::is_same_v<ElemT, std::int8_t>)
-        return jl_int8_type;
-    else if constexpr (std::is_same_v<ElemT, std::uint8_t>)
-        return jl_uint8_type;
-    else if constexpr (std::is_same_v<ElemT, std::int16_t>)
-        return jl_int16_type;
-    else if constexpr (std::is_same_v<ElemT, std::uint16_t>)
-        return jl_uint16_type;
-    else if constexpr (std::is_same_v<ElemT, std::int32_t>)
-        return jl_int32_type;
-    else if constexpr (std::is_same_v<ElemT, std::uint32_t>)
-        return jl_uint32_type;
-    else if constexpr (std::is_same_v<ElemT, std::int64_t>)
-        return jl_int64_type;
-    else if constexpr (std::is_same_v<ElemT, std::uint64_t>)
-        return jl_uint64_type;
-    else if constexpr (std::is_same_v<ElemT, float>)
-        return jl_float32_type;
-    else if constexpr (std::is_same_v<ElemT, double>)
-        return jl_float64_type;
-    else if constexpr (std::is_same_v<ElemT, bool>)
-        return jl_bool_type;
-    else
-    {
-        assert(false &&
-               "jl - unsupported array type. "
-               "Use boolean, floating point or integral types.");
-    }
-}
-
-} // namespace impl
-
 class array
 {
 public:
-    template<typename ElemT>
     array(std::initializer_list<ElemT> elems_)
         : array{impl::get_type<ElemT>(), elems_.size()}
     {
@@ -74,6 +31,8 @@ public:
 
         _arr = jl_alloc_array_1d(array_type, size_);
     }
+
+    array(jl_array_t* arr_) : _arr{arr_}, _size{arr_->length} {}
 
     auto size() { return _size; }
     auto data() { return _arr; }
@@ -101,13 +60,16 @@ public:
         else if constexpr (std::is_floating_point_v<TargT>)
             return static_cast<TargT>(impl::unbox<double>(_boxed_value));
         else
-            return impl::unbox<TargT>(_boxed_value);
+            return *this;
     }
 
     template<typename TargT>
     operator TargT()
     {
-        return impl::unbox<TargT>(_boxed_value);
+        if constexpr (!impl::is_array<TargT>{})
+            return impl::unbox<TargT>(_boxed_value);
+        else
+            return reinterpret_cast<jl_array_t*>(_boxed_value);
     }
 
 private:

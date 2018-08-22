@@ -41,9 +41,11 @@ int main()
         std::puts("Language error caught.");
     }
 
-    jl::array arr{5, 8, 1};
-    jl::call("reverse!", arr);
+    jl::array<int> arr{5, 8, 1};
+    jl::array<long> reversed_arr{
+        jl::call("reverse", arr).get<jl::array<long>>()};
     jl::call("println", arr);
+    jl::call("println", reversed_arr);
 
     // jl::raise_error("Test");
 
