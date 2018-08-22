@@ -1,8 +1,8 @@
 # CXX Julia
 
-This API wrapper for embedding Julia code within C++ was made with ease-of-use in mind, keeping C++'s type-safety.
+This API wrapper for embedding Julia code within C++ was made with ease-of-use in mind with automatic type deduction, but still keeping explicitness where appropriate.
 
-The API is procedural, just like the official C-API, so you can just execute lines of code and te results will be remembered.
+The API is procedural, just like the official C-API, so you can just execute lines of code and the results will be remembered in a global state instead of per instance.
 
 ## Example
 
@@ -73,13 +73,13 @@ int main()
 
 ### Exceptions
 
-In cxx-julia two forms of error checking were used: `assert` and exceptions. Assertions are only used where there has been a programming mistake, while exceptions can also occur by changing Julia scripts without changing any C++ code.
+In *cxx-julia* two forms of error checking are used: `assert` and exceptions. Assertions are only used where there has been a programming mistake, while exceptions can also occur by changing Julia scripts without changing any C++ code.
 
-### `jl::error`
+#### `jl::error`
 This error is never thrown, but is a base for all other exception types and can thus be caught to handle any Julia-related errors.
 
 #### `jl::result_type_error` 
-This is thrown whenever an incorrect type is requested out of a Julia script. For example, if a script returns an integral type, but a floating point type was requested. Note that this error is *not* thrown when e.g. `float` was requested, but `double` was provided.
+This is thrown whenever an incorrect type is requested out of a Julia script, for example if a script returns an integral type but a floating point type was requested. Note that this error is *not* thrown when e.g. `float` was requested, but `double` was provided.
 
 #### `jl::language_error`
 This error is thrown whenever there was an issue in Julia code. In short: it occurs any time a red message would appear in the Julia REPL. `jl::language_error::what()` contains the error name, i.e. one of[Julia - Built-in Exceptions](https://docs.julialang.org/en/stable/manual/control-flow/#Built-in-Exceptions-1) or a custom error.
@@ -89,10 +89,10 @@ This is thrown when a script failed to load. This may be due to the file name be
 
 ### Classes
 
-### `jl::value`
+#### `jl::value`
 This is a wrapper around result values. It supports implicit casting (with appropriate compiler warnings if they are enabled) and explicit casting with `jl::value::get<T>()` (see example above). The conversion methods may throw `jl::value_error`.
 
-### `jl::array<T>`
+#### `jl::array<T>`
 This type is used for communicating with Julia in terms of arrays. Is is usable like an STL container.
 
 ### Functions
@@ -105,13 +105,13 @@ Initialize Julia. Your program will segfault if you do not call this function. C
 Quit Julia. Call it only once at the ed of your program, for example right before returning from `main`. An optional exit code argument may be specified signaling program failure.
 
 #### `jl::value jl::exec(const char* source_string)`
-Executes a string of Julia code. Returns the wrapped result value. 
+Executes a string of Julia code. Returns the wrapped result value. May throw `jl::result_type_error` or `jl::language_error`.
 
 #### `jl::value jl::exec_from_file(const char* file_name)`
-Load the file with the given file name and execute the code within. Note that this path is relative to the current working directory when running the executable.
+Load the file with the given file name and execute the code within. Note that this path is relative to the current working directory when running the executable. May throw `jl::result_type_error`, `jl::language_error` or `jl::load_error`.
 
 #### `jl::value call(const char* function_name, T... args)`
-Call a function denoted by `function_name` with the arguments provided. The function name may also contain a module name (see code above) or other manipulators, as long as it resolves to a function in the REPL.
+Call a function denoted by `function_name` with the arguments provided. The function name may also contain a module name (see code above) or other manipulators, as long as it resolves to a function in the REPL. May throw `jl::result_type_error` or `jl::language_error`.
 
 #### `void raise_error(const char* content, T... args)`
 Raise an error within Julia. You can use printf-style formatting.
