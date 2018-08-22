@@ -93,6 +93,8 @@ value exec(const char* src_str_)
 value exec_from_file(const char* file_name_)
 {
     std::ifstream file{file_name_};
+    if (!file.is_open())
+        throw load_error{std::string{"Could not load script "} + file_name_};
     std::stringstream buffer;
     buffer << file.rdbuf();
     return exec(buffer.str().c_str());
