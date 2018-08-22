@@ -133,4 +133,26 @@ void raise_error(const char* content_, ArgTs... args_)
     jl_errorf(content_, args_...);
 }
 
+value exec(const std::string& src_str_)
+{
+    return exec(src_str_.c_str());
+}
+
+value exec_from_file(const std::string& file_name_)
+{
+    return exec_from_file(file_name_.c_str());
+}
+
+template<typename... ArgTs>
+value call(const std::string& fn_name_, ArgTs... args_)
+{
+    return call(fn_name_.c_str(), args_...);
+}
+
+template<typename... ArgTs>
+void raise_error(const std::string& content_, ArgTs... args_)
+{
+    raise_error(content_.c_str(), args_...);
+}
+
 } // namespace jl
