@@ -54,8 +54,6 @@ public:
     value(jl_value_t* boxed_value_) : _boxed_value{boxed_value_} {}
 
     value() = default;
-    value(const value&) = default;
-    value(value&&) = default;
 
     template<typename TargT>
     TargT get()
@@ -68,13 +66,17 @@ public:
             return *this;
     }
 
-    template<typename TargT>
+    template<typename TargT,
+             typename = std::enable_if_t<std::is_fundamental<TargT>{}>>
     operator TargT()
     {
-        if constexpr (!impl::is_array<TargT>{})
-            return impl::unbox<TargT>(_boxed_value);
-        else
-            return reinterpret_cast<jl_array_t*>(_boxed_value);
+        return impl::unbox<TargT>(_boxed_value);
+    }
+
+    template<typename ElemT>
+    explicit operator array<ElemT>()
+    {
+        return reinterpret_cast<jl_array_t*>(_boxed_value);
     }
 
 private:

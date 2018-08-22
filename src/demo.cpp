@@ -1,5 +1,7 @@
 #include "Julia.hpp"
 
+void fn(double) {}
+
 int main()
 {
 
@@ -46,7 +48,9 @@ int main()
     jl::call("println", arr);
     jl::call("println", reversed_arr);
 
-    jl::raise_error("Test");
+    fn(jl::call("Mod.f", 2.));
+
+    // jl::raise_error("Test");
 
     jl::exec_from_file("sample-script.jl");
 
