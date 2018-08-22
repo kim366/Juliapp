@@ -1,8 +1,7 @@
 #pragma once
 
+#include <Errors.hpp>
 #include <julia/julia.h>
-#include <stdexcept>
-
 namespace jl
 {
 
@@ -19,7 +18,7 @@ RetT unbox(jl_value_t* arg_)
         else if (jl_typeis(arg_, jl_float64_type))
             return jl_unbox_float64(arg_);
 
-        throw std::logic_error{
+        throw value_error{
             "jl - Incorrect result type. Floating-point type requested"};
     }
     else if constexpr (std::is_integral_v<RetT>)
@@ -47,7 +46,7 @@ RetT unbox(jl_value_t* arg_)
                 return jl_unbox_uint64(arg_);
         }
 
-        throw std::logic_error{
+        throw value_error{
             "jl - Incorrect result type. Integral type requested"};
     }
     else if constexpr (std::is_same_v<RetT, bool>)
@@ -55,8 +54,7 @@ RetT unbox(jl_value_t* arg_)
         if (jl_typeis(arg_, jl_bool_type))
             return jl_unbox_bool(arg_);
 
-        throw std::logic_error{
-            "jl - Incorrect result type. Boolean type requested"};
+        throw value_error{"jl - Incorrect result type. Boolean type requested"};
     }
     else
     {

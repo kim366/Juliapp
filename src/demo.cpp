@@ -18,27 +18,27 @@ int main()
         res = jl::call("Mod.f", 2.);
         std::printf("%ld\n", res);
     }
-    catch (const std::logic_error&)
+    catch (jl::value_error&)
     {
-        std::puts("Logic error caught.");
+        std::puts("Value error caught.");
     }
 
     try
     {
         jl::exec("nonexistent_function()");
     }
-    catch (jl::error)
+    catch (jl::language_error&)
     {
-        std::puts("Julia error caught.");
+        std::puts("Language error caught.");
     }
 
     try
     {
-        jl::call("nonexistent_function", 3);
+        jl::call("nonexistent_function");
     }
-    catch (jl::error)
+    catch (jl::language_error&)
     {
-        std::puts("Julia error caught.");
+        std::puts("Language error caught.");
     }
 
     // jl::raise_error("Test");

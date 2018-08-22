@@ -5,24 +5,18 @@
 #include <fstream>
 #include <julia/julia.h>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 namespace jl
 {
-
-struct error : public std::runtime_error
-{
-    explicit error(const std::string& str_) : std::runtime_error{str_} {}
-    explicit error(const char* str_) : std::runtime_error{str_} {}
-    virtual ~error() {}
-};
 
 namespace impl
 {
 void check_err()
 {
     if (jl_exception_occurred())
-        throw error{jl_typeof_str(jl_exception_occurred())};
+        throw language_error{jl_typeof_str(jl_exception_occurred())};
 }
 } // namespace impl
 
