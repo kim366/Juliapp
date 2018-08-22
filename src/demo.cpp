@@ -20,9 +20,9 @@ int main()
         res = jl::call("Mod.f", 2.);
         std::printf("%ld\n", res);
     }
-    catch (jl::value_error&)
+    catch (jl::result_type_error&)
     {
-        std::puts("Value error caught.");
+        std::puts("Result type error caught.");
     }
 
     try

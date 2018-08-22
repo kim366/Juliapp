@@ -19,10 +19,10 @@ struct language_error : error
     virtual ~language_error() {}
 };
 
-struct value_error : error
+struct result_type_error : error
 {
     using error::error;
-    virtual ~value_error() {}
+    virtual ~result_type_error() {}
 };
 
 struct load_error : error
