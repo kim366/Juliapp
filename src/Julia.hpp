@@ -13,11 +13,13 @@ namespace jl
 
 namespace impl
 {
+
 void check_err()
 {
     if (jl_exception_occurred())
         throw language_error{jl_typeof_str(jl_exception_occurred())};
 }
+
 } // namespace impl
 
 class value
