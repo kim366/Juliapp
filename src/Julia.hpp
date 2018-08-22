@@ -13,15 +13,20 @@
 namespace jl
 {
 
+class value;
+
 template<typename ElemT>
 class array
 {
 public:
-    array(std::initializer_list<ElemT> elems_)
-        : array{impl::get_type<ElemT>(), elems_.size()}
+    template<typename... ElemTs,
+             typename CommT = std::common_type_t<ElemTs...>,
+             typename std::enable_if_t<std::is_same_v<CommT, ElemT>>* = nullptr>
+    array(ElemTs... elems_) : array{impl::get_type<CommT>(), sizeof...(ElemTs)}
     {
         ElemT* arr_data = reinterpret_cast<ElemT*>(jl_array_data(_arr));
-        std::copy(elems_.begin(), elems_.end(), arr_data);
+        std::initializer_list<CommT> elem_list{elems_...};
+        std::copy(elem_list.begin(), elem_list.end(), arr_data);
     }
 
     array(jl_datatype_t* type_, std::size_t size_) : _size{size_}

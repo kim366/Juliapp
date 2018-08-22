@@ -9,7 +9,7 @@ int main()
         module Mod
           const a = 6.
           f(x) = a * x^3
-        end    
+        end
     )");
 
     long res;
@@ -42,12 +42,11 @@ int main()
     }
 
     jl::array<int> arr{5, 8, 1};
-    jl::array<long> reversed_arr{
-        jl::call("reverse", arr).get<jl::array<long>>()};
+    jl::array<int> reversed_arr{jl::call("reverse", arr)};
     jl::call("println", arr);
     jl::call("println", reversed_arr);
 
-    // jl::raise_error("Test");
+    jl::raise_error("Test");
 
     jl::exec_from_file("sample-script.jl");
 
