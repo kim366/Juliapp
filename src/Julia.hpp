@@ -141,6 +141,7 @@ value call(const char* fn_name_, ArgTs... args_)
 void init()
 {
     jl_init();
+    jl_gc_enable(0);
 }
 
 void quit(int code_ = 0)
