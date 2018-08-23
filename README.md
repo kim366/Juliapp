@@ -1,4 +1,4 @@
-# CXX Julia
+# Juliapp
 
 This single-include header-only API wrapper for embedding Julia code within C++ was made with ease-of-use in mind with automatic type deduction, but still keeping explicitness where appropriate.
 
@@ -73,7 +73,7 @@ int main()
 
 ### Exceptions
 
-In *cxx-julia* two forms of error checking are used: `assert` and exceptions. Assertions are only used where there has been a programming mistake, while exceptions can also occur by changing Julia scripts without changing any C++ code.
+In *Juliapp* two forms of error checking are used: `assert` and exceptions. Assertions are only used where there has been a programming mistake, while exceptions can also occur by changing Julia scripts without changing any C++ code.
 
 #### `jl::error`
 This error is never thrown, but is a base for all other exception types and can thus be caught to handle any Julia-related errors.

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 infiles=(Errors Helpers Boxing Julia)
-outdir=single_include
+outdir="single_include/juliapp"
 outfile=julia
 outpath="$outdir/$outfile.hpp"
 outcontent=""
@@ -14,4 +14,4 @@ for ((i = 0; i < 4; i++)); do
   cat "src/${infiles[i]}.hpp" >> $outpath
 done
 
-perl -pi -e 's/(#pragma once\n|#include ".+\.hpp"\n)//g' single_include/julia.hpp
+perl -pi -e 's/(#pragma once\n|#include ".+\.hpp"\n)//g' $outpath
