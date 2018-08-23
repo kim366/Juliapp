@@ -16,4 +16,7 @@ done
 
 perl -pi -e 's/(#pragma once\n|#include ".+\.hpp"\n)//g' $outpath
 
-printf '%s\n%s\n' "#pragma once" "$(cat $outpath)" >$outpath
+printf '/*\n\n%s\n%s\n%s\n%s\n\n%s\n\n%s\n*/\n\n%s\n%s\n' "Juliapp" "=======" \
+  "Seamlessly embed Julia code in C++ with an API using modern language features." \
+  "https://github.com/kim366/Juliapp" "=======" \
+  "$(cat LICENSE)" "#pragma once" "$(cat $outpath)" >$outpath
