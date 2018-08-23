@@ -1,4 +1,4 @@
-#include "../single_include/juliapp/julia.hpp"
+#include "Julia.hpp"
 
 #include <algorithm>
 
@@ -9,12 +9,27 @@ int main()
 
     jl::init();
 
-    jl::exec(R"(
-        module Mod
-          const a = 6.
-          f(x) = a * x^3
+    struct S
+    {
+        int64_t x;
+        int64_t y;
+        float f;
+    };
+
+    S* s = jl::exec(R"(
+        struct S
+          x::Int64
+          y::Int64
+          f::Float32
         end
-    )");
+
+        S(16660000, 88235, 3.847)
+    )")
+               .get<S*>();
+
+    printf("(%ld, %ld, %f)\n", s->x, s->y, s->f);
+
+    jl::exec("S(0)");
 
     long res;
     try

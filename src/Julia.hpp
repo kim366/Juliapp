@@ -69,7 +69,9 @@ public:
 
     value() = default;
 
-    template<typename TargT>
+    template<typename TargT,
+             std::enable_if_t<std::is_fundamental<TargT>{}
+                              || impl::is_array<TargT>{}>* = nullptr>
     TargT get()
     {
         if constexpr (std::is_integral_v<TargT>)
@@ -78,6 +80,16 @@ public:
             return static_cast<TargT>(impl::unbox<double>(_boxed_value));
         else
             return *this;
+    }
+
+    template<typename TargT,
+             std::enable_if_t<!std::is_fundamental<TargT>{}>* = nullptr>
+    TargT get()
+    {
+        if constexpr (std::is_pointer_v<TargT>)
+            return reinterpret_cast<TargT>(_boxed_value);
+        else
+            return *reinterpret_cast<std::decay_t<TargT>*>(_boxed_value);
     }
 
     template<typename TargT,
