@@ -1,6 +1,6 @@
 # CXX Julia
 
-This API wrapper for embedding Julia code within C++ was made with ease-of-use in mind with automatic type deduction, but still keeping explicitness where appropriate.
+This single-include header-only API wrapper for embedding Julia code within C++ was made with ease-of-use in mind with automatic type deduction, but still keeping explicitness where appropriate.
 
 The API is procedural, just like the official C-API, so you can just execute lines of code and the results will be remembered in a global state instead of per instance.
 
