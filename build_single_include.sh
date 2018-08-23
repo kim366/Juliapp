@@ -15,3 +15,5 @@ for ((i = 0; i < 4; i++)); do
 done
 
 perl -pi -e 's/(#pragma once\n|#include ".+\.hpp"\n)//g' $outpath
+
+printf '%s\n%s\n' "#pragma once" "$(cat $outpath)" >$outpath
