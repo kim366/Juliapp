@@ -3,7 +3,7 @@ project(julia-cpp LANGUAGES CXX)
 
 aux_source_directory(src sources)
 add_executable(demo ${sources})
-target_compile_options(demo PUBLIC -DJULIA_ENABLE_THREADING=1 -fPIC)
+target_compile_options(demo PUBLIC -I'/usr/include/julia' -DJULIA_ENABLE_THREADING=1 -fPIC)
 target_include_directories(demo PUBLIC src)
 
 set_target_properties(demo PROPERTIES CXX_STANDARD 17)

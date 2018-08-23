@@ -6,7 +6,7 @@
 #include <array>
 #include <fstream>
 #include <iostream>
-#include <julia/julia.h>
+#include <julia.h>
 #include <sstream>
 #include <string>
 

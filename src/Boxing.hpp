@@ -3,7 +3,7 @@
 #include "Errors.hpp"
 #include "Helpers.hpp"
 
-#include <julia/julia.h>
+#include <julia.h>
 
 namespace jl
 {
