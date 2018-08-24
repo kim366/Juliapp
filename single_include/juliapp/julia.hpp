@@ -69,6 +69,7 @@ struct load_error : error
 
 } // namespace jl
 
+
 #include <julia.h>
 
 namespace jl
@@ -132,6 +133,7 @@ struct is_array<array<ElemT>> : std::true_type
 } // namespace impl
 
 } // namespace jl
+
 
 #include <julia.h>
 
@@ -243,6 +245,7 @@ jl_value_t* box(ArgT arg_)
 
 } // namespace jl
 
+
 #include <array>
 #include <fstream>
 #include <iostream>
@@ -309,7 +312,9 @@ public:
 
     value() = default;
 
-    template<typename TargT>
+    template<typename TargT,
+             std::enable_if_t<std::is_fundamental<TargT>{}
+                              || impl::is_array<TargT>{}>* = nullptr>
     TargT get()
     {
         if constexpr (std::is_integral_v<TargT>)
@@ -318,6 +323,16 @@ public:
             return static_cast<TargT>(impl::unbox<double>(_boxed_value));
         else
             return *this;
+    }
+
+    template<typename TargT,
+             std::enable_if_t<!std::is_fundamental<TargT>{}>* = nullptr>
+    TargT get()
+    {
+        if constexpr (std::is_pointer_v<TargT>)
+            return reinterpret_cast<TargT>(_boxed_value);
+        else
+            return *reinterpret_cast<std::decay_t<TargT>*>(_boxed_value);
     }
 
     template<typename TargT,
