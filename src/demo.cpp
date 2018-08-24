@@ -20,7 +20,7 @@ int main()
         float f;
     };
 
-    S& s = jl::exec(R"(
+    S& s = jl::eval(R"(
         mutable struct S
           x::NTuple{2, Float32}
           y::Int64
@@ -33,11 +33,11 @@ int main()
 
     printf("((%f, %f) %ld, %f)\n", s.v.x, s.v.y, s.y, s.f);
     s.v.x = 5;
-    jl::exec("println(s)");
+    jl::eval("println(s)");
 
     try
     {
-        jl::exec("nonexistent_function()");
+        jl::eval("nonexistent_function()");
     }
     catch (jl::language_error&)
     {

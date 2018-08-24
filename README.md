@@ -16,10 +16,10 @@ int main()
     jl::init();
 
     // Execute a string of Julia code.
-    jl::exec("println(\"Hello World!\")");
+    jl::eval("println(\"Hello World!\")");
 
     // Execute a code withing a multi-line raw string.
-    jl::exec(R"(
+    jl::eval(R"(
       module Mod
         const a = 6.
         f(x) = a * x^3
@@ -36,7 +36,7 @@ int main()
     jl::call("println", res);
 
     // Unicode characters are supported.
-    jl::exec("println(5 ÷ 2)");
+    jl::eval("println(5 ÷ 2)");
 
     // Load scripts at runtime! No recompiling of C++ is necessary.
     jl::exec_from_file("sample-script.jl");
@@ -74,7 +74,7 @@ int main()
       float f;
     };
 
-    S& s = jl::exec(R"(
+    S& s = jl::eval(R"(
       mutable struct S
         x::NTuple{2, Float32}
         y::Int64
@@ -85,7 +85,7 @@ int main()
     )").get<S&>();
 
     s.v.x = 5;
-    jl::exec("println(s)");
+    jl::eval("println(s)");
 
     jl::quit();
 }
@@ -97,7 +97,7 @@ int main()
 * Passing around string values is not supported.
 * :warning: Using structs is dangerous. Do not trust user code! Bytes are merely being interpreted and the types must be compatible. Zero validity checking is done! :warning:
 * Requesting references to results instead of copies has to be specifically done with `.get<T>()`.
-* If you have multiple statements in a `jl::exec` call, the return value will be the result of the last statement.
+* If you have multiple statements in a `jl::eval` call, the return value will be the result of the last statement.
 
 ## API Documentation
 
@@ -134,7 +134,7 @@ Initialize Julia. Your program will segfault if you do not call this function. C
 #### `void jl::quit(int exit_code = 0)`
 Quit Julia. Call it only once at the ed of your program, for example right before returning from `main`. An optional exit code argument may be specified signaling program failure.
 
-#### `jl::value jl::exec(const char* source_string)`
+#### `jl::value jl::eval(const char* source_string)`
 Executes a string of Julia code. Returns the wrapped result value. May throw `jl::result_type_error` or `jl::language_error`.
 
 #### `jl::value jl::exec_from_file(const char* file_name)`

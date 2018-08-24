@@ -69,7 +69,6 @@ struct load_error : error
 
 } // namespace jl
 
-
 #include <julia.h>
 
 namespace jl
@@ -133,7 +132,6 @@ struct is_array<array<ElemT>> : std::true_type
 } // namespace impl
 
 } // namespace jl
-
 
 #include <julia.h>
 
@@ -245,7 +243,6 @@ jl_value_t* box(ArgT arg_)
 
 } // namespace jl
 
-
 #include <array>
 #include <fstream>
 #include <iostream>
@@ -340,7 +337,7 @@ private:
     jl_value_t* _boxed_value;
 };
 
-value exec(const char* src_str_)
+value eval(const char* src_str_)
 {
     jl_value_t* res{jl_eval_string(src_str_)};
     impl::check_err();
@@ -354,7 +351,7 @@ value exec_from_file(const char* file_name_)
         throw load_error{std::string{"Could not load script "} + file_name_};
     std::stringstream buffer;
     buffer << file.rdbuf();
-    return exec(buffer.str().c_str());
+    return eval(buffer.str().c_str());
 }
 
 template<typename... ArgTs>
@@ -390,9 +387,9 @@ void raise_error(const char* content_, ArgTs... args_)
     jl_errorf(content_, args_...);
 }
 
-value exec(const std::string& src_str_)
+value eval(const std::string& src_str_)
 {
-    return exec(src_str_.c_str());
+    return eval(src_str_.c_str());
 }
 
 value exec_from_file(const std::string& file_name_)
