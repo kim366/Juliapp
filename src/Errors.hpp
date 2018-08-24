@@ -7,11 +7,10 @@ namespace jl
 
 struct error : std::runtime_error
 {
+protected:
     using std::runtime_error::runtime_error;
-    virtual ~error() = 0;
+    virtual ~error(){};
 };
-
-error::~error() {}
 
 struct language_error : error
 {
