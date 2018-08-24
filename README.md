@@ -38,8 +38,7 @@ int main()
     // Unicode characters are supported.
     jl::exec("println(5 ÷ 2)");
 
-    // Writing these character is cumbersome in C++. Let's
-    // load a Julia script file to solve this problem!
+    // Load scripts at runtime! No recompiling of C++ is necessary.
     jl::exec_from_file("sample-script.jl");
 
     // In Julia, operators are functions. Explicitly cast
