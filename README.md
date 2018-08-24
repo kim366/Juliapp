@@ -87,9 +87,18 @@ int main()
     s.v.x = 5;
     jl::eval("println(s)");
 
+    // This does NOT work!
+    S another_s{{3.f, 78.f}, 12, 9.3f};
+    jl::call("println", another_s);
+
+    // Do this instead
+    S& another_s{jl::eval("S((3, 78), 12, 9.3)").get<S&>()};
+    jl::call("println", another_s);
+
     jl::quit();
 }
 ```
+
 ## Keep in mind
 
 * For now only one-dimensional arrays are implemented.
@@ -98,6 +107,7 @@ int main()
 * :warning: Using structs is dangerous. Do not trust user code! Bytes are merely being interpreted and the types must be compatible. Zero validity checking is done! :warning:
 * Requesting references to results instead of copies has to be specifically done with `.get<T>()`.
 * If you have multiple statements in a `jl::eval` call, the return value will be the result of the last statement.
+* It is currently not possible to send over instances of structs that have been created within C++ (see bottom of above example).
 
 ## API Documentation
 
