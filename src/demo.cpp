@@ -10,24 +10,29 @@ int main()
 
     struct S
     {
-        int64_t x;
-        int64_t y;
+        struct
+        {
+            float x, y;
+        } v;
+        // or float v[2];
+
+        std::int64_t y;
         float f;
     };
 
     S& s = jl::exec(R"(
-        struct S
-          x::Int64
+        mutable struct S
+          x::NTuple{2, Float32}
           y::Int64
           f::Float32
         end
 
-        s = S(16660000, 88235, 3.847)
+        s = S((1234, 5678), 88235, 3.847)
     )")
                .get<S&>();
 
-    printf("(%ld, %ld, %f)\n", s.x, s.y, s.f);
-    s.x = 5;
+    printf("((%f, %f) %ld, %f)\n", s.v.x, s.v.y, s.y, s.f);
+    s.v.x = 5;
     jl::exec("println(s)");
 
     try

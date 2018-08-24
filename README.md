@@ -20,10 +20,10 @@ int main()
 
     // Execute a code withing a multi-line raw string.
     jl::exec(R"(
-        module Mod
-          const a = 6.
-          f(x) = a * x^3
-        end
+      module Mod
+        const a = 6.
+        f(x) = a * x^3
+      end
     )");
 
     // Call the previously defined function with a parameter.
@@ -60,6 +60,34 @@ int main()
     if (arr != reversed_arr)
       jl::raise_error("Something went wrong! %f", 3.14);
 
+    // Create struct equivalents in Julia and C++. Julia's `struct`s and
+    // `NTuple`s are compatible with C++'s stack arrays and `struct`s. The
+    // order of the declared types have to be the same.
+    struct S
+    {
+      struct
+      {
+          float x, y;
+      } v;
+      // or float v[2];
+      
+      std::int64_t y;
+      float f;
+    };
+
+    S& s = jl::exec(R"(
+      mutable struct S
+        x::NTuple{2, Float32}
+        y::Int64
+        f::Float32
+      end
+
+      s = S((1234, 5678), 88235, 3.847)
+    )").get<S&>();
+
+    s.v.x = 5;
+    jl::exec("println(s)");
+
     jl::quit();
 }
 ```
@@ -68,6 +96,9 @@ int main()
 * For now only one-dimensional arrays are implemented.
 * Cast result values to their desired type in order not to cause any problems to the garbage collector.
 * Passing around string values is not supported.
+* :warning: Using structs is dangerous. Do not trust user code! Bytes are merely being interpreted and the types must be compatible. Zero validity checking is done! :warning:
+* Requesting references to results instead of copies has to be specifically done with `.get<T>()`.
+* If you have multiple statements in a `jl::exec` call, the return value will be the result of the last statement.
 
 ## API Documentation
 
