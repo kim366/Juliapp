@@ -73,7 +73,7 @@ RetT unbox(jl_value_t* arg_)
 } // namespace impl
 
 template<typename ArgT>
-jl_value_t* box(ArgT arg_)
+jl_value_t* box(ArgT& arg_)
 {
     if constexpr (std::is_same<ArgT, bool>())
         return jl_box_bool(arg_);
@@ -101,6 +101,13 @@ jl_value_t* box(ArgT arg_)
         return jl_box_voidpointer(arg_);
     else if constexpr (is_array<ArgT>{})
         return reinterpret_cast<jl_value_t*>(arg_.get_boxed_data());
+    else if constexpr (!std::is_fundamental_v<std::decay_t<ArgT>>)
+    {
+        if constexpr (std::is_pointer_v<ArgT>)
+            return reinterpret_cast<jl_value_t*>(arg_);
+        else
+            return reinterpret_cast<jl_value_t*>(&arg_);
+    }
     else
     {
         assert(false &&

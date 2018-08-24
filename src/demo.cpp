@@ -33,7 +33,7 @@ int main()
 
     printf("((%f, %f) %ld, %f)\n", s.v.x, s.v.y, s.y, s.f);
     s.v.x = 5;
-    jl::eval("println(s)");
+    jl::call("println", s);
 
     try
     {

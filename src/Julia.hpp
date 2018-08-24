@@ -132,7 +132,7 @@ inline value exec_from_file(const char* file_name_)
 }
 
 template<typename... ArgTs>
-value call(const char* fn_name_, ArgTs... args_)
+value call(const char* fn_name_, ArgTs&&... args_)
 {
     std::array<jl_value_t*, sizeof...(args_)> boxed_args{impl::box(args_)...};
 
