@@ -15,8 +15,16 @@ namespace impl
 
 inline void check_err()
 {
-    if (jl_exception_occurred())
-        throw language_error{jl_typeof_str(jl_exception_occurred())};
+    jl_value_t* error{jl_exception_occurred()};
+    if (error)
+    {
+#ifdef JULIAPP_DEBUG
+        jl_value_t* show_error = jl_get_function(jl_base_module, "showerror");
+        jl_call2(show_error, jl_stderr_obj(), error);
+        jl_printf(JL_STDERR, "\n");
+#endif
+        throw language_error{jl_typeof_str(error)};
+    }
 }
 
 template<typename ElemT>
