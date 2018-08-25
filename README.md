@@ -9,7 +9,11 @@ The API is procedural, just like the official C-API, so you can just execute lin
 Error handling was left out of this example. Check `src/demo.cpp` or the API documentation below to find out more about possible exceptions.
 
 ```cpp
-#include "Julia.hpp"
+
+// Pretty-print errors (has to be done before including Juliapp)
+#define JULIAPP_DEBUG
+
+#include <juliapp/julia.hpp>
 
 int main()
 {
