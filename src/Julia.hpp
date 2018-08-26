@@ -13,8 +13,6 @@
 namespace jl
 {
 
-using boxed_value = jl_value_t*;
-
 class value;
 
 template<typename ElemT>

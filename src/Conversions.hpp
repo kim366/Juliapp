@@ -1,6 +1,6 @@
 #pragma once
 
-#include <julia.h>
+#include <conversion.hpp>
 
 struct Vec2
 {
@@ -10,6 +10,6 @@ struct Vec2
 namespace jl
 {
 
-jl_value_t* convert(Vec2);
+boxed_value convert(Vec2);
 
 } // namespace jl
