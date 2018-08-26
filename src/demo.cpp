@@ -1,6 +1,5 @@
-#include "Conversions.hpp"
-
 #define JULIAPP_DEBUG
+#include "Conversions.hpp" // must be included BEFORE julia.hpp
 #include "Julia.hpp"
 
 #include <algorithm>
