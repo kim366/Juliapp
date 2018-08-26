@@ -1,7 +1,19 @@
+#include "Conversions.hpp"
+
 #define JULIAPP_DEBUG
 #include "Julia.hpp"
 
 #include <algorithm>
+
+namespace jl
+{
+
+boxed_value convert(Vec2 v_)
+{
+    return jl::call("SVector", v_.x, v_.y);
+}
+
+} // namespace jl
 
 void fn(double) {}
 
@@ -33,11 +45,6 @@ int main()
                .get<S&>();
 
     jl::use("StaticArrays");
-    struct Vec2
-    {
-        float x, y;
-        operator jl::boxed_value() { return jl::call("SVector", x, y); }
-    };
 
     jl::call("println", Vec2{1.334f, 5.67f});
 
