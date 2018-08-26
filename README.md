@@ -108,14 +108,51 @@ int main()
     // (i.e. the raw returned type by jl::call and jl::eval).
     struct Vec2
     {
-        float x, y;
-        operator jl::boxed_value() { return jl::call("SVector", x, y); }
+      float x, y;
+      operator jl::boxed_value() { return jl::call("SVector", x, y); }
     };
 
     jl::call("println", Vec2{1.334f, 5.67f});
 
     jl::quit();
 }
+```
+
+## User-defined conversion
+
+In some cases you do not have access to the declaration of a class you would like to implicitly convert into an argument in Julia calls. In the following example suppose that `Vec2` was loaded from a library and you do not have access to its declaration.
+
+```cpp
+struct Vec2
+{
+  float x, y;
+  // Does not have implicit conversion to jl::boxed_value.
+};
+
+#include <juliapp/conversion.hpp>
+
+// Open jl namespace.
+namespace jl
+{
+  // Add a function named `convert` returning `boxed_value` and taking
+  // one parameter: the type you want to convert. The function body may
+  // be located anywhere as long as the linker is able to find it.
+  boxed_value convert(Vec2 v_);
+}
+
+// Only now load single include.
+#include <juliapp/julia.hpp>
+
+namespace jl
+{
+  // For example, add the function body here. Do the same here as you would
+  // do in the conversion operator in the full example above.
+  boxed_value convert(Vec2 v_)
+  {
+    return jl::call("SVector", v_.x, v_.y);
+  }
+}
+
 ```
 
 ## Keep in mind
