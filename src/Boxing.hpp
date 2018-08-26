@@ -75,7 +75,9 @@ RetT unbox(jl_value_t* arg_)
 template<typename ArgT>
 jl_value_t* box(ArgT& arg_)
 {
-    if constexpr (std::is_same<ArgT, bool>())
+    if constexpr (std::is_convertible_v<ArgT, jl_value_t*>)
+        return arg_;
+    else if constexpr (std::is_same<ArgT, bool>())
         return jl_box_bool(arg_);
     else if constexpr (std::is_same<ArgT, std::int8_t>())
         return jl_box_int8(arg_);

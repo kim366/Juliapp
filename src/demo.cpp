@@ -1,3 +1,4 @@
+#define JULIAPP_DEBUG
 #include "Julia.hpp"
 
 #include <algorithm>
@@ -31,6 +32,15 @@ int main()
     )")
                .get<S&>();
 
+    jl::use("StaticArrays");
+    struct Vec2
+    {
+        float x, y;
+        operator jl::boxed_value() { return jl::call("SVector", x, y); }
+    };
+
+    jl::call("println", Vec2{1.334f, 5.67f});
+
     printf("((%f, %f) %ld, %f)\n", s.v.x, s.v.y, s.y, s.f);
     s.v.x = 5;
     jl::call("println", s);
@@ -53,14 +63,14 @@ int main()
         std::puts("Language error caught.");
     }
 
-    jl::array<int> arr{5, 8, 1};
-    jl::array<int> reversed_arr{jl::call("reverse", arr)};
-    jl::call("println", arr);
-    std::reverse(reversed_arr.begin(), reversed_arr.end());
-    jl::call("println", reversed_arr);
+    // jl::array<int> arr{5, 8, 1};
+    // jl::array<int> reversed_arr{jl::call("reverse", arr)};
+    // jl::call("println", arr);
+    // std::reverse(reversed_arr.begin(), reversed_arr.end());
+    // jl::call("println", reversed_arr);
 
-    std::printf("2nd element: %d\n", arr[1]);
-    std::printf("Back element: %d\n", arr.back());
+    // std::printf("2nd element: %d\n", arr[1]);
+    // std::printf("Back element: %d\n", arr.back());
 
     // jl::raise_error("Test");
 

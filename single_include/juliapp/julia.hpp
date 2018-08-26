@@ -214,7 +214,9 @@ RetT unbox(jl_value_t* arg_)
 template<typename ArgT>
 jl_value_t* box(ArgT& arg_)
 {
-    if constexpr (std::is_same<ArgT, bool>())
+    if constexpr (std::is_convertible_v<ArgT, jl_value_t*>)
+        return arg_;
+    else if constexpr (std::is_same<ArgT, bool>())
         return jl_box_bool(arg_);
     else if constexpr (std::is_same<ArgT, std::int8_t>())
         return jl_box_int8(arg_);
@@ -269,6 +271,8 @@ jl_value_t* box(ArgT& arg_)
 
 namespace jl
 {
+
+using boxed_value = jl_value_t*;
 
 class value;
 
@@ -348,18 +352,24 @@ public:
              std::enable_if_t<!std::is_fundamental<TargT>{}>* = nullptr>
     TargT get() noexcept
     {
-        if constexpr (std::is_pointer_v<TargT>)
+        if constexpr (std::is_same_v<TargT, jl_value_t*>)
+            return static_cast<jl_value_t*>(*this);
+        else if constexpr (std::is_pointer_v<TargT>)
             return reinterpret_cast<TargT>(_boxed_value);
         else
             return *reinterpret_cast<std::decay_t<TargT>*>(_boxed_value);
     }
 
-    template<typename TargT,
-             typename = std::enable_if_t<std::is_fundamental<TargT>{}>>
+    template<
+        typename TargT,
+        typename = std::enable_if_t<std::is_fundamental<TargT>{}
+                                    && !std::is_same_v<TargT, jl_value_t*>>>
     operator TargT()
     {
         return impl::unbox<TargT>(_boxed_value);
     }
+
+    operator jl_value_t*() { return _boxed_value; }
 
     template<typename ElemT>
     explicit operator array<ElemT>() noexcept
@@ -419,6 +429,16 @@ template<typename... ArgTs>
 void raise_error(const char* content_, ArgTs... args_)
 {
     jl_errorf(content_, args_...);
+}
+
+inline void use(const std::string& module_)
+{
+    jl_eval_string((std::string{"using "} + module_).c_str());
+}
+
+inline void use(const char* module_)
+{
+    use(std::string{module_});
 }
 
 inline value eval(const std::string& src_str_)

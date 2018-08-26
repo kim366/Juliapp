@@ -103,6 +103,17 @@ int main()
     // will segfault.
     jl::use("StaticArrays");
 
+    // You can directly pass instances of classes into Julia as long
+    // as they are implicitly convertible to jl::boxed_value
+    // (i.e. the raw returned type by jl::call and jl::eval).
+    struct Vec2
+    {
+        float x, y;
+        operator jl::boxed_value() { return jl::call("SVector", x, y); }
+    };
+
+    jl::call("println", Vec2{1.334f, 5.67f});
+
     jl::quit();
 }
 ```

@@ -13,6 +13,8 @@
 namespace jl
 {
 
+using boxed_value = jl_value_t*;
+
 class value;
 
 template<typename ElemT>
@@ -91,18 +93,24 @@ public:
              std::enable_if_t<!std::is_fundamental<TargT>{}>* = nullptr>
     TargT get() noexcept
     {
-        if constexpr (std::is_pointer_v<TargT>)
+        if constexpr (std::is_same_v<TargT, jl_value_t*>)
+            return static_cast<jl_value_t*>(*this);
+        else if constexpr (std::is_pointer_v<TargT>)
             return reinterpret_cast<TargT>(_boxed_value);
         else
             return *reinterpret_cast<std::decay_t<TargT>*>(_boxed_value);
     }
 
-    template<typename TargT,
-             typename = std::enable_if_t<std::is_fundamental<TargT>{}>>
+    template<
+        typename TargT,
+        typename = std::enable_if_t<std::is_fundamental<TargT>{}
+                                    && !std::is_same_v<TargT, jl_value_t*>>>
     operator TargT()
     {
         return impl::unbox<TargT>(_boxed_value);
     }
+
+    operator jl_value_t*() { return _boxed_value; }
 
     template<typename ElemT>
     explicit operator array<ElemT>() noexcept
