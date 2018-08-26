@@ -99,6 +99,10 @@ int main()
     S& another_s{jl::eval("S((3, 78), 12, 9.3)").get<S&>()};
     jl::call("println", another_s);
 
+    // Add a Julia module via `using`. jl::eval("using StaticArrays")
+    // will segfault.
+    jl::use("StaticArrays");
+
     jl::quit();
 }
 ```

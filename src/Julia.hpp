@@ -164,6 +164,16 @@ void raise_error(const char* content_, ArgTs... args_)
     jl_errorf(content_, args_...);
 }
 
+inline void use(const std::string& module_)
+{
+    jl_eval_string((std::string{"using "} + module_).c_str());
+}
+
+inline void use(const char* module_)
+{
+    use(std::string{module_});
+}
+
 inline value eval(const std::string& src_str_)
 {
     return eval(src_str_.c_str());
