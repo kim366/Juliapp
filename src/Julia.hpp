@@ -140,15 +140,17 @@ inline value exec_from_file(const char* file_name_)
 template<typename... ArgTs>
 value call(const char* fn_name_, ArgTs&&... args_)
 {
-    std::array<jl_value_t*, sizeof...(args_)> boxed_args;
+    constexpr std::size_t num_args{sizeof...(args_)};
+    jl_value_t** boxed_args{new jl_value_t*[num_args]};
+    JL_GC_PUSHARGS(boxed_args, num_args);
 
-    impl::make_arg_vec<decltype(boxed_args), ArgTs...>::make(
-        boxed_args, 0, args_...);
+    impl::make_arg_vec<ArgTs...>::make(boxed_args, 0, args_...);
 
     jl_value_t* func{jl_eval_string(fn_name_)};
     impl::check_err();
-    jl_value_t* res{jl_call(func, boxed_args.data(), boxed_args.size())};
+    jl_value_t* res{jl_call(func, boxed_args, num_args)};
     impl::check_err();
+    JL_GC_POP();
     return res;
 }
 

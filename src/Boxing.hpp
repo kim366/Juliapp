@@ -122,23 +122,23 @@ jl_value_t* box(ArgT& arg_)
 template<typename...>
 struct make_arg_vec;
 
-template<typename ArrT, typename FirstArgT, typename... RestArgTs>
-struct make_arg_vec<ArrT, FirstArgT, RestArgTs...>
+template<typename FirstArgT, typename... RestArgTs>
+struct make_arg_vec<FirstArgT, RestArgTs...>
 {
-    static void make(ArrT& array_,
+    static void make(jl_value_t** vector_,
                      std::size_t index_,
                      FirstArgT first_,
                      RestArgTs... rest_)
     {
-        array_[index_] = box(first_);
-        make_arg_vec<ArrT, RestArgTs...>::make(array_, index_ + 1, rest_...);
+        vector_[index_] = box(first_);
+        make_arg_vec<RestArgTs...>::make(vector_, index_ + 1, rest_...);
     }
 };
 
-template<typename ArrT>
-struct make_arg_vec<ArrT>
+template<>
+struct make_arg_vec<>
 {
-    static void make(ArrT&, std::size_t) {}
+    static void make(jl_value_t**, std::size_t) {}
 };
 
 } // namespace impl
