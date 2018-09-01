@@ -271,6 +271,28 @@ jl_value_t* box(ArgT& arg_)
     }
 }
 
+template<typename...>
+struct make_arg_vec;
+
+template<typename FirstArgT, typename... RestArgTs>
+struct make_arg_vec<FirstArgT, RestArgTs...>
+{
+    static void make(jl_value_t** vector_,
+                     std::size_t index_,
+                     FirstArgT first_,
+                     RestArgTs... rest_)
+    {
+        vector_[index_] = box(first_);
+        make_arg_vec<RestArgTs...>::make(vector_, index_ + 1, rest_...);
+    }
+};
+
+template<>
+struct make_arg_vec<>
+{
+    static void make(jl_value_t**, std::size_t) {}
+};
+
 } // namespace impl
 
 } // namespace jl
@@ -413,12 +435,17 @@ inline value exec_from_file(const char* file_name_)
 template<typename... ArgTs>
 value call(const char* fn_name_, ArgTs&&... args_)
 {
-    std::array<jl_value_t*, sizeof...(args_)> boxed_args{impl::box(args_)...};
+    constexpr std::size_t num_args{sizeof...(args_)};
+    jl_value_t** boxed_args;
+    JL_GC_PUSHARGS(boxed_args, num_args);
+
+    impl::make_arg_vec<ArgTs...>::make(boxed_args, 0, args_...);
 
     jl_value_t* func{jl_eval_string(fn_name_)};
     impl::check_err();
-    jl_value_t* res{jl_call(func, boxed_args.data(), boxed_args.size())};
+    jl_value_t* res{jl_call(func, boxed_args, num_args)};
     impl::check_err();
+    JL_GC_POP();
     return res;
 }
 

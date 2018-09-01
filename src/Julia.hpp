@@ -141,7 +141,7 @@ template<typename... ArgTs>
 value call(const char* fn_name_, ArgTs&&... args_)
 {
     constexpr std::size_t num_args{sizeof...(args_)};
-    jl_value_t** boxed_args{new jl_value_t*[num_args]};
+    jl_value_t** boxed_args;
     JL_GC_PUSHARGS(boxed_args, num_args);
 
     impl::make_arg_vec<ArgTs...>::make(boxed_args, 0, args_...);
