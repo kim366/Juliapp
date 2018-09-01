@@ -44,8 +44,11 @@ int main()
                .get<S&>();
 
     jl::use("StaticArrays");
+    jl::use("LinearAlgebra");
 
-    jl::call("println", Vec2{1.334f, 5.67f});
+    Vec2 v;
+    v = jl::call("+", Vec2{1.334f, 5.67f}, Vec2{6.254f, 9.127f});
+    printf("v = (%f, %f)\n", v.x, v.y);
 
     printf("((%f, %f) %ld, %f)\n", s.v.x, s.v.y, s.y, s.f);
     s.v.x = 5;

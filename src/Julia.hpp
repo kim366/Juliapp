@@ -108,6 +108,13 @@ public:
         return impl::unbox<TargT>(_boxed_value);
     }
 
+    template<typename TargT,
+             std::enable_if_t<!std::is_fundamental<TargT>{}>* = nullptr>
+    operator TargT()
+    {
+        return get<TargT>();
+    }
+
     operator jl_value_t*() { return _boxed_value; }
 
     template<typename ElemT>
