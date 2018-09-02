@@ -4,6 +4,7 @@
 #include "./conversion.hpp"
 #endif
 
+#include "Concepts.hpp"
 #include "Errors.hpp"
 #include "Helpers.hpp"
 
