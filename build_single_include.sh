@@ -1,6 +1,6 @@
 #!/bin/bash
 
-infiles=(Errors Helpers Boxing Julia)
+infiles=(Concepts Errors Helpers Boxing Array Value Julia)
 outdir="single_include/juliapp"
 outfile=julia
 outpath="$outdir/$outfile.hpp"
