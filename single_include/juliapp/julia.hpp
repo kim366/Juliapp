@@ -154,6 +154,10 @@ public:
 
 } // namespace jl
 
+#ifdef JULIAPP_CONVERSION
+#include "./conversion.hpp"
+#endif
+
 
 #include <julia.h>
 

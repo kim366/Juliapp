@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef JULIAPP_CONVERSION
+#include "./conversion.hpp"
+#endif
+
 #include "Errors.hpp"
 #include "Helpers.hpp"
 

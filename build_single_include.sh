@@ -14,9 +14,9 @@ for ((i = 0; i < 4; i++)); do
   cat "src/${infiles[i]}.hpp" >> $outpath
 done
 
-perl -pi -e 's/(#pragma once\n|#include ".+\.hpp"\n)//g' $outpath
+perl -pi -e 's/(#pragma once\n|#include "(?!\.\/).+\.hpp"\n)//g' $outpath
 
-cp "src/conversion.hpp" "$outdir"
+cp "src/Conversion.hpp" "$outdir/conversion.hpp"
 
 for f in $outpath $outdir/conversion.hpp; do
   printf '/*\n\n%s\n%s\n%s\n%s\n\n%s\n\n%s\n*/\n\n%s\n%s\n' "Juliapp" "=======" \

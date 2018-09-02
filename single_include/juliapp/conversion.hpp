@@ -40,4 +40,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace jl
 {
 using boxed_value = jl_value_t*;
-}
+
+/////////////// Place your conversions here ///////////////
+
+///////////////////////////////////////////////////////////
+
+} // namespace jl
