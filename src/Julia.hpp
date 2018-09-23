@@ -38,7 +38,7 @@ public:
         _arr = jl_alloc_array_1d(array_type, size_);
     }
 
-    array(jl_array_t* arr_) noexcept : _arr{arr_}, _size{arr_->length} {}
+    array(jl_array_t* arr_) noexcept : _arr{arr_}, _size{jl_array_len(arr_)} {}
 
     array(const array&) noexcept = default;
     array(array&&) noexcept = default;
