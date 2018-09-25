@@ -109,7 +109,7 @@ public:
     }
 
     template<typename TargT,
-             std::enable_if_t<!std::is_fundamental<TargT>{}>* = nullptr>
+             std::enable_if_t<std::is_class_v<std::decay_t<TargT>>>* = nullptr>
     operator TargT()
     {
         return get<TargT>();
