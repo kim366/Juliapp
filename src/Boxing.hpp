@@ -106,7 +106,7 @@ jl_value_t* box(ArgT& arg_)
         return jl_box_float64(arg_);
     else if constexpr (std::is_same<ArgT, void*>())
         return jl_box_voidpointer(arg_);
-    else if constexpr (is_array<ArgT>{})
+    else if constexpr (is_array<std::decay_t<ArgT>>{})
         return reinterpret_cast<jl_value_t*>(arg_.get_boxed_data());
     else if constexpr (!std::is_fundamental_v<std::decay_t<ArgT>>)
     {
@@ -130,19 +130,23 @@ template<typename FirstArgT, typename... RestArgTs>
 struct make_arg_vec<FirstArgT, RestArgTs...>
 {
     static void make(jl_value_t** vector_,
+                     jl_array_t* array_,
                      std::size_t index_,
                      FirstArgT first_,
                      RestArgTs... rest_)
     {
-        vector_[index_] = box(first_);
-        make_arg_vec<RestArgTs...>::make(vector_, index_ + 1, rest_...);
+        jl_value_t* boxed_val{box(first_)};
+        vector_[index_] = boxed_val;
+        if (array_)
+            jl_gc_wb(array_, boxed_val);
+        make_arg_vec<RestArgTs...>::make(vector_, array_, index_ + 1, rest_...);
     }
 };
 
 template<>
 struct make_arg_vec<>
 {
-    static void make(jl_value_t**, std::size_t) {}
+    static void make(jl_value_t**, jl_array_t*, std::size_t) {}
 };
 
 } // namespace impl

@@ -25,9 +25,9 @@ public:
     array(ElemTs... elems_) noexcept
         : array{impl::get_type<CommT>(), sizeof...(ElemTs)}
     {
-        std::initializer_list<CommT> elem_list{elems_...};
-        ElemT* _arr_data{data()};
-        std::copy(elem_list.begin(), elem_list.end(), _arr_data);
+        jl_value_t** _arr_data{
+            reinterpret_cast<jl_value_t**>(jl_array_data(_arr))};
+        impl::make_arg_vec<ElemTs...>::make(_arr_data, _arr, 0, elems_...);
     }
 
     array(jl_datatype_t* type_, std::size_t size_) noexcept : _size{size_}
@@ -150,8 +150,7 @@ value call(const char* fn_name_, ArgTs&&... args_)
     constexpr std::size_t num_args{sizeof...(args_)};
     jl_value_t** boxed_args;
     JL_GC_PUSHARGS(boxed_args, num_args);
-
-    impl::make_arg_vec<ArgTs...>::make(boxed_args, 0, args_...);
+    impl::make_arg_vec<ArgTs...>::make(boxed_args, nullptr, 0, args_...);
 
     jl_value_t* func{jl_eval_string(fn_name_)};
     impl::check_err();
