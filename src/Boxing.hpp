@@ -126,27 +126,30 @@ jl_value_t* box(ArgT& arg_)
 template<typename...>
 struct make_arg_vec;
 
-template<typename FirstArgT, typename... RestArgTs>
-struct make_arg_vec<FirstArgT, RestArgTs...>
+template<typename DatT, typename FirstArgT, typename... RestArgTs>
+struct make_arg_vec<DatT, FirstArgT, RestArgTs...>
 {
-    static void make(jl_value_t** vector_,
-                     jl_array_t* array_,
+    static void make(DatT* vector_,
                      std::size_t index_,
                      FirstArgT first_,
                      RestArgTs... rest_)
     {
-        jl_value_t* boxed_val{box(first_)};
-        vector_[index_] = boxed_val;
-        if (array_)
-            jl_gc_wb(array_, boxed_val);
-        make_arg_vec<RestArgTs...>::make(vector_, array_, index_ + 1, rest_...);
+        if constexpr (std::is_same_v<DatT, jl_value_t*>)
+        {
+            jl_value_t* boxed_val{box(first_)};
+            vector_[index_] = boxed_val;
+        }
+        else
+            vector_[index_] = first_;
+
+        make_arg_vec<DatT, RestArgTs...>::make(vector_, index_ + 1, rest_...);
     }
 };
 
-template<>
-struct make_arg_vec<>
+template<typename DatT>
+struct make_arg_vec<DatT>
 {
-    static void make(jl_value_t**, jl_array_t*, std::size_t) {}
+    static void make(DatT*, std::size_t) {}
 };
 
 } // namespace impl

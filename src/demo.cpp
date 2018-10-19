@@ -78,8 +78,8 @@ int main()
     // std::reverse(reversed_arr.begin(), reversed_arr.end());
     // jl::call("println", reversed_arr);
 
-    std::printf("2nd element: %d\n", arr[1].get<int>());
-    std::printf("Back element: %d\n", arr.back().get<int>());
+    std::printf("2nd element: %d\n", arr[1]);
+    std::printf("Back element: %d\n", arr.back());
 
     // jl::raise_error("Test");
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ArrayIterator.hpp"
 #include "Boxing.hpp"
 #include "Helpers.hpp"
 
@@ -26,14 +25,14 @@ public:
     array(ElemTs... elems_) noexcept
         : array{impl::get_type<CommT>(), sizeof...(ElemTs)}
     {
-        impl::make_arg_vec<ElemTs...>::make(_arr, _metadata, 0, elems_...);
+        impl::make_arg_vec<ElemT, ElemTs...>::make(_arr, 0, elems_...);
     }
 
     array(jl_datatype_t* type_, std::size_t size_) noexcept : _size{size_}
     {
         jl_value_t* array_type{jl_apply_array_type(
             reinterpret_cast<jl_value_t*>(type_), dimensions)};
-        _arr = new jl_value_t*[_size];
+        _arr = new ElemT[_size];
         _metadata = jl_ptr_to_array_1d(array_type, _arr, _size, true);
     }
 
@@ -47,22 +46,22 @@ public:
 
     std::size_t size() const noexcept { return _size; }
     bool empty() const noexcept { return _size > 0; }
-    jl_value_t** data() noexcept { return _arr; }
+    ElemT* data() noexcept { return _arr; }
     jl_array_t* get_boxed_data() noexcept { return _metadata; }
     jl_value_t* begin() noexcept { return data(); }
     jl_value_t* end() noexcept { return data() + _size; }
     const jl_value_t* cbegin() const noexcept { return data(); }
     const jl_value_t* cend() const noexcept { return data() + _size; }
-    value operator[](std::size_t index_);
-    const value operator[](std::size_t index_) const;
-    value front();
-    value back();
-    const value front() const;
-    const value back() const;
+    ElemT operator[](std::size_t index_) { return data()[index_]; }
+    const ElemT operator[](std::size_t index_) const { return data()[index_]; }
+    ElemT front() { return *data(); }
+    ElemT back() { return data()[_size - 1]; }
+    const ElemT front() const { return *data(); }
+    const ElemT back() const { return data()[_size - 1]; }
 
 private:
     static constexpr std::size_t dimensions{1};
-    jl_value_t** _arr;
+    ElemT* _arr;
     jl_array_t* _metadata;
     const std::size_t _size;
 };
@@ -126,41 +125,6 @@ public:
 private:
     jl_value_t* _boxed_value;
 };
-template<typename ElemT>
-const value array<ElemT>::operator[](std::size_t index_) const
-{
-    return data()[index_];
-}
-
-template<typename ElemT>
-value array<ElemT>::operator[](std::size_t index_)
-{
-    return data()[index_];
-}
-
-template<typename ElemT>
-value array<ElemT>::front()
-{
-    return *data();
-}
-
-template<typename ElemT>
-value array<ElemT>::back()
-{
-    return data()[_size - 1];
-}
-
-template<typename ElemT>
-const value array<ElemT>::front() const
-{
-    return *data();
-}
-
-template<typename ElemT>
-const value array<ElemT>::back() const
-{
-    return data()[_size - 1];
-}
 
 inline value eval(const char* src_str_)
 {
@@ -185,7 +149,7 @@ value call(const char* fn_name_, ArgTs&&... args_)
     constexpr std::size_t num_args{sizeof...(args_)};
     jl_value_t** boxed_args;
     JL_GC_PUSHARGS(boxed_args, num_args);
-    impl::make_arg_vec<ArgTs...>::make(boxed_args, nullptr, 0, args_...);
+    impl::make_arg_vec<jl_value_t*, ArgTs...>::make(boxed_args, 0, args_...);
 
     jl_value_t* func{jl_eval_string(fn_name_)};
     impl::check_err();
