@@ -37,7 +37,9 @@ public:
     }
 
     array(jl_array_t* metadata_) noexcept
-        : _metadata{metadata_}, _size{jl_array_len(metadata_)}
+        : _arr{static_cast<ElemT*>(jl_array_data(metadata_))}
+        , _metadata{metadata_}
+        , _size{jl_array_len(metadata_)}
     {
     }
 
@@ -48,10 +50,10 @@ public:
     bool empty() const noexcept { return _size > 0; }
     ElemT* data() noexcept { return _arr; }
     jl_array_t* get_boxed_data() noexcept { return _metadata; }
-    jl_value_t* begin() noexcept { return data(); }
-    jl_value_t* end() noexcept { return data() + _size; }
-    const jl_value_t* cbegin() const noexcept { return data(); }
-    const jl_value_t* cend() const noexcept { return data() + _size; }
+    ElemT* begin() noexcept { return data(); }
+    ElemT* end() noexcept { return data() + _size; }
+    const ElemT* cbegin() const noexcept { return data(); }
+    const ElemT* cend() const noexcept { return data() + _size; }
     ElemT operator[](std::size_t index_) { return data()[index_]; }
     const ElemT operator[](std::size_t index_) const { return data()[index_]; }
     ElemT front() { return *data(); }
