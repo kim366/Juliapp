@@ -77,6 +77,7 @@ int main()
     jl::call("println", arr);
     std::reverse(reversed_arr.begin(), reversed_arr.end());
     jl::call("println", reversed_arr);
+    jl::call("println ∘ collect ∘ UnitRange", 1000, 1005);
 
     std::printf("2nd element: %d\n", arr[1]);
     std::printf("Back element: %d\n", arr.back());
