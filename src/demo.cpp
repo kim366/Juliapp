@@ -1,6 +1,7 @@
 #define JULIAPP_DEBUG
 #include "Conversions.hpp" // must be included BEFORE julia.hpp
 #include "Julia.hpp"
+#include "Sync.hpp"
 
 #include <algorithm>
 
@@ -19,6 +20,7 @@ void fn(double) {}
 int main()
 {
     jl::init();
+    jl::sync<int>("Int32");
 
     // struct S
     // {
