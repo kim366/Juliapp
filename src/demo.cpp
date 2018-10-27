@@ -1,5 +1,4 @@
 #define JULIAPP_DEBUG
-#include "Conversions.hpp" // must be included BEFORE julia.hpp
 #include "Julia.hpp"
 #include "Sync.hpp"
 
@@ -8,19 +7,25 @@
 namespace jl
 {
 
-boxed_value convert(Vec2 v_)
-{
-    return jl::call("SVector", v_.x, v_.y);
-}
+// boxed_value convert(Vec2 v_)
+//{
+//    return jl::call("SVector", v_.x, v_.y);
+//}
 
 } // namespace jl
 
 void fn(double) {}
 
+struct Vec2
+{
+    float x, y;
+};
+
 int main()
 {
     jl::init();
-    jl::sync<int>("Int32");
+    jl::use("StaticArrays");
+    jl::sync<Vec2>("NTuple{2, Float32}");
 
     // struct S
     // {
@@ -45,7 +50,6 @@ int main()
     // )")
     //            .get<S&>();
 
-    // jl::use("StaticArrays");
     // jl::use("LinearAlgebra");
 
     // Vec2 v;
@@ -74,15 +78,16 @@ int main()
     //     std::puts("Language error caught.");
     // }
 
-    jl::array<int> arr{5, 8, 1};
-    jl::array<int> reversed_arr{jl::call("reverse", arr)};
-    jl::call("println", arr);
-    std::reverse(reversed_arr.begin(), reversed_arr.end());
-    jl::call("println", reversed_arr);
-    jl::call("println ∘ collect ∘ UnitRange", 1000, 1005);
+    //    jl::array<int> arr{5, 8, 1};
+    //    jl::array<int> reversed_arr{jl::call("reverse", arr)};
+    //    jl::call("println", arr);
+    jl::call("println", Vec2{2, 3});
+    //    std::reverse(reversed_arr.begin(), reversed_arr.end());
+    //    jl::call("println", reversed_arr);
+    //    jl::call("println ∘ collect ∘ UnitRange", 1000, 1005);
 
-    std::printf("2nd element: %d\n", arr[1]);
-    std::printf("Back element: %d\n", arr.back());
+    //    std::printf("2nd element: %d\n", arr[1]);
+    //    std::printf("Back element: %d\n", arr.back());
 
     // jl::raise_error("Test");
 

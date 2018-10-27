@@ -75,6 +75,11 @@ public:
 
     value() noexcept = default;
 
+    template<typename T>
+    value(T&& obj_) : _boxed_value{box(obj_)}
+    {
+    }
+
     template<typename TargT,
              std::enable_if_t<std::is_fundamental<TargT>{}
                               || impl::is_array<TargT>{}>* = nullptr>

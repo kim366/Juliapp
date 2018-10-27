@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Errors.hpp"
+#include "Sync.hpp"
 
 #include <julia.h>
 
@@ -54,9 +55,11 @@ jl_datatype_t* get_type()
         return jl_bool_type;
     else
     {
-        assert(false &&
+        auto found{impl::type_map.find(typeid(ElemT))};
+        assert(found != impl::type_map.end() &&
                "jl - unsupported array type. "
                "Use boolean, floating point or integral types.");
+        return found->second;
     }
 }
 

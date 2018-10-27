@@ -7,6 +7,7 @@
 #include "Errors.hpp"
 #include "Helpers.hpp"
 
+#include <iostream>
 #include <julia.h>
 
 namespace jl
@@ -108,18 +109,14 @@ jl_value_t* box(ArgT& arg_)
         return jl_box_voidpointer(arg_);
     else if constexpr (is_array<std::decay_t<ArgT>>{})
         return reinterpret_cast<jl_value_t*>(arg_.get_boxed_data());
-    else if constexpr (!std::is_fundamental_v<std::decay_t<ArgT>>)
-    {
-        if constexpr (std::is_pointer_v<ArgT>)
-            return reinterpret_cast<jl_value_t*>(arg_);
-        else
-            return reinterpret_cast<jl_value_t*>(&arg_);
-    }
     else
     {
-        assert(false &&
-               "jl - unsupported argument type. "
-               "Use array, boolean, floating point or integral types.");
+        auto found{impl::type_map.find(typeid(ArgT))};
+        assert(found != impl::type_map.end() && "Requested type not synced");
+        jl_value_t* val{jl_new_struct_uninit(found->second)};
+        *reinterpret_cast<ArgT*>(jl_data_ptr(val)) = arg_;
+        std::cout << val;
+        return val;
     }
 }
 
@@ -149,6 +146,7 @@ struct make_arg_vec<DatT, FirstArgT, RestArgTs...>
 template<typename DatT>
 struct make_arg_vec<DatT>
 {
+
     static void make(DatT*, std::size_t) {}
 };
 
