@@ -32,7 +32,7 @@ public:
     {
         jl_value_t* array_type{jl_apply_array_type(
             reinterpret_cast<jl_value_t*>(type_), dimensions)};
-        _arr = new ElemT[_size];
+        _arr = static_cast<ElemT*>(std::malloc(_size * sizeof(ElemT)));
         _metadata = jl_ptr_to_array_1d(array_type, _arr, _size, true);
     }
 
