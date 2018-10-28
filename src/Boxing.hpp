@@ -7,7 +7,6 @@
 #include "Errors.hpp"
 #include "Helpers.hpp"
 
-#include <iostream>
 #include <julia.h>
 
 namespace jl
@@ -115,7 +114,6 @@ jl_value_t* box(ArgT& arg_)
         assert(found != impl::type_map.end() && "Requested type not synced");
         jl_value_t* val{jl_new_struct_uninit(found->second)};
         *reinterpret_cast<ArgT*>(jl_data_ptr(val)) = arg_;
-        std::cout << val;
         return val;
     }
 }

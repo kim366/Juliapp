@@ -133,6 +133,17 @@ private:
     jl_value_t* _boxed_value;
 };
 
+template<typename ValT, typename... ArgTs>
+value make_value(ArgTs&&... args_)
+{
+    auto found{impl::type_map.find(typeid(ValT))};
+    assert(found != impl::type_map.end() && "Requested type not synced");
+    jl_value_t* val{jl_new_struct_uninit(found->second)};
+    *reinterpret_cast<ValT*>(jl_data_ptr(val)) =
+        ValT(std::forward<ArgTs>(args_)...);
+    return val;
+}
+
 inline value eval(const char* src_str_)
 {
     jl_value_t* res{jl_eval_string(src_str_)};

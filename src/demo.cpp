@@ -18,6 +18,7 @@ void fn(double) {}
 
 struct Vec2
 {
+    Vec2(float x, float y) : x{x}, y{y} {}
     float x, y;
 };
 
@@ -25,7 +26,18 @@ int main()
 {
     jl::init();
     jl::use("StaticArrays");
-    jl::sync<Vec2>("NTuple{2, Float32}");
+
+    jl::eval(R"(
+         mutable struct Vec2
+           x::Float32
+           y::Float32
+         end
+     )");
+    jl::sync<Vec2>("Vec2");
+
+    jl::value jl_vec{jl::make_value<Vec2>(7.f, 1.f)};
+
+    std::printf("%f\n", jl_vec.get<Vec2>().x);
 
     // struct S
     // {
@@ -81,7 +93,11 @@ int main()
     //    jl::array<int> arr{5, 8, 1};
     //    jl::array<int> reversed_arr{jl::call("reverse", arr)};
     //    jl::call("println", arr);
+    jl::call("println", jl_vec);
     jl::call("println", Vec2{2, 3});
+    // jl::call("println", jl_vec);
+    /* TODO: Fix this call; if called instead of above a jl:: call, jl_vec gets
+     * garbage collected. */
     //    std::reverse(reversed_arr.begin(), reversed_arr.end());
     //    jl::call("println", reversed_arr);
     //    jl::call("println ∘ collect ∘ UnitRange", 1000, 1005);
