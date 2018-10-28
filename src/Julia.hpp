@@ -136,9 +136,9 @@ private:
 template<typename ValT, typename... ArgTs>
 value make_value(ArgTs&&... args_)
 {
-    auto found{impl::type_map.find(typeid(ValT))};
-    assert(found != impl::type_map.end() && "Requested type not synced");
-    jl_value_t* val{jl_new_struct_uninit(found->second)};
+    jl_datatype_t* found{impl::find_synced_jl_type<ValT>()};
+    assert(found && "Requested type not synced");
+    jl_value_t* val{jl_new_struct_uninit(found)};
     *reinterpret_cast<ValT*>(jl_data_ptr(val)) =
         ValT(std::forward<ArgTs>(args_)...);
     return val;
@@ -185,6 +185,8 @@ inline void init()
 inline void quit(int code_ = 0)
 {
     jl_atexit_hook(code_);
+    delete[] impl::synced_cpp_types;
+    delete[] impl::synced_jl_types;
 }
 
 inline void raise_error(const char* content_)

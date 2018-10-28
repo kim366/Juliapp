@@ -33,7 +33,7 @@ int main()
            y::Float32
          end
      )");
-    jl::sync<Vec2>("Vec2");
+    jl::sync(jl::type<Vec2>{"NTuple{2, Float32}"});
 
     jl::value jl_vec{jl::make_value<Vec2>(7.f, 1.f)};
 

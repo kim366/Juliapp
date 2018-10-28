@@ -110,9 +110,9 @@ jl_value_t* box(ArgT& arg_)
         return reinterpret_cast<jl_value_t*>(arg_.get_boxed_data());
     else
     {
-        auto found{impl::type_map.find(typeid(ArgT))};
-        assert(found != impl::type_map.end() && "Requested type not synced");
-        jl_value_t* val{jl_new_struct_uninit(found->second)};
+        jl_datatype_t* found{impl::find_synced_jl_type<ArgT>()};
+        assert(found && "Requested type not synced");
+        jl_value_t* val{jl_new_struct_uninit(found)};
         *reinterpret_cast<ArgT*>(jl_data_ptr(val)) = arg_;
         return val;
     }

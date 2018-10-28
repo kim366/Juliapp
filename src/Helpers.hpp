@@ -55,11 +55,11 @@ jl_datatype_t* get_type()
         return jl_bool_type;
     else
     {
-        auto found{impl::type_map.find(typeid(ElemT))};
-        assert(found != impl::type_map.end() &&
+        auto found{impl::find_synced_jl_type<ElemT>()};
+        assert(found &&
                "jl - unsupported array type. "
                "Use boolean, floating point or integral types.");
-        return found->second;
+        return found;
     }
 }
 
