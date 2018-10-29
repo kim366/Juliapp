@@ -31,6 +31,21 @@ private:
 
 class function
 {
+    function(generic_string name_)
+        : _function{jl_get_function(jl_main_module, name_)}
+    {
+    }
+
+    function(module module_, generic_string name_)
+        : _function{jl_get_function(module_, name_)}
+    {
+    }
+
+public:
+    operator jl_function_t*() { return _function; }
+
+private:
+    jl_function_t* _function;
 };
 
 } // namespace jl
