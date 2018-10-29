@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Boxing.hpp"
+#include "GenericString.hpp"
 #include "Helpers.hpp"
 
 #include <array>
@@ -144,25 +145,26 @@ value make_value(ArgTs&&... args_)
     return val;
 }
 
-inline value eval(const char* src_str_)
+inline value eval(generic_string src_str_)
 {
     jl_value_t* res{jl_eval_string(src_str_)};
     impl::check_err();
     return res;
 }
 
-inline value exec_from_file(const char* file_name_)
+inline value exec_from_file(generic_string file_name_)
 {
     std::ifstream file{file_name_};
     if (!file.is_open())
-        throw load_error{std::string{"Could not load script "} + file_name_};
+        throw load_error{std::string{"Could not load script "}
+                         + static_cast<const char*>(file_name_)};
     std::stringstream buffer;
     buffer << file.rdbuf();
     return eval(buffer.str().c_str());
 }
 
 template<typename... ArgTs>
-value call(const char* fn_name_, ArgTs&&... args_)
+value call(generic_string fn_name_, ArgTs&&... args_)
 {
     constexpr std::size_t num_args{sizeof...(args_)};
     jl_value_t** boxed_args;
@@ -189,47 +191,20 @@ inline void quit(int code_ = 0)
     delete[] impl::synced_jl_types;
 }
 
-inline void raise_error(const char* content_)
+inline void raise_error(generic_string content_)
 {
     jl_error(content_);
 }
 
 template<typename... ArgTs>
-void raise_error(const char* content_, ArgTs... args_)
+void raise_error(generic_string content_, ArgTs... args_)
 {
     jl_errorf(content_, args_...);
 }
 
-inline void use(const std::string& module_)
-{
-    jl_eval_string((std::string{"using "} + module_).c_str());
-}
-
-inline void use(const char* module_)
-{
-    use(std::string{module_});
-}
-
-inline value eval(const std::string& src_str_)
-{
-    return eval(src_str_.c_str());
-}
-
-inline value exec_from_file(const std::string& file_name_)
-{
-    return exec_from_file(file_name_.c_str());
-}
-
-template<typename... ArgTs>
-value call(const std::string& fn_name_, ArgTs... args_)
-{
-    return call(fn_name_.c_str(), args_...);
-}
-
-template<typename... ArgTs>
-void raise_error(const std::string& content_, ArgTs... args_)
-{
-    raise_error(content_.c_str(), args_...);
-}
+// inline void use(generic_string module_)
+//{
+//    jl_eval_string((std::string{"using "} + module_).c_str());
+//}
 
 } // namespace jl

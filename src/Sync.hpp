@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GenericString.hpp"
+
 #include <julia.h>
 #include <map>
 #include <string>
@@ -46,8 +48,7 @@ template<typename CppT>
 struct type
 {
     using cpp_type = CppT;
-    type(const std::string& str_) : julia_type{str_.c_str()} {}
-    type(const char* str_) : julia_type{str_} {}
+    type(generic_string type_name_) : julia_type{type_name_} {}
 
     const char* julia_type;
 };

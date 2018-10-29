@@ -25,7 +25,7 @@ struct Vec2
 int main()
 {
     jl::init();
-    jl::use("StaticArrays");
+    //    jl::use("StaticArrays");
 
     jl::eval(R"(
          mutable struct Vec2
