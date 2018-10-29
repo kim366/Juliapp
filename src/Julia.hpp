@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Boxing.hpp"
+#include "Function.hpp"
 #include "GenericString.hpp"
 #include "Helpers.hpp"
 
