@@ -165,19 +165,29 @@ inline value exec_from_file(generic_string file_name_)
 }
 
 template<typename... ArgTs>
-value call(generic_string fn_name_, ArgTs&&... args_)
+value call(function fn_, ArgTs&&... args_)
 {
     constexpr std::size_t num_args{sizeof...(args_)};
     jl_value_t** boxed_args;
     JL_GC_PUSHARGS(boxed_args, num_args);
     impl::make_arg_vec<jl_value_t*, ArgTs...>::make(boxed_args, 0, args_...);
 
-    jl_value_t* func{jl_eval_string(fn_name_)};
-    impl::check_err();
-    jl_value_t* res{jl_call(func, boxed_args, num_args)};
+    jl_value_t* res{jl_call(fn_, boxed_args, num_args)};
     impl::check_err();
     JL_GC_POP();
     return res;
+}
+
+template<typename... ArgTs>
+value call(generic_string fn_name_, ArgTs&&... args_)
+{
+    return call(function{fn_name_}, std::forward<ArgTs>(args_)...);
+}
+
+template<typename... ArgTs>
+value function::operator()(ArgTs&&... args_)
+{
+    return call(*this, std::forward<ArgTs>(args_)...);
 }
 
 inline void init()

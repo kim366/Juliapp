@@ -31,6 +31,7 @@ private:
 
 class function
 {
+public:
     function(generic_string name_)
         : _function{jl_get_function(jl_main_module, name_)}
     {
@@ -41,8 +42,9 @@ class function
     {
     }
 
-public:
     operator jl_function_t*() { return _function; }
+    template<typename... ArgTs>
+    class value operator()(ArgTs&&... args_);
 
 private:
     jl_function_t* _function;

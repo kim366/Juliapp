@@ -28,12 +28,19 @@ int main()
     //    jl::use("StaticArrays");
 
     jl::eval(R"(
-         mutable struct Vec2
-           x::Float32
-           y::Float32
-         end
+      module Mod
+        mutable struct Vec2
+          x::Float32
+          y::Float32
+        end
+
+        f(x) = println(x)
+      end
      )");
     jl::sync(jl::type<Vec2>{"NTuple{2, Float32}"});
+
+    jl::function f{jl::module{"Mod"}, "f"};
+    f(1337);
 
     jl::value jl_vec{jl::make_value<Vec2>(7.f, 1.f)};
 
