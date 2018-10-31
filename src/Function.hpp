@@ -11,7 +11,7 @@ class module
 {
 
 public:
-    module(generic_string name_)
+    explicit module(generic_string name_)
         : _module{reinterpret_cast<jl_module_t*>(
               jl_get_global(jl_main_module, jl_symbol(name_)))}
     {
@@ -32,7 +32,7 @@ private:
 class function
 {
 public:
-    function(generic_string name_)
+    explicit function(generic_string name_)
         : _function{jl_get_function(jl_main_module, name_)}
     {
     }

@@ -24,6 +24,8 @@ struct Vec2
 
 int main()
 {
+    using namespace jl::literals;
+
     //    jl::use("StaticArrays");
 
     jl::eval(R"(
@@ -38,7 +40,7 @@ int main()
      )");
     jl::sync(jl::type<Vec2>{"NTuple{2, Float32}"});
 
-    jl::function f{jl::module{"Mod"}, "f"};
+    jl::function f{"Mod"_jlm, "f"};
     f(1337);
 
     jl::value jl_vec{jl::make_value<Vec2>(7.f, 1.f)};
