@@ -5,15 +5,21 @@
 namespace jl
 {
 
-class value
+namespace impl
 {
-public:
-    value(jl_value_t* boxed_value_) noexcept : _boxed_value{boxed_value_} {}
 
-    value() noexcept = default;
+class common_value
+{
+
+public:
+    common_value(jl_value_t* boxed_value_) noexcept : _boxed_value{boxed_value_}
+    {
+    }
+
+    common_value() noexcept = default;
 
     template<typename T>
-    value(T&& obj_) : _boxed_value{box(obj_)}
+    common_value(T&& obj_) : _boxed_value{box(obj_)}
     {
     }
 
@@ -66,8 +72,25 @@ public:
         return reinterpret_cast<jl_array_t*>(_boxed_value);
     }
 
-private:
+protected:
     jl_value_t* _boxed_value;
+};
+
+} // namespace impl
+
+template<typename ValT>
+class typed_value : public impl::common_value
+{
+    using impl::common_value::common_value;
+
+public:
+    ValT& operator*() { return impl::unbox<ValT&>(_boxed_value); }
+    ValT* operator->() { return &**this; }
+};
+
+class value : public impl::common_value
+{
+    using impl::common_value::common_value;
 };
 
 } // namespace jl

@@ -19,7 +19,7 @@ namespace jl
 {
 
 template<typename ValT, typename... ArgTs>
-value make_value(ArgTs&&... args_)
+typed_value<ValT> make_value(ArgTs&&... args_)
 {
     jl_datatype_t* found{impl::find_synced_jl_type<ValT>()};
     assert(found && "Requested type not synced");

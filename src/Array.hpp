@@ -8,8 +8,6 @@
 namespace jl
 {
 
-class value;
-
 template<typename ElemT>
 class array
 {

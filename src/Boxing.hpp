@@ -69,9 +69,9 @@ RetT unbox(jl_value_t* arg_)
     }
     else
     {
-        assert(false &&
-               "jl - unsupported result type. "
-               "Use boolean, floating point or integral types.");
+        //        jl_datatype_t* found{impl::find_synced_jl_type<RetT>()};
+        //        assert(found && "Requested type not synced");
+        return *reinterpret_cast<std::decay_t<RetT>*>(jl_data_ptr(arg_));
     }
 }
 
