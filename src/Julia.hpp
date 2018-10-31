@@ -3,6 +3,7 @@
 #include "Boxing.hpp"
 #include "Function.hpp"
 #include "GenericString.hpp"
+#include "GlobalInstance.hpp"
 #include "Helpers.hpp"
 
 #include <array>
@@ -188,18 +189,6 @@ template<typename... ArgTs>
 value function::operator()(ArgTs&&... args_)
 {
     return call(*this, std::forward<ArgTs>(args_)...);
-}
-
-inline void init()
-{
-    jl_init();
-}
-
-inline void quit(int code_ = 0)
-{
-    jl_atexit_hook(code_);
-    delete[] impl::synced_cpp_types;
-    delete[] impl::synced_jl_types;
 }
 
 inline void raise_error(generic_string content_)

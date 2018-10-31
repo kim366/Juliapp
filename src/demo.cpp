@@ -24,7 +24,6 @@ struct Vec2
 
 int main()
 {
-    jl::init();
     //    jl::use("StaticArrays");
 
     jl::eval(R"(
@@ -117,6 +116,4 @@ int main()
     // jl::exec_from_file("sample-script.jl");
 
     // std::printf("%d\n", jl::call("÷", 5, 2).get<int>());
-
-    jl::quit();
 }
