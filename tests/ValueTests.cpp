@@ -1,5 +1,6 @@
 #include "catch.hpp"
 
+#define JLPP_IMPL_UNIT_TESTING
 #include <Julia.hpp>
 
 TEST_CASE("Boxing of primitive types")
