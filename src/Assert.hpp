@@ -32,10 +32,11 @@ namespace impl::test
 
 struct assertion_instance
 {
-    assertion_instance(bool expr_)
+    assertion_instance(bool expr_, const char* msg_)
     {
         if (!expr_)
-            throw jl::test::failed_assertion{"Assertion failed"};
+            throw jl::test::failed_assertion{std::string{"Assertion failed: ("}
+                                             + msg_ + ")"};
     }
 };
 
@@ -62,7 +63,7 @@ struct static_assertion_instance<false>
 
 // clang-format off
 #define jlpp_assert(expr)                                                      \
-    jl::impl::test::assertion_instance{expr}
+    jl::impl::test::assertion_instance{expr, #expr}
 #define jlpp_static_assert(expr, ...)                                          \
     jl::impl::test::static_assertion_instance<expr>{#__VA_ARGS__}
 // clang-format on

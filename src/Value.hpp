@@ -18,11 +18,6 @@ public:
 
     common_value() noexcept = default;
 
-    template<typename T>
-    common_value(T&& obj_) : _boxed_value{box(obj_)}
-    {
-    }
-
     template<typename TargT,
              std::enable_if_t<std::is_fundamental<TargT>{}
                               || impl::is_array<TargT>{}>* = nullptr>
@@ -91,6 +86,12 @@ class typed_value : public impl::common_value
     using impl::common_value::common_value;
 
 public:
+    typed_value(ValT&& obj_) : common_value{impl::box(std::forward<ValT>(obj_))}
+    {
+    }
+
+    typed_value(const ValT& obj_) : common_value{impl::box(obj_)} {}
+
     ValT& operator*() { return impl::unbox<ValT&>(_boxed_value); }
     ValT* operator->() { return &**this; }
 };
@@ -98,6 +99,17 @@ public:
 class value : public impl::common_value
 {
     using impl::common_value::common_value;
+
+public:
+    template<typename T>
+    value(T&& obj_) : common_value{impl::box(std::forward<T>(obj_))}
+    {
+    }
+
+    template<typename T>
+    value(const T& obj_) : common_value{impl::box(obj_)}
+    {
+    }
 };
 
 } // namespace jl

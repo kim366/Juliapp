@@ -73,42 +73,45 @@ RetT unbox(jl_value_t* arg_)
 }
 
 template<typename ArgT>
-jl_value_t* box(ArgT& arg_)
+jl_value_t* box(ArgT&& arg_)
 {
-    if constexpr (std::is_convertible_v<ArgT, jl_value_t*>)
+    using DecayedArgT = std::decay_t<ArgT>;
+
+    if constexpr (std::is_convertible_v<DecayedArgT, jl_value_t*>)
         return arg_;
-    else if constexpr (std::is_same<ArgT, bool>())
+    else if constexpr (std::is_same<DecayedArgT, bool>())
         return jl_box_bool(arg_);
-    else if constexpr (std::is_same<ArgT, std::int8_t>())
+    else if constexpr (std::is_same<DecayedArgT, std::int8_t>())
         return jl_box_int8(arg_);
-    else if constexpr (std::is_same<ArgT, std::uint8_t>())
+    else if constexpr (std::is_same<DecayedArgT, std::uint8_t>())
         return jl_box_uint8(arg_);
-    else if constexpr (std::is_same<ArgT, std::int16_t>())
+    else if constexpr (std::is_same<DecayedArgT, std::int16_t>())
         return jl_box_int16(arg_);
-    else if constexpr (std::is_same<ArgT, std::uint16_t>())
+    else if constexpr (std::is_same<DecayedArgT, std::uint16_t>())
         return jl_box_uint16(arg_);
-    else if constexpr (std::is_same<ArgT, std::int32_t>())
+    else if constexpr (std::is_same<DecayedArgT, std::int32_t>())
         return jl_box_int32(arg_);
-    else if constexpr (std::is_same<ArgT, std::uint32_t>())
+    else if constexpr (std::is_same<DecayedArgT, std::uint32_t>())
         return jl_box_uint32(arg_);
-    else if constexpr (std::is_same<ArgT, std::int64_t>())
+    else if constexpr (std::is_same<DecayedArgT, std::int64_t>())
         return jl_box_int64(arg_);
-    else if constexpr (std::is_same<ArgT, std::uint64_t>())
+    else if constexpr (std::is_same<DecayedArgT, std::uint64_t>())
         return jl_box_uint64(arg_);
-    else if constexpr (std::is_same<ArgT, float>())
+    else if constexpr (std::is_same<DecayedArgT, float>())
         return jl_box_float32(arg_);
-    else if constexpr (std::is_same<ArgT, double>())
+    else if constexpr (std::is_same<DecayedArgT, double>())
         return jl_box_float64(arg_);
-    else if constexpr (std::is_same<ArgT, void*>())
+    else if constexpr (std::is_same<DecayedArgT, void*>())
         return jl_box_voidpointer(arg_);
-    else if constexpr (is_array<std::decay_t<ArgT>>{})
+    else if constexpr (is_array<DecayedArgT>{})
         return reinterpret_cast<jl_value_t*>(arg_.get_boxed_data());
     else
     {
-        jl_datatype_t* found{impl::find_synced_jl_type<ArgT>()};
+        jl_datatype_t* found{impl::find_synced_jl_type<DecayedArgT>()};
         jlpp_assert(found && "Requested type not synced");
         jl_value_t* val{jl_new_struct_uninit(found)};
-        *reinterpret_cast<ArgT*>(jl_data_ptr(val)) = arg_;
+        *reinterpret_cast<DecayedArgT*>(jl_data_ptr(val)) =
+            std::forward<ArgT>(arg_);
         return val;
     }
 }
