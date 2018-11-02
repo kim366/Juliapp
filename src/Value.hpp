@@ -72,6 +72,13 @@ public:
         return reinterpret_cast<jl_array_t*>(_boxed_value);
     }
 
+    bool operator==(const common_value& rhs) const
+    {
+        return static_cast<bool>(jl_egal(_boxed_value, rhs._boxed_value));
+    }
+
+    bool operator!=(const common_value& rhs) const { return !(rhs == *this); }
+
 protected:
     jl_value_t* _boxed_value;
 };
