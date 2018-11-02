@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Assert.hpp"
 #include "Errors.hpp"
 #include "Helpers.hpp"
 
@@ -66,7 +67,7 @@ RetT unbox(jl_value_t* arg_)
     else
     {
         //        jl_datatype_t* found{impl::find_synced_jl_type<RetT>()};
-        //        assert(found && "Requested type not synced");
+        //        jlpp_assert(found && "Requested type not synced");
         return *reinterpret_cast<std::decay_t<RetT>*>(jl_data_ptr(arg_));
     }
 }
@@ -105,7 +106,7 @@ jl_value_t* box(ArgT& arg_)
     else
     {
         jl_datatype_t* found{impl::find_synced_jl_type<ArgT>()};
-        assert(found && "Requested type not synced");
+        jlpp_assert(found && "Requested type not synced");
         jl_value_t* val{jl_new_struct_uninit(found)};
         *reinterpret_cast<ArgT*>(jl_data_ptr(val)) = arg_;
         return val;

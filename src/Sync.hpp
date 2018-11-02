@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Assert.hpp"
 #include "GenericString.hpp"
 
 #include <julia.h>
@@ -56,7 +57,7 @@ struct type
 template<typename... TypeTs>
 void sync(TypeTs&&... ts_)
 {
-    assert(impl::num_synced_types == 0 && "You may sync types only once");
+    jlpp_assert(impl::num_synced_types == 0 && "You may sync types only once");
     impl::num_synced_types = sizeof...(ts_);
     impl::synced_cpp_types = new std::type_index[sizeof...(ts_)]{
         typeid(typename TypeTs::cpp_type)...};
@@ -68,11 +69,11 @@ void sync(TypeTs&&... ts_)
     jl_function_t* sizeof_func{jl_eval_string("sizeof")};
     JL_GC_PUSH1(sizeof_func);
 
-    assert("Synced datatype sizes do not match"
-           && ((sizeof(typename TypeTs::cpp_type)
-                == static_cast<std::size_t>(jl_unbox_int64(
-                       jl_call1(sizeof_func, jl_eval_string(ts_.julia_type)))))
-               && ...));
+    jlpp_assert("Synced datatype sizes do not match"
+                && ((sizeof(typename TypeTs::cpp_type)
+                     == static_cast<std::size_t>(jl_unbox_int64(jl_call1(
+                            sizeof_func, jl_eval_string(ts_.julia_type)))))
+                    && ...));
     JL_GC_POP();
 }
 

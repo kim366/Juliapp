@@ -22,7 +22,7 @@ template<typename ValT, typename... ArgTs>
 typed_value<ValT> make_value(ArgTs&&... args_)
 {
     jl_datatype_t* found{impl::find_synced_jl_type<ValT>()};
-    assert(found && "Requested type not synced");
+    jlpp_assert(found && "Requested type not synced");
     jl_value_t* val{jl_new_struct_uninit(found)};
     *reinterpret_cast<ValT*>(jl_data_ptr(val)) =
         ValT(std::forward<ArgTs>(args_)...);
