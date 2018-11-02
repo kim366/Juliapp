@@ -11,3 +11,11 @@ TEST_CASE("Boxing of primitive types")
     // TODO: Make this work
     // CHECK(jl::value{2.}.get<int>() == 2);
 }
+
+TEST_CASE("Literals")
+{
+    using namespace jl::literals;
+    jl::eval("module SomeMod nested(x) = 3x end; free(x) = 2x");
+    REQUIRE("SomeMod"_jlm == jl::module{"SomeMod"});
+    REQUIRE("free"_jlf == jl::function{"free"});
+}
