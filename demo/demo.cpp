@@ -34,7 +34,7 @@ int main()
     f(1337);
 
     auto jl_vec{jl::make_value<Vec2>(7.f, 1.f)};
-    static_assert(std::is_same_v<decltype(jl_vec), jl::typed_value<Vec2>>);
+    static_assert(std::is_same_v<decltype(jl_vec), jl::value<Vec2>>);
     std::printf("From C: %f\n", jl_vec->x);
     jl_vec->x = 7.12345f;
     std::printf("%f\n", jl_vec.get<Vec2>().x);

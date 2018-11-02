@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Any.hpp"
 #include "GenericString.hpp"
 #include "Module.hpp"
 
@@ -8,6 +9,9 @@
 
 namespace jl
 {
+
+template<typename>
+class value;
 
 class function
 {
@@ -24,7 +28,7 @@ public:
 
     operator jl_function_t*() { return _function; }
     template<typename... ArgTs>
-    class value operator()(ArgTs&&... args_);
+    value<jl::any> operator()(ArgTs&&... args_);
 
     bool operator==(const function& rhs) const
     {

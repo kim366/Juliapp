@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Any.hpp"
 #include "Array.hpp"
 
 namespace jl
@@ -81,26 +82,29 @@ protected:
 } // namespace impl
 
 template<typename ValT>
-class typed_value : public impl::common_value
-{
-    using impl::common_value::common_value;
-
-public:
-    typed_value(ValT&& obj_) : common_value{impl::box(std::forward<ValT>(obj_))}
-    {
-    }
-
-    typed_value(const ValT& obj_) : common_value{impl::box(obj_)} {}
-
-    ValT& operator*() { return impl::unbox<ValT&>(_boxed_value); }
-    ValT* operator->() { return &**this; }
-};
-
 class value : public impl::common_value
 {
     using impl::common_value::common_value;
 
 public:
+    //    value() = default;
+
+    value(ValT&& obj_) : common_value{impl::box(std::forward<ValT>(obj_))} {}
+
+    value(const ValT& obj_) : common_value{impl::box(obj_)} {}
+
+    ValT& operator*() { return impl::unbox<ValT&>(_boxed_value); }
+    ValT* operator->() { return &**this; }
+};
+
+template<>
+class value<jl::any> : public impl::common_value
+{
+    using impl::common_value::common_value;
+
+public:
+    value() = default;
+
     template<typename T>
     value(T&& obj_) : common_value{impl::box(std::forward<T>(obj_))}
     {

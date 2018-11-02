@@ -29,13 +29,15 @@ TEST_CASE("Moving variables into values")
     jl::sync(jl::type<NoCopy>{"struct NoCopy x::Float32 end"});
     auto x = NoCopy{3.14f};
 
-    REQUIRE(jl::typed_value { std::move(x) }->x == 3.14f);
+    REQUIRE(jl::value { std::move(x) }->x == 3.14f);
 }
 
 TEST_CASE("Copying variables into values")
 {
     auto x = 5;
-    auto xv = jl::typed_value{x};
+    auto xv = jl::value{x};
+
+    jl::value<jl::any> y;
 
     REQUIRE(x == 5);
     REQUIRE(*xv == 5);

@@ -19,7 +19,7 @@ namespace jl
 {
 
 template<typename ValT, typename... ArgTs>
-typed_value<ValT> make_value(ArgTs&&... args_)
+value<ValT> make_value(ArgTs&&... args_)
 {
     jl_datatype_t* found{impl::find_synced_jl_type<ValT>()};
     jlpp_assert(found && "Requested type not synced");
@@ -29,14 +29,14 @@ typed_value<ValT> make_value(ArgTs&&... args_)
     return val;
 }
 
-inline value eval(generic_string src_str_)
+inline value<jl::any> eval(generic_string src_str_)
 {
     jl_value_t* res{jl_eval_string(src_str_)};
     impl::check_err();
     return res;
 }
 
-inline value exec_from_file(generic_string file_name_)
+inline value<jl::any> exec_from_file(generic_string file_name_)
 {
     std::ifstream file{file_name_};
     if (!file.is_open())
@@ -48,7 +48,7 @@ inline value exec_from_file(generic_string file_name_)
 }
 
 template<typename... ArgTs>
-value call(function fn_, ArgTs&&... args_)
+value<jl::any> call(function fn_, ArgTs&&... args_)
 {
     constexpr std::size_t num_args{sizeof...(args_)};
     jl_value_t** boxed_args;
@@ -62,13 +62,13 @@ value call(function fn_, ArgTs&&... args_)
 }
 
 template<typename... ArgTs>
-value call(generic_string fn_name_, ArgTs&&... args_)
+value<jl::any> call(generic_string fn_name_, ArgTs&&... args_)
 {
     return call(function{fn_name_}, std::forward<ArgTs>(args_)...);
 }
 
 template<typename... ArgTs>
-value function::operator()(ArgTs&&... args_)
+value<jl::any> function::operator()(ArgTs&&... args_)
 {
     return call(*this, std::forward<ArgTs>(args_)...);
 }
