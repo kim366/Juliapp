@@ -68,7 +68,6 @@ struct load_error : error
 
 } // namespace jl
 
-
 #include <julia.h>
 
 namespace jl
@@ -137,19 +136,6 @@ struct is_array<array<ElemT>> : std::true_type
 {
 };
 
-template<typename T>
-class is_convertible
-{
-    template<typename C, typename = decltype(convert(std::declval<C>()))>
-    static std::true_type test(int);
-
-    template<typename>
-    static std::false_type test(...);
-
-public:
-    static constexpr bool value = decltype(test<T>(0))::value;
-};
-
 } // namespace impl
 
 } // namespace jl
@@ -157,7 +143,6 @@ public:
 #ifdef JULIAPP_CONVERSION
 #include "./conversion.hpp"
 #endif
-
 
 #include <julia.h>
 
@@ -232,8 +217,6 @@ jl_value_t* box(ArgT& arg_)
 {
     if constexpr (std::is_convertible_v<ArgT, jl_value_t*>)
         return arg_;
-    else if constexpr (impl::is_convertible<ArgT>::value)
-        return convert(arg_);
     else if constexpr (std::is_same<ArgT, bool>())
         return jl_box_bool(arg_);
     else if constexpr (std::is_same<ArgT, std::int8_t>())
@@ -300,7 +283,6 @@ struct make_arg_vec<>
 } // namespace impl
 
 } // namespace jl
-
 
 #include <array>
 #include <fstream>

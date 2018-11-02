@@ -4,16 +4,6 @@
 
 #include <algorithm>
 
-namespace jl
-{
-
-// boxed_value convert(Vec2 v_)
-//{
-//    return jl::call("SVector", v_.x, v_.y);
-//}
-
-} // namespace jl
-
 void fn(double) {}
 
 struct Vec2

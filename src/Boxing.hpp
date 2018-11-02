@@ -1,9 +1,5 @@
 #pragma once
 
-#ifdef JULIAPP_CONVERSION
-#include "./conversion.hpp"
-#endif
-
 #include "Errors.hpp"
 #include "Helpers.hpp"
 
@@ -80,8 +76,6 @@ jl_value_t* box(ArgT& arg_)
 {
     if constexpr (std::is_convertible_v<ArgT, jl_value_t*>)
         return arg_;
-    else if constexpr (impl::is_convertible<ArgT>::value)
-        return convert(arg_);
     else if constexpr (std::is_same<ArgT, bool>())
         return jl_box_bool(arg_);
     else if constexpr (std::is_same<ArgT, std::int8_t>())
