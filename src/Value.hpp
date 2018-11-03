@@ -93,7 +93,17 @@ public:
 
     value(const ValT& obj_) : common_value{impl::box(obj_)} {}
 
-    ValT& operator*() { return impl::unbox<ValT&>(_boxed_value); }
+    template<typename std::enable_if_t<std::is_fundamental_v<ValT>>* = nullptr>
+    ValT operator*()
+    {
+        return get<ValT>();
+    }
+
+    template<typename std::enable_if_t<!std::is_fundamental_v<ValT>>* = nullptr>
+    ValT& operator*()
+    {
+        return impl::unbox<ValT&>(_boxed_value);
+    }
     ValT* operator->() { return &**this; }
 };
 

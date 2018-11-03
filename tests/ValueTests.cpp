@@ -75,6 +75,7 @@ TEST_CASE("References to mutable/immutable structs")
     auto mut = jl::value<Mut>{{3}};
     auto immut = jl::value<const Immut>{{7}};
     auto nonconst_immut = jl::value<Immut>{{9}};
+    auto primit = jl::value{12};
 
     REQUIRE((*mut).x == 3);
     mut->x = 5;
@@ -84,4 +85,7 @@ TEST_CASE("References to mutable/immutable structs")
     CHECK_NOTHROW(jlpp_static_assert(std::is_const_v<decltype(*immut)>));
     CHECK_THROWS_AS(nonconst_immut->x = 5, jl::test::failed_assertion);
     CHECK_NOTHROW(nonconst_immut->x == 3);
+
+    CHECK_NOTHROW(
+        jlpp_static_assert(!std::is_lvalue_reference_v<decltype(*primit)>));
 }
