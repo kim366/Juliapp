@@ -66,15 +66,35 @@ void sync(TypeTs&&... ts_)
         reinterpret_cast<jl_datatype_t*>(jl_eval_string(ts_.julia_type))...
     };
 
-    jl_function_t* sizeof_func{jl_eval_string("sizeof")};
-    JL_GC_PUSH1(sizeof_func);
+#ifndef NDEBUG
+    jl_function_t* sizeof_func{
+        jl_get_global(jl_core_module, jl_symbol("sizeof"))};
+    jl_function_t* isbits_check_func{nullptr};
+    JL_GC_PUSH2(sizeof_func, isbits_check_func);
+    isbits_check_func = jl_eval_string(R"(
+      typ::DataType -> begin
+        isbitstype(typ) && return true
+        for n in fieldnames(typ)
+          isbitstype(fieldtype(typ, n)) || return false;
+        end
+        true
+      end
+    )");
 
     jlpp_assert("Synced datatype sizes do not match"
                 && ((sizeof(typename TypeTs::cpp_type)
                      == static_cast<std::size_t>(jl_unbox_int64(jl_call1(
                             sizeof_func, jl_eval_string(ts_.julia_type)))))
                     && ...));
+
+    jlpp_assert((("Contents of synced types are not isbits"
+                  && jl_unbox_bool(jl_call1(isbits_check_func,
+                                            jl_eval_string(ts_.julia_type))))
+                 && ...));
+
     JL_GC_POP();
+
+#endif
 }
 
 } // namespace jl
