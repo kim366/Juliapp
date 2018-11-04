@@ -89,9 +89,15 @@ class value : public impl::common_value
 public:
     //    value() = default;
 
-    value(ValT&& obj_) : common_value{impl::box(std::forward<ValT>(obj_))} {}
+    value(ValT&& obj_) : common_value{impl::box(std::forward<ValT>(obj_))}
+    {
+        assert_const_match();
+    }
 
-    value(const ValT& obj_) : common_value{impl::box(obj_)} {}
+    value(const ValT& obj_) : common_value{impl::box(obj_)}
+    {
+        assert_const_match();
+    }
 
     template<typename std::enable_if_t<std::is_fundamental_v<ValT>>* = nullptr>
     ValT operator*()
@@ -104,7 +110,21 @@ public:
     {
         return impl::unbox<ValT&>(_boxed_value);
     }
+
+    template<typename std::enable_if_t<!std::is_fundamental_v<ValT>>* = nullptr>
+    const ValT& operator*() const
+    {
+        return impl::unbox<ValT&>(_boxed_value);
+    }
+
     ValT* operator->() { return &**this; }
+
+private:
+    inline void assert_const_match()
+    {
+        if constexpr (!std::is_const_v<ValT> && !std::is_fundamental_v<ValT>)
+            jlpp_assert(jl_is_mutable(jl_typeof(_boxed_value)));
+    }
 };
 
 template<>

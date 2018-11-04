@@ -25,11 +25,11 @@ TEST_CASE("Moving variables into values")
         float x;
     };
 
-    jl::sync(jl::type<NoCopy>{"struct NoCopy x::Float32 end"});
+    jl::eval("struct NoCopy x::Float32 end");
+    jl::sync(jl::type<NoCopy>{"NoCopy"});
 
     auto x = NoCopy{3.14f};
-
-    REQUIRE(jl::value { std::move(x) }->x == 3.14f);
+    REQUIRE(jl::value{std::move(x)}.get<const NoCopy&>().x == 3.14f);
 }
 
 TEST_CASE("Copying variables into values")
@@ -37,7 +37,7 @@ TEST_CASE("Copying variables into values")
     auto x = 5;
     auto xv = jl::value{x};
 
-    jl::value<jl::any> y;
+    jl::value<jl::any>{};
 
     REQUIRE(x == 5);
     REQUIRE(*xv == 5);
@@ -74,18 +74,20 @@ TEST_CASE("References to mutable/immutable structs")
     jl::sync(jl::type<Mut>{"Mut"}, jl::type<Immut>{"Immut"});
     auto mut = jl::value<Mut>{{3}};
     auto immut = jl::value<const Immut>{{7}};
-    auto nonconst_immut = jl::value<Immut>{{9}};
-    auto primit = jl::value{12};
+    CHECK_THROWS_AS(jl::value<Immut>{{9}}, jl::test::failed_assertion);
 
     REQUIRE((*mut).x == 3);
     mut->x = 5;
     REQUIRE((*mut).x == 5);
     REQUIRE(mut->x == 5);
 
-    CHECK_NOTHROW(jlpp_static_assert(std::is_const_v<decltype(*immut)>));
-    CHECK_THROWS_AS(nonconst_immut->x = 5, jl::test::failed_assertion);
-    CHECK_NOTHROW(nonconst_immut->x == 3);
+    CHECK_NOTHROW(jlpp_static_assert(
+        std::is_const_v<std::remove_reference_t<decltype(*immut)>>));
+}
 
+TEST_CASE("Primitive value dereferencing")
+{
+    auto primit = jl::value{12};
     CHECK_NOTHROW(
         jlpp_static_assert(!std::is_lvalue_reference_v<decltype(*primit)>));
 }
