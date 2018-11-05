@@ -72,14 +72,7 @@ TEST_CASE("References to mutable/immutable structs")
             operator=(const Immut&) = default; // should be delete in practice
     };
 
-    try
-    {
-        jl::sync(jl::type<Mut>{"Mut"}, jl::type<Immut>{"Immut"});
-    }
-    catch (std::exception& e)
-    {
-        puts(e.what());
-    }
+    jl::sync(jl::type<Mut>{"Mut"}, jl::type<Immut>{"Immut"});
     auto mut = jl::value<Mut>{{3}};
     auto immut = jl::value<const Immut>{{7}};
     CHECK_THROWS_AS(jl::value<Immut>{{9}}, jl::test::failed_assertion);

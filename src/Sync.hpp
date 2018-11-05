@@ -57,7 +57,11 @@ struct type
 template<typename... TypeTs>
 void sync(TypeTs&&... ts_)
 {
-    jlpp_assert(impl::num_synced_types == 0 && "You may sync types only once");
+    if (impl::num_synced_types != 0)
+    {
+        delete[] impl::synced_cpp_types;
+        delete[] impl::synced_jl_types;
+    }
     impl::num_synced_types = sizeof...(ts_);
     impl::synced_cpp_types = new std::type_index[sizeof...(ts_)]{
         typeid(typename TypeTs::cpp_type)...};
