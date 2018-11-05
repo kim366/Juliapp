@@ -14,9 +14,9 @@ namespace jl
 namespace impl
 {
 
-std::type_index* synced_cpp_types;
-jl_datatype_t** synced_jl_types;
-std::size_t num_synced_types;
+inline std::type_index* synced_cpp_types;
+inline jl_datatype_t** synced_jl_types;
+inline std::size_t num_synced_types;
 
 template<typename CppT>
 jl_datatype_t* find_synced_jl_type()

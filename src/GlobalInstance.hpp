@@ -17,6 +17,6 @@ struct global
         delete[] impl::synced_cpp_types;
         delete[] impl::synced_jl_types;
     }
-} const volatile global_instance;
+} inline const volatile global_instance;
 
 } // namespace jl::impl
