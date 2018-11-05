@@ -50,7 +50,9 @@ inline value<jl::any> exec_from_file(generic_string file_name_)
 template<typename... ArgTs>
 value<jl::any> call(function fn_, ArgTs&&... args_)
 {
-    constexpr std::size_t num_args{sizeof...(args_)};
+    if (fn_ == nullptr)
+        throw language_error{"MethodError"};
+    constexpr int num_args{sizeof...(args_)};
     jl_value_t** boxed_args;
     JL_GC_PUSHARGS(boxed_args, num_args);
     impl::make_arg_vec<jl_value_t*, ArgTs...>::make(boxed_args, 0, args_...);

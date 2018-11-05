@@ -7,12 +7,6 @@ TEST_CASE("Calling Functions with free function")
 {
     jl::eval("f(x) = 3x; g(x::Int32) = 2x");
     REQUIRE(jl::call("f", 5).get<int>() == 15);
-    try
-    {
-        (jl::call("g", 5ULL));
-    }
-    catch (std::exception& e)
-    {
-        puts(e.what());
-    };
+    CHECK_THROWS_AS(jl::call("g", 5ULL), jl::language_error);
+    CHECK_THROWS_AS(jl::call("h", 13.), jl::language_error);
 }
