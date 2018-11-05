@@ -76,27 +76,37 @@ template<typename ArgT>
 jl_value_t* box(ArgT&& arg_)
 {
     using DecayedArgT = std::decay_t<ArgT>;
+    using ArgDeclT = decltype(arg_);
 
     if constexpr (std::is_convertible_v<DecayedArgT, jl_value_t*>)
         return arg_;
     else if constexpr (std::is_same<DecayedArgT, bool>())
         return jl_box_bool(arg_);
-    else if constexpr (std::is_same<DecayedArgT, std::int8_t>())
-        return jl_box_int8(arg_);
-    else if constexpr (std::is_same<DecayedArgT, std::uint8_t>())
-        return jl_box_uint8(arg_);
-    else if constexpr (std::is_same<DecayedArgT, std::int16_t>())
-        return jl_box_int16(arg_);
-    else if constexpr (std::is_same<DecayedArgT, std::uint16_t>())
-        return jl_box_uint16(arg_);
-    else if constexpr (std::is_same<DecayedArgT, std::int32_t>())
-        return jl_box_int32(arg_);
-    else if constexpr (std::is_same<DecayedArgT, std::uint32_t>())
-        return jl_box_uint32(arg_);
-    else if constexpr (std::is_same<DecayedArgT, std::int64_t>())
-        return jl_box_int64(arg_);
-    else if constexpr (std::is_same<DecayedArgT, std::uint64_t>())
-        return jl_box_uint64(arg_);
+    else if constexpr (std::is_integral_v<DecayedArgT>)
+    {
+        if constexpr (std::is_signed_v<DecayedArgT>)
+        {
+            if constexpr (sizeof(ArgDeclT) == 1)
+                return jl_box_int8(arg_);
+            else if constexpr (sizeof(ArgDeclT) == 2)
+                return jl_box_int16(arg_);
+            else if constexpr (sizeof(ArgDeclT) == 4)
+                return jl_box_int32(arg_);
+            else if constexpr (sizeof(ArgDeclT) == 8)
+                return jl_box_int64(arg_);
+        }
+        else
+        {
+            if constexpr (sizeof(ArgDeclT) == 1)
+                return jl_box_uint8(arg_);
+            else if constexpr (sizeof(ArgDeclT) == 2)
+                return jl_box_uint16(arg_);
+            else if constexpr (sizeof(ArgDeclT) == 4)
+                return jl_box_uint32(arg_);
+            else if constexpr (sizeof(ArgDeclT) == 8)
+                return jl_box_uint64(arg_);
+        }
+    }
     else if constexpr (std::is_same<DecayedArgT, float>())
         return jl_box_float32(arg_);
     else if constexpr (std::is_same<DecayedArgT, double>())
