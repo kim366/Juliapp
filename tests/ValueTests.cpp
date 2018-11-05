@@ -12,26 +12,27 @@ TEST_CASE("Boxing of primitive types")
     // CHECK(jl::value{2.}.get<int>() == 2);
 }
 
-// WONTFIX
-// TEST_CASE("Moving variables into values")
-//{
-//    struct NoCopy
-//    {
-//        NoCopy(const NoCopy&) = delete;
-//        NoCopy(NoCopy&&) = default;
-//
-//        NoCopy& operator=(const NoCopy&) = delete;
-//        NoCopy& operator=(NoCopy&&) = default;
-//
-//        float x;
-//    };
-//
-//    jl::eval("struct NoCopy x::Float32 end");
-//    jl::sync(jl::type<NoCopy>{"NoCopy"});
-//
-//    auto x = NoCopy{3.14f};
-//    REQUIRE(jl::value{std::move(x)}.get<const NoCopy&>().x == 3.14f);
-//}
+TEST_CASE("Moving variables into values")
+{
+    struct NoCopy
+    {
+        NoCopy(const NoCopy&) = delete;
+        NoCopy(NoCopy&&) = default;
+
+        NoCopy& operator=(const NoCopy&) = delete;
+        NoCopy& operator=(NoCopy&&) = default;
+
+        float x;
+    };
+
+    jl::eval("mutable struct NoCopy x::Float32 end");
+    jl::sync(jl::type<NoCopy>{"NoCopy"});
+
+    auto x = NoCopy{3.14f};
+    // clang-format off
+    REQUIRE(jl::value{std::move(x)}->x == 3.14f);
+    // clang-format on
+}
 
 TEST_CASE("Copying variables into values")
 {
