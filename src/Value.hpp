@@ -23,7 +23,7 @@ public:
 
     common_value() noexcept : common_value{nullptr} {}
 
-    virtual ~common_value() { global_instance.release_value(_boxed_value); }
+    ~common_value() { global_instance.release_value(_boxed_value); }
 
     template<typename TargT,
              std::enable_if_t<std::is_fundamental<TargT>{}
