@@ -86,6 +86,22 @@ void raise_error(generic_string content_, ArgTs... args_)
     jl_errorf(content_, args_...);
 }
 
+inline void init()
+{
+#ifndef JLPP_MANUAL_INIT
+    jlpp_assert(false && "Define JLPP_MANUAL_INIT before using init/quit");
+#endif
+    impl::init();
+}
+
+inline void quit(int status_ = 0)
+{
+#ifndef JLPP_MANUAL_INIT
+    jlpp_assert(false && "Define JLPP_MANUAL_INIT before using init/quit");
+#endif
+    impl::quit(status_);
+}
+
 // inline void use(generic_string module_)
 //{
 //    jl_eval_string((std::string{"using "} + module_).c_str());

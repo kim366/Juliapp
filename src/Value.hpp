@@ -18,12 +18,12 @@ class common_value
 public:
     common_value(jl_value_t* boxed_value_) noexcept : _boxed_value{boxed_value_}
     {
-        global_instance.root_value(_boxed_value);
+        root_value(_boxed_value);
     }
 
     common_value() noexcept : common_value{nullptr} {}
 
-    ~common_value() { global_instance.release_value(_boxed_value); }
+    ~common_value() { release_value(_boxed_value); }
 
     template<typename TargT,
              std::enable_if_t<std::is_fundamental<TargT>{}
