@@ -74,16 +74,12 @@ TEST_CASE("References to mutable/immutable structs")
 
     jl::sync(jl::type<Mut>{"Mut"}, jl::type<Immut>{"Immut"});
     auto mut = jl::value<Mut>{{3}};
-    auto immut = jl::value<const Immut>{{7}};
-    CHECK_THROWS_AS(jl::value<Immut>{{9}}, jl::test::failed_assertion);
+    auto immut = jl::value<Immut>{{7}};
 
     REQUIRE((*mut).x == 3);
     mut->x = 5;
     REQUIRE((*mut).x == 5);
     REQUIRE(mut->x == 5);
-
-    CHECK_NOTHROW(jlpp_static_assert(
-        std::is_const_v<std::remove_reference_t<decltype(*immut)>>));
 }
 
 TEST_CASE("Primitive value dereferencing")
