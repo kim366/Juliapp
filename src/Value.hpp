@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Array.hpp"
+#include "Function.hpp"
 #include "Init.hpp"
 
 #include <julia_gcext.h>
@@ -120,6 +121,8 @@ struct runtime_value : private impl::common_value
     {
         return reinterpret_cast<jl_array_t*>(_boxed_value);
     }
+
+    function get_function() { return function{c_val()}; }
 };
 
 } // namespace jl

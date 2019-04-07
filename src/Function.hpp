@@ -14,6 +14,8 @@ class runtime_value;
 class function
 {
 public:
+    function(jl_function_t* _function) : _function{_function} {}
+
     explicit function(util::string_view name_)
         : _function{jl_get_function(jl_main_module, name_)}
     {

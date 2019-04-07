@@ -14,3 +14,12 @@ TEST_CASE("Function objects")
     long long res = f(3);
     CHECK(res == 12);
 }
+
+TEST_CASE("Function returning function")
+{
+    jl::eval("returning_function() = x -> 3x");
+
+    auto f = jl::call("returning_function").get_function();
+
+    CHECK(f(2).get<int>() == 6);
+}
