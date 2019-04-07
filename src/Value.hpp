@@ -24,7 +24,7 @@ public:
     ~common_value() { release_value(_boxed_value); }
 
 protected:
-    operator jl_value_t*() { return _boxed_value; }
+    jl_value_t* c_val() { return _boxed_value; }
 
     bool operator==(const common_value& rhs) const
     {
@@ -50,9 +50,7 @@ protected:
              std::enable_if_t<!std::is_fundamental<TargT>{}>* = nullptr>
     TargT get() noexcept
     {
-        if constexpr (std::is_same_v<TargT, jl_value_t*>)
-            return static_cast<jl_value_t*>(*this);
-        else if constexpr (std::is_pointer_v<TargT>)
+        if constexpr (std::is_pointer_v<TargT>)
             return reinterpret_cast<TargT>(_boxed_value);
         else
             return *reinterpret_cast<std::decay_t<TargT>*>(_boxed_value);
@@ -103,10 +101,8 @@ struct runtime_value : private impl::common_value
 
     runtime_value() = default;
 
-    template<
-        typename TargT,
-        typename = std::enable_if_t<std::is_fundamental<TargT>{}
-                                    && !std::is_same_v<TargT, jl_value_t*>>>
+    template<typename TargT,
+             typename = std::enable_if_t<std::is_fundamental<TargT>{}>>
     operator TargT()
     {
         return impl::unbox<TargT>(_boxed_value);

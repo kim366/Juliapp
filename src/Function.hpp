@@ -20,11 +20,12 @@ public:
     }
 
     function(module module_, util::string_view name_)
-        : _function{jl_get_function(module_, name_)}
+        : _function{jl_get_function(module_.c_mod(), name_)}
     {
     }
 
-    operator jl_function_t*() { return _function; }
+    jl_function_t* c_fn() { return _function; }
+
     template<typename... ArgTs>
     runtime_value operator()(ArgTs&&... args_);
 

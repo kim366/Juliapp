@@ -19,11 +19,11 @@ public:
 
     module(module& parent_module_, util::string_view name_)
         : _module{reinterpret_cast<jl_module_t*>(
-              jl_get_global(parent_module_, jl_symbol(name_)))}
+              jl_get_global(parent_module_.c_mod(), jl_symbol(name_)))}
     {
     }
 
-    operator jl_module_t*() { return _module; }
+    jl_module_t* c_mod() { return _module; }
 
     bool operator==(const module& rhs) const { return _module == rhs._module; }
 

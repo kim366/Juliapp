@@ -50,14 +50,14 @@ inline runtime_value exec_from_file(util::string_view file_name_)
 template<typename... ArgTs>
 runtime_value call(function fn_, ArgTs&&... args_)
 {
-    if (fn_ == nullptr)
+    if (fn_.c_fn() == nullptr)
         throw language_error{"MethodError"};
     constexpr int num_args{sizeof...(args_)};
     jl_value_t** boxed_args;
     JL_GC_PUSHARGS(boxed_args, num_args);
     impl::make_arg_vec<jl_value_t*, ArgTs...>::make(boxed_args, 0, args_...);
 
-    jl_value_t* res{jl_call(fn_, boxed_args, num_args)};
+    jl_value_t* res{jl_call(fn_.c_fn(), boxed_args, num_args)};
     impl::check_err();
     JL_GC_POP();
     return res;
