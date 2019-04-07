@@ -49,7 +49,7 @@ template<typename CppT>
 struct type
 {
     using cpp_type = CppT;
-    type(generic_string type_name_) : julia_type{type_name_} {}
+    type(util::generic_string type_name_) : julia_type{type_name_} {}
 
     const char* julia_type;
 };

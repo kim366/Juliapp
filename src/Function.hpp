@@ -16,12 +16,12 @@ class value;
 class function
 {
 public:
-    explicit function(generic_string name_)
+    explicit function(util::generic_string name_)
         : _function{jl_get_function(jl_main_module, name_)}
     {
     }
 
-    function(module module_, generic_string name_)
+    function(module module_, util::generic_string name_)
         : _function{jl_get_function(module_, name_)}
     {
     }

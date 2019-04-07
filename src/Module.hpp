@@ -11,13 +11,13 @@ class module
 {
 
 public:
-    explicit module(generic_string name_)
+    explicit module(util::generic_string name_)
         : _module{reinterpret_cast<jl_module_t*>(
               jl_get_global(jl_main_module, jl_symbol(name_)))}
     {
     }
 
-    module(module& parent_module_, generic_string name_)
+    module(module& parent_module_, util::generic_string name_)
         : _module{reinterpret_cast<jl_module_t*>(
               jl_get_global(parent_module_, jl_symbol(name_)))}
     {
