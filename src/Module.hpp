@@ -11,6 +11,8 @@ class module
 {
 
 public:
+    module(jl_module_t* module_) : _module{module_} {}
+
     explicit module(util::string_view name_)
         : _module{reinterpret_cast<jl_module_t*>(
               jl_get_global(jl_main_module, jl_symbol(name_)))}

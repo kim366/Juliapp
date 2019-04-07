@@ -3,6 +3,7 @@
 #include "Array.hpp"
 #include "Function.hpp"
 #include "Init.hpp"
+#include "Module.hpp"
 
 #include <julia_gcext.h>
 
@@ -123,6 +124,11 @@ struct runtime_value : private impl::common_value
     }
 
     function get_function() { return function{c_val()}; }
+
+    module get_module()
+    {
+        return module{reinterpret_cast<jl_module_t*>(c_val())};
+    }
 };
 
 } // namespace jl
