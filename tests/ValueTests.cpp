@@ -5,8 +5,8 @@
 
 TEST_CASE("Boxing of primitive types")
 {
-    CHECK(jl::value{5}.get<int>() == 5);
-    CHECK(jl::value{3.}.get<float>() == 3.f);
+    CHECK(*jl::value{5} == 5);
+    CHECK(*jl::value{3.} == 3.f);
 
     // WONTFIX: Make this work
     // CHECK(jl::value{2.}.get<int>() == 2);
@@ -38,11 +38,9 @@ TEST_CASE("Copying variables into values")
 {
     auto x = 5;
     auto xv = jl::value{x};
-    auto xa = jl::runtime_value{};
 
     REQUIRE(x == 5);
     REQUIRE(*xv == 5);
-    REQUIRE(xa.get<int>() == 5);
 }
 
 TEST_CASE("Literals")

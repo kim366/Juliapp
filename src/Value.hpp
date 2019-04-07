@@ -13,7 +13,6 @@ namespace impl
 
 class common_value
 {
-
 public:
     common_value(jl_value_t* boxed_value_) noexcept : _boxed_value{boxed_value_}
     {
@@ -23,6 +22,16 @@ public:
     common_value() noexcept : common_value{nullptr} {}
 
     ~common_value() { release_value(_boxed_value); }
+
+protected:
+    operator jl_value_t*() { return _boxed_value; }
+
+    bool operator==(const common_value& rhs) const
+    {
+        return static_cast<bool>(jl_egal(_boxed_value, rhs._boxed_value));
+    }
+
+    bool operator!=(const common_value& rhs) const { return !(rhs == *this); }
 
     template<typename TargT,
              std::enable_if_t<std::is_fundamental<TargT>{}
@@ -49,49 +58,15 @@ public:
             return *reinterpret_cast<std::decay_t<TargT>*>(_boxed_value);
     }
 
-    template<
-        typename TargT,
-        typename = std::enable_if_t<std::is_fundamental<TargT>{}
-                                    && !std::is_same_v<TargT, jl_value_t*>>>
-    operator TargT()
-    {
-        return impl::unbox<TargT>(_boxed_value);
-    }
-
-    template<typename TargT,
-             std::enable_if_t<std::is_class_v<std::decay_t<TargT>>>* = nullptr>
-    operator TargT()
-    {
-        return get<TargT>();
-    }
-
-    operator jl_value_t*() { return _boxed_value; }
-
-    template<typename ElemT>
-    explicit operator array<ElemT>() noexcept
-    {
-        return reinterpret_cast<jl_array_t*>(_boxed_value);
-    }
-
-    bool operator==(const common_value& rhs) const
-    {
-        return static_cast<bool>(jl_egal(_boxed_value, rhs._boxed_value));
-    }
-
-    bool operator!=(const common_value& rhs) const { return !(rhs == *this); }
-
-protected:
     jl_value_t* _boxed_value;
 };
 
 } // namespace impl
 
 template<typename ValT>
-class value : public impl::common_value
+struct value : private impl::common_value
 {
     using impl::common_value::common_value;
-
-public:
     //    value() = default;
 
     value(ValT&& obj_) : common_value{impl::box(std::forward<ValT>(obj_))} {}
@@ -119,21 +94,35 @@ public:
     ValT* operator->() { return &**this; }
 };
 
-class runtime_value : public impl::common_value
+struct runtime_value : private impl::common_value
 {
-    using impl::common_value::common_value;
+    using common_value::common_value;
+    using common_value::get;
+    using common_value::operator!=;
+    using common_value::operator==;
 
-public:
     runtime_value() = default;
 
-    template<typename T>
-    runtime_value(T&& obj_) : common_value{impl::box(std::forward<T>(obj_))}
+    template<
+        typename TargT,
+        typename = std::enable_if_t<std::is_fundamental<TargT>{}
+                                    && !std::is_same_v<TargT, jl_value_t*>>>
+    operator TargT()
     {
+        return impl::unbox<TargT>(_boxed_value);
     }
 
-    template<typename T>
-    runtime_value(const T& obj_) : common_value{impl::box(obj_)}
+    template<typename TargT,
+             std::enable_if_t<std::is_class_v<std::decay_t<TargT>>>* = nullptr>
+    operator TargT()
     {
+        return get<TargT>();
+    }
+
+    template<typename ElemT>
+    explicit operator array<ElemT>() noexcept
+    {
+        return reinterpret_cast<jl_array_t*>(_boxed_value);
     }
 };
 
