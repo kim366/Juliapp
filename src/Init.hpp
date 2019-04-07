@@ -43,14 +43,15 @@ inline void release_value(jl_value_t* val)
     rooted_values.erase(std::next(found_val).base());
 }
 
-class global
+class init_guard
 {
 public:
-    global() noexcept { init(); }
-    ~global() { quit(); }
+    init_guard() noexcept { init(); }
+    ~init_guard() { quit(); }
 };
+
 #ifndef JLPP_MANUAL_INIT
-inline global global_instance{};
+inline init_guard global_init_guard{};
 #endif
 
 inline void root_scanner_cb(int)

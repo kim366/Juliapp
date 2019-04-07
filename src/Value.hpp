@@ -2,7 +2,7 @@
 
 #include "Any.hpp"
 #include "Array.hpp"
-#include "GlobalInstance.hpp"
+#include "Init.hpp"
 
 #include <julia_gcext.h>
 

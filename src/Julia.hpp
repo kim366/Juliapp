@@ -2,7 +2,7 @@
 
 #include "Boxing.hpp"
 #include "Function.hpp"
-#include "GlobalInstance.hpp"
+#include "Init.hpp"
 #include "Helpers.hpp"
 #include "Literals.hpp"
 #include "StringView.hpp"
