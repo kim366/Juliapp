@@ -2,7 +2,7 @@
 
 #include "Boxing.hpp"
 #include "Function.hpp"
-#include "GenericString.hpp"
+#include "StringView.hpp"
 #include "GlobalInstance.hpp"
 #include "Helpers.hpp"
 #include "Literals.hpp"
@@ -29,14 +29,14 @@ value<ValT> make_value(ArgTs&&... args_)
     return val;
 }
 
-inline value<jl::any> eval(util::generic_string src_str_)
+inline value<jl::any> eval(util::string_view src_str_)
 {
     jl_value_t* res{jl_eval_string(src_str_)};
     impl::check_err();
     return res;
 }
 
-inline value<jl::any> exec_from_file(util::generic_string file_name_)
+inline value<jl::any> exec_from_file(util::string_view file_name_)
 {
     std::ifstream file{file_name_};
     if (!file.is_open())
@@ -64,7 +64,7 @@ value<jl::any> call(function fn_, ArgTs&&... args_)
 }
 
 template<typename... ArgTs>
-value<jl::any> call(util::generic_string fn_name_, ArgTs&&... args_)
+value<jl::any> call(util::string_view fn_name_, ArgTs&&... args_)
 {
     return call(function{fn_name_}, std::forward<ArgTs>(args_)...);
 }
@@ -75,13 +75,13 @@ value<jl::any> function::operator()(ArgTs&&... args_)
     return call(*this, std::forward<ArgTs>(args_)...);
 }
 
-inline void raise_error(util::generic_string content_)
+inline void raise_error(util::string_view content_)
 {
     jl_error(content_);
 }
 
 template<typename... ArgTs>
-void raise_error(util::generic_string content_, ArgTs... args_)
+void raise_error(util::string_view content_, ArgTs... args_)
 {
     jl_errorf(content_, args_...);
 }
@@ -102,7 +102,7 @@ inline void quit(int status_ = 0)
     impl::quit(status_);
 }
 
-// inline void use(generic_string module_)
+// inline void use(string_view module_)
 //{
 //    jl_eval_string((std::string{"using "} + module_).c_str());
 //}

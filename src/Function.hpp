@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Any.hpp"
-#include "GenericString.hpp"
+#include "StringView.hpp"
 #include "Module.hpp"
 
 #include <julia.h>
@@ -16,12 +16,12 @@ class value;
 class function
 {
 public:
-    explicit function(util::generic_string name_)
+    explicit function(util::string_view name_)
         : _function{jl_get_function(jl_main_module, name_)}
     {
     }
 
-    function(module module_, util::generic_string name_)
+    function(module module_, util::string_view name_)
         : _function{jl_get_function(module_, name_)}
     {
     }
