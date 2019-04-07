@@ -120,8 +120,7 @@ jl_value_t* box(ArgT&& arg_)
         jl_datatype_t* found{impl::find_synced_jl_type<DecayedArgT>()};
         jlpp_assert(found && "Requested type not synced");
         jl_value_t* val{jl_new_struct_uninit(found)};
-        *reinterpret_cast<DecayedArgT*>(jl_data_ptr(val)) =
-            std::forward<ArgT>(arg_);
+        new (jl_data_ptr(val)) ArgT{std::forward<ArgT>(arg_)};
         return val;
     }
 }

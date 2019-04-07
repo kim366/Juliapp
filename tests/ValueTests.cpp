@@ -68,9 +68,8 @@ TEST_CASE("References to mutable/immutable structs")
 
     struct Immut
     {
-        int64_t x; // should be const in practice
-        Immut&
-            operator=(const Immut&) = default; // should be delete in practice
+        const int64_t x;
+        Immut& operator=(const Immut&) = delete;
     };
 
     jl::sync(jl::type<Mut>{"Mut"}, jl::type<Immut>{"Immut"});
