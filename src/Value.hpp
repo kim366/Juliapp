@@ -134,7 +134,7 @@ private:
 };
 
 template<>
-class value<jl::any> : public impl::common_value
+class value<any> : public impl::common_value
 {
     using impl::common_value::common_value;
 

@@ -39,7 +39,7 @@ TEST_CASE("Copying variables into values")
     auto x = 5;
     auto xv = jl::value{x};
 
-    jl::value<jl::any>{};
+    jl::value<any>{};
 
     REQUIRE(x == 5);
     REQUIRE(*xv == 5);

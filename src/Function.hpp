@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Any.hpp"
-#include "StringView.hpp"
 #include "Module.hpp"
+#include "StringView.hpp"
 
 #include <julia.h>
 #include <string>
@@ -28,7 +28,7 @@ public:
 
     operator jl_function_t*() { return _function; }
     template<typename... ArgTs>
-    value<jl::any> operator()(ArgTs&&... args_);
+    value<any> operator()(ArgTs&&... args_);
 
     bool operator==(const function& rhs) const
     {
