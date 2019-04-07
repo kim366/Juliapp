@@ -2,8 +2,8 @@
 
 #include "Boxing.hpp"
 #include "Function.hpp"
-#include "Init.hpp"
 #include "Helpers.hpp"
+#include "Init.hpp"
 #include "Literals.hpp"
 #include "StringView.hpp"
 #include "Value.hpp"
@@ -29,14 +29,14 @@ value<ValT> make_value(ArgTs&&... args_)
     return val;
 }
 
-inline value<any> eval(util::string_view src_str_)
+inline runtime_value eval(util::string_view src_str_)
 {
     jl_value_t* res{jl_eval_string(src_str_)};
     impl::check_err();
     return res;
 }
 
-inline value<any> exec_from_file(util::string_view file_name_)
+inline runtime_value exec_from_file(util::string_view file_name_)
 {
     std::ifstream file{file_name_};
     if (!file.is_open())
@@ -48,7 +48,7 @@ inline value<any> exec_from_file(util::string_view file_name_)
 }
 
 template<typename... ArgTs>
-value<any> call(function fn_, ArgTs&&... args_)
+runtime_value call(function fn_, ArgTs&&... args_)
 {
     if (fn_ == nullptr)
         throw language_error{"MethodError"};
@@ -64,13 +64,13 @@ value<any> call(function fn_, ArgTs&&... args_)
 }
 
 template<typename... ArgTs>
-value<any> call(util::string_view fn_name_, ArgTs&&... args_)
+runtime_value call(util::string_view fn_name_, ArgTs&&... args_)
 {
     return call(function{fn_name_}, std::forward<ArgTs>(args_)...);
 }
 
 template<typename... ArgTs>
-value<any> function::operator()(ArgTs&&... args_)
+runtime_value function::operator()(ArgTs&&... args_)
 {
     return call(*this, std::forward<ArgTs>(args_)...);
 }

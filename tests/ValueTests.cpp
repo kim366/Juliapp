@@ -38,11 +38,11 @@ TEST_CASE("Copying variables into values")
 {
     auto x = 5;
     auto xv = jl::value{x};
-
-    jl::value<any>{};
+    auto xa = jl::runtime_value{};
 
     REQUIRE(x == 5);
     REQUIRE(*xv == 5);
+    REQUIRE(xa.get<int>() == 5);
 }
 
 TEST_CASE("Literals")

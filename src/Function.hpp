@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Any.hpp"
 #include "Module.hpp"
 #include "StringView.hpp"
 
@@ -10,8 +9,7 @@
 namespace jl
 {
 
-template<typename>
-class value;
+class runtime_value;
 
 class function
 {
@@ -28,7 +26,7 @@ public:
 
     operator jl_function_t*() { return _function; }
     template<typename... ArgTs>
-    value<any> operator()(ArgTs&&... args_);
+    runtime_value operator()(ArgTs&&... args_);
 
     bool operator==(const function& rhs) const
     {

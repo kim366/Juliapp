@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Any.hpp"
 #include "Array.hpp"
 #include "Init.hpp"
 
@@ -120,21 +119,20 @@ public:
     ValT* operator->() { return &**this; }
 };
 
-template<>
-class value<any> : public impl::common_value
+class runtime_value : public impl::common_value
 {
     using impl::common_value::common_value;
 
 public:
-    value() = default;
+    runtime_value() = default;
 
     template<typename T>
-    value(T&& obj_) : common_value{impl::box(std::forward<T>(obj_))}
+    runtime_value(T&& obj_) : common_value{impl::box(std::forward<T>(obj_))}
     {
     }
 
     template<typename T>
-    value(const T& obj_) : common_value{impl::box(obj_)}
+    runtime_value(const T& obj_) : common_value{impl::box(obj_)}
     {
     }
 };
