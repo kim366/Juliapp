@@ -107,4 +107,9 @@ inline void quit(int status_ = 0)
 //    jl_eval_string((std::string{"using "} + module_).c_str());
 //}
 
+using int_t =
+    std::conditional_t<sizeof(void*) == 8, std::int64_t, std::int32_t>;
+using uint_t =
+    std::conditional_t<sizeof(void*) == 8, std::uint64_t, std::uint32_t>;
+
 } // namespace jl
