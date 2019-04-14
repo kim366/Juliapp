@@ -28,6 +28,14 @@ RetT unbox(jl_value_t* arg_)
         throw result_type_error{
             "Incorrect result type. Floating-point type requested"};
     }
+    else if constexpr (std::is_same_v<RetT, bool>)
+    {
+        if (jl_typeis(arg_, jl_bool_type))
+            return jl_unbox_bool(arg_);
+
+        throw result_type_error{
+            "Incorrect result type. Boolean type requested"};
+    }
     else if constexpr (std::is_integral_v<RetT>)
     {
         if constexpr (std::is_signed_v<RetT>)
@@ -55,14 +63,6 @@ RetT unbox(jl_value_t* arg_)
 
         throw result_type_error{
             "Incorrect result type. Integral type requested"};
-    }
-    else if constexpr (std::is_same_v<RetT, bool>)
-    {
-        if (jl_typeis(arg_, jl_bool_type))
-            return jl_unbox_bool(arg_);
-
-        throw result_type_error{
-            "Incorrect result type. Boolean type requested"};
     }
     else
     {
