@@ -9,25 +9,27 @@ struct error : std::runtime_error
 {
 protected:
     using std::runtime_error::runtime_error;
-    virtual ~error(){};
+
+public:
+    ~error() override = default;
 };
 
 struct language_error : error
 {
     using error::error;
-    virtual ~language_error() {}
+    ~language_error() override = default;
 };
 
 struct result_type_error : error
 {
     using error::error;
-    virtual ~result_type_error() {}
+    ~result_type_error() override = default;
 };
 
 struct load_error : error
 {
     using error::error;
-    virtual ~load_error() {}
+    ~load_error() override = default;
 };
 
 } // namespace jl
