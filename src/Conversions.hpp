@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Binding.hpp>
 #include <Function.hpp>
+#include <Global.hpp>
 #include <Module.hpp>
 #include <Value.hpp>
 
@@ -26,6 +26,28 @@ inline generic_value function::genric()
 inline generic_value module::genric()
 {
     return reinterpret_cast<jl_value_t*>(c_mod());
+}
+
+inline generic_value global::value()
+{
+    assert(c_binding()->value != nullptr);
+    return c_binding()->value;
+}
+
+inline function global::as_function()
+{
+    return value();
+}
+
+inline module global::as_module()
+{
+    return value();
+}
+
+template<typename TargT>
+global::operator TargT()
+{
+    return value().get<TargT>();
 }
 
 } // namespace jl
