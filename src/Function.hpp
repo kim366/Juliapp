@@ -27,6 +27,7 @@ public:
     }
 
     jl_function_t* c_fn() { return _function; }
+    generic_value genric();
 
     template<typename... ArgTs>
     generic_value operator()(ArgTs&&... args_);

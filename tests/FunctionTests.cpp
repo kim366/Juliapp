@@ -19,7 +19,7 @@ TEST_CASE("Function returning function")
 {
     jl::eval("returning_function() = x -> 3x");
 
-    auto f = jl::call("returning_function").get_function();
+    auto f = jl::call("returning_function").as_function();
 
     CHECK(f(2).get<int>() == 6);
 }

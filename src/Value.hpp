@@ -123,12 +123,8 @@ struct generic_value : private impl::common_value
         return reinterpret_cast<jl_array_t*>(_boxed_value);
     }
 
-    function get_function() { return function{c_val()}; }
-
-    module get_module()
-    {
-        return module{reinterpret_cast<jl_module_t*>(c_val())};
-    }
+    function as_function();
+    module as_module();
 };
 
 } // namespace jl

@@ -26,6 +26,7 @@ public:
     }
 
     jl_module_t* c_mod() { return _module; }
+    generic_value genric();
 
     bool operator==(const module& rhs) const { return _module == rhs._module; }
 

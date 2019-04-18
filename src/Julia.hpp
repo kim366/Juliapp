@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Boxing.hpp"
+#include "Conversions.hpp"
 #include "Function.hpp"
 #include "Helpers.hpp"
 #include "Init.hpp"
