@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Errors.hpp"
-#include "Global.hpp"
 #include "Symbol.hpp"
 #include "Value.hpp"
 
@@ -11,6 +10,8 @@
 
 namespace jl
 {
+
+class global;
 
 class module
 {
@@ -23,15 +24,7 @@ public:
     {
     }
 
-    global operator[](symbol name_)
-    {
-        jl_binding_t* binding = nullptr;
-
-        JL_TRY { binding = jl_get_binding_wr(c_mod(), name_.c_sym(), true); }
-        JL_CATCH { throw language_error{"Failed to get binding to symbol"}; }
-
-        return binding;
-    }
+    global operator[](symbol name_);
 
     jl_module_t* c_mod() const
     {
@@ -49,5 +42,8 @@ public:
 private:
     generic_value _module;
 };
+
+inline module main =
+    generic_value{reinterpret_cast<jl_value_t*>(jl_main_module)};
 
 } // namespace jl

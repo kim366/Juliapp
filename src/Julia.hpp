@@ -9,6 +9,7 @@
 #include "Literals.hpp"
 #include "Symbol.hpp"
 #include "Value.hpp"
+#include "ModuleImpl.hpp"
 
 #include <array>
 #include <fstream>

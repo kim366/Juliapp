@@ -1,5 +1,8 @@
 #pragma once
 
+#include <Module.hpp>
+#include <Symbol.hpp>
+#include <Value.hpp>
 #include <julia.h>
 
 namespace jl
@@ -13,6 +16,7 @@ class global
 {
 public:
     global(jl_binding_t* binding_) : _binding{binding_} {}
+    global(symbol symbol_) : _binding{main[symbol_]} {}
 
     jl_binding_t* c_binding() { return _binding; }
     generic_value value();
