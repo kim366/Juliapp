@@ -15,7 +15,7 @@ inline function generic_value::as_function()
 
 inline module generic_value::as_module()
 {
-    return reinterpret_cast<jl_module_t*>(c_val());
+    return *this;
 }
 
 inline generic_value function::genric()
@@ -36,12 +36,12 @@ inline generic_value global::value()
 
 inline function global::as_function()
 {
-    return value();
+    return value().as_function();
 }
 
 inline module global::as_module()
 {
-    return value();
+    return value().as_module();
 }
 
 template<typename TargT>

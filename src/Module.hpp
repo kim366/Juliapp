@@ -2,7 +2,8 @@
 
 #include "Errors.hpp"
 #include "Global.hpp"
-#include "StringView.hpp"
+#include "Symbol.hpp"
+#include "Value.hpp"
 
 #include <julia.h>
 
@@ -13,39 +14,38 @@ class module
 {
 
 public:
-    module(jl_module_t* module_) : _module{module_} {}
+    module(generic_value val_) : _module{val_} {}
 
-    explicit module(util::string_view name_)
-        : _module{reinterpret_cast<jl_module_t*>(
-              jl_get_global(jl_main_module, jl_symbol(name_)))}
+    explicit module(symbol name_)
+        : _module{jl_get_global(jl_main_module, name_.c_sym())}
     {
     }
 
-    module(module& parent_module_, util::string_view name_)
-        : _module{reinterpret_cast<jl_module_t*>(
-              jl_get_global(parent_module_.c_mod(), jl_symbol(name_)))}
-    {
-    }
-
-    global operator[](symbol name_) const
+    global operator[](symbol name_)
     {
         jl_binding_t* binding = nullptr;
 
-        JL_TRY { binding = jl_get_binding_wr(_module, name_.c_sym(), true); }
+        JL_TRY { binding = jl_get_binding_wr(c_mod(), name_.c_sym(), true); }
         JL_CATCH { throw language_error{"Failed to get binding to symbol"}; }
 
         return binding;
     }
 
-    jl_module_t* c_mod() { return _module; }
+    jl_module_t* c_mod() const
+    {
+        return reinterpret_cast<jl_module_t*>(_module.c_val());
+    }
     generic_value genric();
 
-    bool operator==(const module& rhs) const { return _module == rhs._module; }
+    bool operator==(const module& rhs) const
+    {
+        return _module.c_val() == rhs._module.c_val();
+    }
 
     bool operator!=(const module& rhs) const { return !(rhs == *this); }
 
 private:
-    jl_module_t* _module;
+    generic_value _module;
 };
 
 } // namespace jl

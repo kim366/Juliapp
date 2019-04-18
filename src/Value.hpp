@@ -23,11 +23,12 @@ public:
     }
 
     common_value() noexcept : common_value{nullptr} {}
+    common_value(const common_value& other) : common_value{other.c_val()} {}
 
     ~common_value() { release_value(_boxed_value); }
 
 protected:
-    jl_value_t* c_val() { return _boxed_value; }
+    jl_value_t* c_val() const { return _boxed_value; }
 
     bool operator==(const common_value& rhs) const
     {
