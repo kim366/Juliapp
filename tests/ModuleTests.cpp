@@ -14,3 +14,16 @@ TEST_CASE("Function returning Module")
     CHECK(f().get<int>() == 3);
     CHECK(f2().get<int>() == 3);
 }
+
+TEST_CASE("Module subscript operator")
+{
+    using namespace jl::literals;
+
+    jl::eval("module ModuleForSubscript x = 3; f(a) = a end");
+
+    auto mod = "ModuleForSubscript"_jlm;
+
+    jl::global x = mod["x"];
+    int xint = x;
+    REQUIRE(xint == 3);
+}

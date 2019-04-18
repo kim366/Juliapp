@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Array.hpp"
-#include "Function.hpp"
 #include "Init.hpp"
-#include "Module.hpp"
 
 #include <julia_gcext.h>
 
 namespace jl
 {
+
+class function;
+class module;
 
 namespace impl
 {
