@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Assert.hpp"
-#include "StringView.hpp"
+#include "Symbol.hpp"
 
 #include <julia.h>
 #include <map>
@@ -49,7 +49,7 @@ template<typename CppT>
 struct type
 {
     using cpp_type = CppT;
-    type(util::string_view type_name_) : julia_type{type_name_} {}
+    type(std::string_view type_name_) : julia_type{type_name_.data()} {}
 
     const char* julia_type;
 };

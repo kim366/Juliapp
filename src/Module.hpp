@@ -27,11 +27,11 @@ public:
     {
     }
 
-    global operator[](util::string_view name_) const
+    global operator[](symbol name_) const
     {
         jl_binding_t* binding = nullptr;
 
-        JL_TRY { binding = jl_get_binding_wr(_module, jl_symbol(name_), true); }
+        JL_TRY { binding = jl_get_binding_wr(_module, name_.c_sym(), true); }
         JL_CATCH { throw language_error{"Failed to get binding to symbol"}; }
 
         return binding;

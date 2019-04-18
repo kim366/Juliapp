@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Module.hpp"
-#include "StringView.hpp"
+#include "Symbol.hpp"
 
 #include <julia.h>
 #include <string>
@@ -16,13 +16,8 @@ class function
 public:
     function(jl_function_t* _function) : _function{_function} {}
 
-    explicit function(util::string_view name_)
-        : _function{jl_get_function(jl_main_module, name_)}
-    {
-    }
-
-    function(module module_, util::string_view name_)
-        : _function{jl_get_function(module_.c_mod(), name_)}
+    explicit function(symbol symbol_)
+        : _function{jl_get_global(jl_main_module, symbol_.c_sym())}
     {
     }
 

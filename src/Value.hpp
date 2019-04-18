@@ -67,6 +67,7 @@ protected:
 template<typename ValT>
 struct value : private impl::common_value
 {
+    using common_value::c_val;
     using impl::common_value::common_value;
     //    value() = default;
 
@@ -101,6 +102,7 @@ struct generic_value : private impl::common_value
     using common_value::get;
     using common_value::operator!=;
     using common_value::operator==;
+    using common_value::c_val;
 
     generic_value() = default;
 

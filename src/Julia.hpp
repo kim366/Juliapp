@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Global.hpp"
 #include "Boxing.hpp"
 #include "Conversions.hpp"
 #include "Function.hpp"
+#include "Global.hpp"
 #include "Helpers.hpp"
 #include "Init.hpp"
 #include "Literals.hpp"
-#include "StringView.hpp"
+#include "Symbol.hpp"
 #include "Value.hpp"
 
 #include <array>
@@ -31,19 +31,19 @@ value<ValT> make_value(ArgTs&&... args_)
     return val;
 }
 
-inline generic_value eval(util::string_view src_str_)
+inline generic_value eval(std::string_view src_str_)
 {
-    jl_value_t* res{jl_eval_string(src_str_)};
+    jl_value_t* res{jl_eval_string(src_str_.data())};
     impl::check_err();
     return res;
 }
 
-inline generic_value exec_from_file(util::string_view file_name_)
+inline generic_value exec_from_file(std::string_view file_name_)
 {
-    std::ifstream file{file_name_};
+    std::ifstream file{file_name_.data()};
     if (!file.is_open())
         throw load_error{std::string{"Could not load script "}
-                         + static_cast<const char*>(file_name_)};
+                         + file_name_.data()};
     std::stringstream buffer;
     buffer << file.rdbuf();
     return eval(buffer.str().c_str());
@@ -66,7 +66,7 @@ generic_value call(function fn_, ArgTs&&... args_)
 }
 
 template<typename... ArgTs>
-generic_value call(util::string_view fn_name_, ArgTs&&... args_)
+generic_value call(symbol fn_name_, ArgTs&&... args_)
 {
     return call(function{fn_name_}, std::forward<ArgTs>(args_)...);
 }
@@ -77,13 +77,13 @@ generic_value function::operator()(ArgTs&&... args_)
     return call(*this, std::forward<ArgTs>(args_)...);
 }
 
-inline void raise_error(util::string_view content_)
+inline void raise_error(std::string_view content_)
 {
-    jl_error(content_);
+    jl_error(content_.data());
 }
 
 template<typename... ArgTs>
-void raise_error(util::string_view content_, ArgTs... args_)
+void raise_error(symbol content_, ArgTs... args_)
 {
     jl_errorf(content_, args_...);
 }
@@ -104,7 +104,7 @@ inline void quit(int status_ = 0)
     impl::quit(status_);
 }
 
-// inline void use(string_view module_)
+// inline void use(symbol module_)
 //{
 //    jl_eval_string((std::string{"using "} + module_).c_str());
 //}
