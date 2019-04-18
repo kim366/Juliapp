@@ -10,22 +10,22 @@ namespace jl
 
 inline function generic_value::as_function()
 {
-    return c_val();
+    return function{*this};
 }
 
 inline module generic_value::as_module()
 {
-    return *this;
+    return module{*this};
 }
 
-inline generic_value function::genric()
+inline generic_value function::generic()
 {
-    return c_fn();
+    return _function;
 }
 
-inline generic_value module::genric()
+inline generic_value module::generic()
 {
-    return reinterpret_cast<jl_value_t*>(c_mod());
+    return _module;
 }
 
 inline generic_value global::value()

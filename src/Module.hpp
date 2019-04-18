@@ -1,3 +1,5 @@
+#include <utility>
+
 #pragma once
 
 #include "Errors.hpp"
@@ -14,7 +16,7 @@ class module
 {
 
 public:
-    module(generic_value val_) : _module{val_} {}
+    module(generic_value val_) : _module{std::move(val_)} {}
 
     explicit module(symbol name_)
         : _module{jl_get_global(jl_main_module, name_.c_sym())}
@@ -35,7 +37,7 @@ public:
     {
         return reinterpret_cast<jl_module_t*>(_module.c_val());
     }
-    generic_value genric();
+    generic_value generic();
 
     bool operator==(const module& rhs) const
     {
