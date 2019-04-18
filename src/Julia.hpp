@@ -29,14 +29,14 @@ value<ValT> make_value(ArgTs&&... args_)
     return val;
 }
 
-inline runtime_value eval(util::string_view src_str_)
+inline generic_value eval(util::string_view src_str_)
 {
     jl_value_t* res{jl_eval_string(src_str_)};
     impl::check_err();
     return res;
 }
 
-inline runtime_value exec_from_file(util::string_view file_name_)
+inline generic_value exec_from_file(util::string_view file_name_)
 {
     std::ifstream file{file_name_};
     if (!file.is_open())
@@ -48,7 +48,7 @@ inline runtime_value exec_from_file(util::string_view file_name_)
 }
 
 template<typename... ArgTs>
-runtime_value call(function fn_, ArgTs&&... args_)
+generic_value call(function fn_, ArgTs&&... args_)
 {
     if (fn_.c_fn() == nullptr)
         throw language_error{"MethodError"};
@@ -64,13 +64,13 @@ runtime_value call(function fn_, ArgTs&&... args_)
 }
 
 template<typename... ArgTs>
-runtime_value call(util::string_view fn_name_, ArgTs&&... args_)
+generic_value call(util::string_view fn_name_, ArgTs&&... args_)
 {
     return call(function{fn_name_}, std::forward<ArgTs>(args_)...);
 }
 
 template<typename... ArgTs>
-runtime_value function::operator()(ArgTs&&... args_)
+generic_value function::operator()(ArgTs&&... args_)
 {
     return call(*this, std::forward<ArgTs>(args_)...);
 }

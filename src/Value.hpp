@@ -94,14 +94,14 @@ struct value : private impl::common_value
     ValT* operator->() { return &**this; }
 };
 
-struct runtime_value : private impl::common_value
+struct generic_value : private impl::common_value
 {
     using common_value::common_value;
     using common_value::get;
     using common_value::operator!=;
     using common_value::operator==;
 
-    runtime_value() = default;
+    generic_value() = default;
 
     template<typename TargT,
              typename = std::enable_if_t<std::is_fundamental<TargT>{}>>
