@@ -15,7 +15,7 @@ struct function : public generic_value
 {
     function(generic_value val_) : generic_value{std::move(val_)} {}
 
-    explicit function(symbol symbol_)
+    function(symbol symbol_)
         : generic_value{jl_get_global(jl_main_module, symbol_.c_sym())}
     {
     }

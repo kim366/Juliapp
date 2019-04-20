@@ -13,14 +13,12 @@ namespace jl
 
 class global;
 
-class module
+struct module : generic_value
 {
-
-public:
-    module(generic_value val_) : _module{std::move(val_)} {}
+    module(generic_value val_) : generic_value{std::move(val_)} {}
 
     explicit module(symbol name_)
-        : _module{jl_get_global(jl_main_module, name_.c_sym())}
+        : generic_value{jl_get_global(jl_main_module, name_.c_sym())}
     {
     }
 
@@ -28,18 +26,12 @@ public:
 
     jl_module_t* c_mod() const
     {
-        return reinterpret_cast<jl_module_t*>(_module.c_val());
+        return reinterpret_cast<jl_module_t*>(c_val());
     }
 
-    bool operator==(const module& rhs) const
-    {
-        return _module.c_val() == rhs._module.c_val();
-    }
+    bool operator==(const module& rhs) const { return c_val() == rhs.c_val(); }
 
     bool operator!=(const module& rhs) const { return !(rhs == *this); }
-
-private:
-    generic_value _module;
 };
 
 inline module main =

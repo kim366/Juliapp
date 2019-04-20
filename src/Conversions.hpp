@@ -10,7 +10,7 @@ namespace jl
 
 inline function generic_value::as_function()
 {
-    return function{*this};
+    return function(*this);
 }
 
 inline module generic_value::as_module()
