@@ -18,16 +18,6 @@ inline module generic_value::as_module()
     return module{*this};
 }
 
-inline generic_value function::generic()
-{
-    return _function;
-}
-
-inline generic_value module::generic()
-{
-    return _module;
-}
-
 inline generic_value global::value()
 {
     assert(c_binding()->value != nullptr);
@@ -48,12 +38,6 @@ template<typename TargT>
 global::operator TargT()
 {
     return value().get<TargT>();
-}
-
-template<typename T>
-generic_value value<T>::generic() const
-{
-    return _boxed_value;
 }
 
 } // namespace jl

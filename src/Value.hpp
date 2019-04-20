@@ -43,8 +43,6 @@ struct value : public generic_value
     }
 
     ValT* operator->() { return &**this; }
-
-    generic_value generic() const;
 };
 
 } // namespace jl

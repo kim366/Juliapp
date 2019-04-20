@@ -11,33 +11,23 @@
 namespace jl
 {
 
-class generic_value;
-
-class function
+struct function : public generic_value
 {
-public:
-    function(generic_value val_) : _function{std::move(val_)} {}
+    function(generic_value val_) : generic_value{std::move(val_)} {}
 
     explicit function(symbol symbol_)
-        : _function{jl_get_global(jl_main_module, symbol_.c_sym())}
+        : generic_value{jl_get_global(jl_main_module, symbol_.c_sym())}
     {
     }
 
-    jl_function_t* c_fn() { return _function.c_val(); }
-    generic_value generic();
+    jl_function_t* c_fn() const { return c_val(); }
 
     template<typename... ArgTs>
     generic_value operator()(ArgTs&&... args_);
 
-    bool operator==(const function& rhs) const
-    {
-        return _function.c_val() == rhs._function.c_val();
-    }
+    bool operator==(const function& rhs) const { return c_fn() == rhs.c_fn(); }
 
     bool operator!=(const function& rhs) const { return !(rhs == *this); }
-
-private:
-    generic_value _function;
 };
 
 namespace impl

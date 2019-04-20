@@ -30,7 +30,6 @@ public:
     {
         return reinterpret_cast<jl_module_t*>(_module.c_val());
     }
-    generic_value generic();
 
     bool operator==(const module& rhs) const
     {

@@ -19,6 +19,10 @@ public:
 
     generic_value() noexcept : generic_value{nullptr} {}
     generic_value(const generic_value& other) : generic_value{other.c_val()} {}
+    generic_value(generic_value&& other) : _boxed_value{other.c_val()}
+    {
+        other._boxed_value = nullptr;
+    }
 
     ~generic_value() { impl::release_value(_boxed_value); }
 
@@ -73,6 +77,9 @@ public:
     {
         return reinterpret_cast<jl_array_t*>(_boxed_value);
     }
+
+    generic_value generic() const& { return generic_value{*this}; }
+    generic_value generic() && { return generic_value{std::move(*this)}; }
 
     function as_function();
     module as_module();

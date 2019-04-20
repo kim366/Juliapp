@@ -31,13 +31,7 @@ public:
                          && !std::is_same_v<NoRefT, generic_value>>* = nullptr>
     global& operator=(T&& data_)
     {
-        return *this = ::jl::value<T>{data_};
-    }
-
-    template<typename T>
-    global& operator=(const ::jl::value<T>& value_)
-    {
-        return *this = value_.generic();
+        return *this = ::jl::value<T>{std::forward<T>(data_)};
     }
 
     global& operator=(const generic_value& value_)
