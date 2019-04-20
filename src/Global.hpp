@@ -24,9 +24,11 @@ public:
     function as_function();
     module as_module();
 
-    template<typename T,
-             std::enable_if_t<!impl::is_value<std::remove_reference_t<T>>{}>* =
-                 nullptr>
+    template<
+        typename T,
+        typename NoRefT = std::remove_reference_t<T>,
+        std::enable_if_t<!impl::is_value<NoRefT>{}
+                         && !std::is_same_v<NoRefT, generic_value>>* = nullptr>
     global& operator=(T&& data_)
     {
         return *this = ::jl::value<T>{data_};
@@ -34,6 +36,11 @@ public:
 
     template<typename T>
     global& operator=(const ::jl::value<T>& value_)
+    {
+        return *this = value_.generic();
+    }
+
+    global& operator=(const generic_value& value_)
     {
         jl_checked_assignment(_binding, value_.c_val());
         return *this;

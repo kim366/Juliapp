@@ -50,4 +50,10 @@ global::operator TargT()
     return value().get<TargT>();
 }
 
+template<typename T>
+generic_value value<T>::generic() const
+{
+    return _boxed_value;
+}
+
 } // namespace jl

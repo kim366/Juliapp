@@ -65,6 +65,8 @@ protected:
 
 } // namespace impl
 
+struct generic_value;
+
 template<typename ValT>
 struct value : private impl::common_value
 {
@@ -95,6 +97,8 @@ struct value : private impl::common_value
     }
 
     ValT* operator->() { return &**this; }
+
+    generic_value generic() const;
 };
 
 struct generic_value : private impl::common_value
