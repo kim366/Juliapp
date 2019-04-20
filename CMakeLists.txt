@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.8)
 project(julia-cpp LANGUAGES CXX)
 
 find_library(
-        JULIA_LIB julia
+        JULIA_LIB "julia-debug"
         HINTS "julia/lib"
 )
 
