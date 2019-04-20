@@ -3,12 +3,14 @@
 #define JLPP_IMPL_UNIT_TESTING
 #include <Julia.hpp>
 
+using namespace jl::literals;
+
 TEST_CASE("Function returning Module")
 {
     jl::eval(
         "module ReturnedModule f() = 3 end; returning_module() = ReturnedModule");
-    auto m = jl::call("returning_module").as_module();
-    jl::module m2 = jl::call("returning_module");
+    auto m = "returning_module"_jlf().as_module();
+    jl::module m2 = "returning_module"_jlf();
     auto f = m["f"].as_function();
     auto f2 = m2["f"].as_function();
     CHECK(f().get<int>() == 3);
