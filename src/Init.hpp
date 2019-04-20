@@ -36,11 +36,14 @@ inline void root_value(jl_value_t* val)
 
 inline void release_value(jl_value_t* val)
 {
-    const auto found_val =
-        std::find(rooted_values.rbegin(), rooted_values.rend(), val);
-    jlpp_assert(found_val != rooted_values.rend()
-                && "Releasing unrooted value");
-    rooted_values.erase(std::next(found_val).base());
+    if (val != nullptr)
+    {
+        const auto found_val =
+            std::find(rooted_values.rbegin(), rooted_values.rend(), val);
+        jlpp_assert(found_val != rooted_values.rend()
+                    && "Releasing unrooted value");
+        rooted_values.erase(std::next(found_val).base());
+    }
 }
 
 class init_guard
