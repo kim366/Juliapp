@@ -11,6 +11,9 @@ namespace jl
 template<typename ElemT>
 class array;
 
+template<typename ValT>
+class value;
+
 namespace impl
 {
 
@@ -70,6 +73,16 @@ struct is_array : std::false_type
 
 template<typename ElemT>
 struct is_array<array<ElemT>> : std::true_type
+{
+};
+
+template<typename>
+struct is_value : std::false_type
+{
+};
+
+template<typename ValT>
+struct is_value<value<ValT>> : std::true_type
 {
 };
 

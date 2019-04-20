@@ -24,11 +24,18 @@ public:
     function as_function();
     module as_module();
 
-    template<typename T>
-    global& operator=(T&& value_)
+    template<typename T,
+             std::enable_if_t<!impl::is_value<std::remove_reference_t<T>>{}>* =
+                 nullptr>
+    global& operator=(T&& data_)
     {
-        jl_checked_assignment(_binding,
-                              ::jl::value<T>{std::forward<T>(value_)}.c_val());
+        return *this = ::jl::value<T>{data_};
+    }
+
+    template<typename T>
+    global& operator=(const ::jl::value<T>& value_)
+    {
+        jl_checked_assignment(_binding, value_.c_val());
         return *this;
     }
 
