@@ -1,10 +1,6 @@
 #pragma once
 
-#include "Array.hpp"
 #include "GenericValue.hpp"
-#include "Init.hpp"
-
-#include <julia_gcext.h>
 
 namespace jl
 {
@@ -24,24 +20,15 @@ struct value : public generic_value
     value(const ValT& obj_) : generic_value{impl::box(obj_)} {}
 
     template<typename std::enable_if_t<std::is_fundamental_v<ValT>>* = nullptr>
-    ValT operator*()
-    {
-        return get<ValT>();
-    }
+    ValT operator*();
 
     template<typename std::enable_if_t<!std::is_fundamental_v<ValT>>* = nullptr>
-    ValT& operator*()
-    {
-        return impl::unbox<ValT&>(_boxed_value);
-    }
+    ValT& operator*();
 
     template<typename std::enable_if_t<!std::is_fundamental_v<ValT>>* = nullptr>
-    const ValT& operator*() const
-    {
-        return impl::unbox<ValT&>(_boxed_value);
-    }
+    const ValT& operator*() const;
 
-    ValT* operator->() { return &**this; }
+    ValT* operator->();
 };
 
 } // namespace jl

@@ -1,6 +1,7 @@
-#include <Boxing.hpp>
+#pragma once
+
 #include <Helpers.hpp>
-#include <Init.hpp>
+#include <julia.h>
 
 namespace jl
 {
@@ -11,75 +12,42 @@ struct module;
 class generic_value
 {
 public:
-    generic_value(jl_value_t* boxed_value_) noexcept
-        : _boxed_value{boxed_value_}
-    {
-        impl::root_value(_boxed_value);
-    }
+    generic_value(jl_value_t* boxed_value_) noexcept;
 
-    generic_value() noexcept : generic_value{nullptr} {}
-    generic_value(const generic_value& other) : generic_value{other.c_val()} {}
-    generic_value(generic_value&& other) : _boxed_value{other.c_val()}
-    {
-        other._boxed_value = nullptr;
-    }
+    generic_value() noexcept;
+    generic_value(const generic_value& other);
+    generic_value(generic_value&& other);
 
-    ~generic_value() { impl::release_value(_boxed_value); }
+    ~generic_value();
 
-    jl_value_t* c_val() const { return _boxed_value; }
+    jl_value_t* c_val() const;
 
-    bool operator==(const generic_value& rhs) const
-    {
-        return static_cast<bool>(jl_egal(_boxed_value, rhs._boxed_value));
-    }
+    bool operator==(const generic_value& rhs) const;
 
-    bool operator!=(const generic_value& rhs) const { return !(rhs == *this); }
+    bool operator!=(const generic_value& rhs) const;
 
     template<typename TargT,
              std::enable_if_t<std::is_fundamental<TargT>{}
                               || impl::is_array<TargT>{}>* = nullptr>
-    TargT get()
-    {
-        if constexpr (std::is_integral_v<TargT>)
-            return static_cast<TargT>(impl::unbox<long>(_boxed_value));
-        else if constexpr (std::is_floating_point_v<TargT>)
-            return static_cast<TargT>(impl::unbox<double>(_boxed_value));
-        else
-            return *this;
-    }
+    TargT get();
 
     template<typename TargT,
              std::enable_if_t<!std::is_fundamental<TargT>{}>* = nullptr>
-    TargT get() noexcept
-    {
-        if constexpr (std::is_pointer_v<TargT>)
-            return reinterpret_cast<TargT>(_boxed_value);
-        else
-            return *reinterpret_cast<std::decay_t<TargT>*>(_boxed_value);
-    }
+    TargT get() noexcept;
 
     template<typename TargT,
              typename = std::enable_if_t<std::is_fundamental<TargT>{}>>
-    operator TargT()
-    {
-        return impl::unbox<TargT>(_boxed_value);
-    }
+    operator TargT();
 
     template<typename TargT,
              std::enable_if_t<std::is_class_v<std::decay_t<TargT>>>* = nullptr>
-    operator TargT()
-    {
-        return get<TargT>();
-    }
+    operator TargT();
 
     template<typename ElemT>
-    explicit operator array<ElemT>() noexcept
-    {
-        return reinterpret_cast<jl_array_t*>(_boxed_value);
-    }
+    explicit operator array<ElemT>() noexcept;
 
-    generic_value generic() const& { return generic_value{*this}; }
-    generic_value generic() && { return generic_value{std::move(*this)}; }
+    generic_value generic() const&;
+    generic_value generic() &&;
 
     function as_function();
     module as_module();

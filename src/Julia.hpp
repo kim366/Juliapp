@@ -3,13 +3,16 @@
 #include "Boxing.hpp"
 #include "Conversions.hpp"
 #include "Function.hpp"
+#include "GenericValue.inl"
 #include "Global.hpp"
+#include "Global.inl"
 #include "Helpers.hpp"
 #include "Init.hpp"
 #include "Literals.hpp"
-#include "ModuleImpl.hpp"
+#include "Module.inl"
 #include "Symbol.hpp"
 #include "Value.hpp"
+#include "Value.inl"
 
 #include <array>
 #include <fstream>
