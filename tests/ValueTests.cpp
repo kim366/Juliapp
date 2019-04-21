@@ -3,6 +3,37 @@
 #define JLPP_IMPL_UNIT_TESTING
 #include <Julia.hpp>
 
+using namespace jl::literals;
+
+struct NoCopy;
+JLPP_SYNC(NoCopy, "NoCopy"_jlg);
+struct NoCopy
+{
+    NoCopy(const NoCopy&) = delete;
+    NoCopy(NoCopy&&) = default;
+
+    NoCopy& operator=(const NoCopy&) = delete;
+    NoCopy& operator=(NoCopy&&) = default;
+
+    float x;
+};
+
+struct Mut;
+JLPP_SYNC(Mut, "Mut"_jlg);
+struct Mut
+{
+    int64_t x;
+    Mut& operator=(const Mut&) = default;
+};
+
+struct Immut;
+JLPP_SYNC(Immut, "Immut"_jlg);
+struct Immut
+{
+    const int64_t x;
+    Immut& operator=(const Immut&) = delete;
+};
+
 TEST_CASE("Boxing of primitive types")
 {
     CHECK(*jl::value{5} == 5);
@@ -14,19 +45,7 @@ TEST_CASE("Boxing of primitive types")
 
 TEST_CASE("Moving variables into values")
 {
-    struct NoCopy
-    {
-        NoCopy(const NoCopy&) = delete;
-        NoCopy(NoCopy&&) = default;
-
-        NoCopy& operator=(const NoCopy&) = delete;
-        NoCopy& operator=(NoCopy&&) = default;
-
-        float x;
-    };
-
     jl::eval("mutable struct NoCopy x::Float32 end");
-    jl::sync(jl::type<NoCopy>{"NoCopy"});
 
     auto x = NoCopy{3.14f};
     // clang-format off
@@ -58,19 +77,6 @@ TEST_CASE("References to mutable/immutable structs")
       struct Immut x::Int64 end
     )");
 
-    struct Mut
-    {
-        int64_t x;
-        Mut& operator=(const Mut&) = default;
-    };
-
-    struct Immut
-    {
-        const int64_t x;
-        Immut& operator=(const Immut&) = delete;
-    };
-
-    jl::sync(jl::type<Mut>{"Mut"}, jl::type<Immut>{"Immut"});
     auto mut = jl::value<Mut>{{3}};
     auto immut = jl::value<Immut>{{7}};
 

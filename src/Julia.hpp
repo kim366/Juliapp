@@ -11,6 +11,7 @@
 #include "Literals.hpp"
 #include "Module.inl"
 #include "Symbol.hpp"
+#include "Sync.hpp"
 #include "Value.hpp"
 #include "Value.inl"
 

@@ -1,12 +1,11 @@
 #pragma once
 
 #include "Assert.hpp"
+#include "GenericValue.hpp"
 #include "Symbol.hpp"
 
+#include <cassert>
 #include <julia.h>
-#include <map>
-#include <string>
-#include <typeindex>
 
 namespace jl
 {
@@ -14,91 +13,103 @@ namespace jl
 namespace impl
 {
 
-inline std::type_index* synced_cpp_types;
-inline jl_datatype_t** synced_jl_types;
-inline std::size_t num_synced_types;
+template<typename SyncedT>
+struct types_match_impl
+{
+    constexpr static bool synced = false;
+    static jl_value_t* type() { return nullptr; }
+};
 
-template<typename CppT>
+#define IMPL_JLPP_ASSERT_SYNC                                                  \
+    jlpp_static_assert(::jl::impl::types_match_impl<SyncedT>::synced,          \
+                       "Type not synced (type labelled as SyncedT)!")
+
+#define JLPP_SYNC(cpp_type, julia_type)                                        \
+    namespace jl::impl                                                         \
+    {                                                                          \
+    template<>                                                                 \
+    struct types_match_impl<::cpp_type>                                        \
+    {                                                                          \
+        static auto type()                                                     \
+        { /*TODO: Assert sizeof */                                             \
+            static auto type = julia_type.value().c_val();                     \
+            return type;                                                       \
+        }                                                                      \
+                                                                               \
+        constexpr static bool synced = true;                                   \
+    };                                                                         \
+    }                                                                          \
+    struct jlpp_dummy
+
+template<typename...>
+struct sync_force_resolve_impl;
+
+template<typename T, typename... Ts>
+struct sync_force_resolve_impl<T, Ts...>
+{
+    static void resolve()
+    {
+        (void)types_match_impl<T>::type();
+        sync_force_resolve_impl<Ts...>::resolve();
+    }
+};
+
+template<>
+struct sync_force_resolve_impl<>
+{
+    static void resolve() {}
+};
+
+template<typename SyncedT>
 jl_datatype_t* find_synced_jl_type()
 {
-    std::type_index cpp_type{typeid(CppT)};
-    for (std::size_t i = 0; i < num_synced_types; ++i)
-    {
-        if (synced_cpp_types[i] == cpp_type)
-            return synced_jl_types[i];
-    }
-
-    return nullptr;
+    IMPL_JLPP_ASSERT_SYNC;
+    return reinterpret_cast<jl_datatype_t*>(
+        impl::types_match_impl<SyncedT>::type());
 }
 
-template<typename CppT>
-bool verify_synced_cpp_type(jl_datatype_t* julia_type_)
+template<typename SyncedT>
+bool types_match(generic_value name)
 {
-    for (std::size_t i = 0; i < num_synced_types; ++i)
-    {
-        if (synced_jl_types[i] == julia_type_)
-            return synced_cpp_types[i] == typeid(CppT);
-    }
+    IMPL_JLPP_ASSERT_SYNC;
+    return impl::types_match_impl<SyncedT>::type() == name.c_val();
+}
 
-    return false;
+template<typename ElemT>
+jl_datatype_t* get_type()
+{
+    if constexpr (std::is_same_v<ElemT, std::int8_t>)
+        return jl_int8_type;
+    else if constexpr (std::is_same_v<ElemT, std::uint8_t>)
+        return jl_uint8_type;
+    else if constexpr (std::is_same_v<ElemT, std::int16_t>)
+        return jl_int16_type;
+    else if constexpr (std::is_same_v<ElemT, std::uint16_t>)
+        return jl_uint16_type;
+    else if constexpr (std::is_same_v<ElemT, std::int32_t>)
+        return jl_int32_type;
+    else if constexpr (std::is_same_v<ElemT, std::uint32_t>)
+        return jl_uint32_type;
+    else if constexpr (std::is_same_v<ElemT, std::int64_t>)
+        return jl_int64_type;
+    else if constexpr (std::is_same_v<ElemT, std::uint64_t>)
+        return jl_uint64_type;
+    else if constexpr (std::is_same_v<ElemT, float>)
+        return jl_float32_type;
+    else if constexpr (std::is_same_v<ElemT, double>)
+        return jl_float64_type;
+    else if constexpr (std::is_same_v<ElemT, bool>)
+        return jl_bool_type;
+    else
+        return find_synced_jl_type<ElemT>();
 }
 
 } // namespace impl
 
-template<typename CppT>
-struct type
+template<typename... Ts>
+void sync_force_resolve()
 {
-    using cpp_type = CppT;
-    type(std::string_view type_name_) : julia_type{type_name_.data()} {}
-
-    const char* julia_type;
-};
-
-template<typename... TypeTs>
-void sync(TypeTs&&... ts_)
-{
-    if (impl::num_synced_types != 0)
-    {
-        delete[] impl::synced_cpp_types;
-        delete[] impl::synced_jl_types;
-    }
-    impl::num_synced_types = sizeof...(ts_);
-    impl::synced_cpp_types = new std::type_index[sizeof...(ts_)]{
-        typeid(typename TypeTs::cpp_type)...};
-    // TODO: improve performance by exchanging `jl_eval_string`
-    impl::synced_jl_types = new jl_datatype_t* [sizeof...(ts_)] {
-        reinterpret_cast<jl_datatype_t*>(jl_eval_string(ts_.julia_type))...
-    };
-
-#ifndef NDEBUG
-    jl_function_t* sizeof_func{
-        jl_get_global(jl_core_module, jl_symbol("sizeof"))};
-    jl_function_t* isbits_check_func{nullptr};
-    JL_GC_PUSH2(sizeof_func, isbits_check_func);
-    isbits_check_func = jl_eval_string(R"(
-      typ::DataType -> begin
-        isbitstype(typ) && return true
-        for n in fieldnames(typ)
-          isbitstype(fieldtype(typ, n)) || return false;
-        end
-        true
-      end
-    )");
-
-    jlpp_assert("Synced datatype sizes do not match"
-                && ((sizeof(typename TypeTs::cpp_type)
-                     == static_cast<std::size_t>(jl_unbox_int64(jl_call1(
-                            sizeof_func, jl_eval_string(ts_.julia_type)))))
-                    && ...));
-
-    jlpp_assert((("Contents of synced types are not isbits"
-                  && jl_unbox_bool(jl_call1(isbits_check_func,
-                                            jl_eval_string(ts_.julia_type))))
-                 && ...));
-
-    JL_GC_POP();
-
-#endif
+    impl::sync_force_resolve_impl<Ts...>::resolve();
 }
 
 } // namespace jl

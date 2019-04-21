@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Sync.hpp"
+#include "Assert.hpp"
 
 #include <algorithm>
 #include <julia.h>
@@ -22,8 +22,6 @@ inline void init()
 
 inline void quit(int status_ = 0)
 {
-    delete[] synced_cpp_types;
-    delete[] synced_jl_types;
     rooted_values.clear();
     rooted_values.shrink_to_fit();
     jl_atexit_hook(status_);

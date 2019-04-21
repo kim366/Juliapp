@@ -3,6 +3,7 @@
 #include "Assert.hpp"
 #include "Errors.hpp"
 #include "Helpers.hpp"
+#include "Sync.hpp"
 
 #include <julia.h>
 
@@ -66,8 +67,14 @@ RetT unbox(jl_value_t* arg_)
     }
     else
     {
-        //        jl_datatype_t* found{impl::find_synced_jl_type<RetT>()};
-        //        jlpp_assert(found && "Requested type not synced");
+        if (!impl::types_match<std::decay_t<RetT>>(jl_typeof(arg_)))
+            throw result_type_error{
+                std::string{"Incorrect type requested. "}
+                + jl_typeof_str(reinterpret_cast<jl_value_t*>(arg_))
+                + " given, but synced with "
+                + jl_typename_str(reinterpret_cast<jl_value_t*>(
+                      find_synced_jl_type<std::decay_t<RetT>>()))
+                + '.'};
         return *reinterpret_cast<std::decay_t<RetT>*>(jl_data_ptr(arg_));
     }
 }
