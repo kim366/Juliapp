@@ -24,21 +24,24 @@ struct types_match_impl
     jlpp_static_assert(::jl::impl::types_match_impl<SyncedT>::synced,          \
                        "Type not synced (type labelled as SyncedT)!")
 
-#define JLPP_SYNC(cpp_type, julia_type)                                        \
-    namespace jl::impl                                                         \
-    {                                                                          \
-    template<>                                                                 \
-    struct types_match_impl<::cpp_type>                                        \
-    {                                                                          \
-        static auto type()                                                     \
-        { /*TODO: Assert sizeof */                                             \
-            static auto type = julia_type.value().c_val();                     \
-            return type;                                                       \
-        }                                                                      \
-                                                                               \
-        constexpr static bool synced = true;                                   \
-    };                                                                         \
-    }                                                                          \
+#define JLPP_SYNC(cpp_type, julia_type)                                                            \
+    namespace jl::impl                                                                             \
+    {                                                                                              \
+    template<>                                                                                     \
+    struct types_match_impl<::cpp_type>                                                            \
+    {                                                                                              \
+        static auto type()                                                                         \
+        {                                                                                          \
+            static auto type = julia_type.value().c_val();                                         \
+            jlpp_assert(                                                                           \
+                jl_datatype_size(type) == sizeof(cpp_type)                                         \
+                && "Synced type sizes do not match. Are you sure the definitions are identical?"); \
+            return type;                                                                           \
+        }                                                                                          \
+                                                                                                   \
+        constexpr static bool synced = true;                                                       \
+    };                                                                                             \
+    }                                                                                              \
     struct jlpp_dummy
 
 template<typename...>
@@ -49,7 +52,7 @@ struct sync_force_resolve_impl<T, Ts...>
 {
     static void resolve()
     {
-        (void)types_match_impl<T>::type();
+        static_cast<void>(types_match_impl<T>::type());
         sync_force_resolve_impl<Ts...>::resolve();
     }
 };

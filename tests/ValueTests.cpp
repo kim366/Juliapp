@@ -5,8 +5,6 @@
 
 using namespace jl::literals;
 
-struct NoCopy;
-JLPP_SYNC(NoCopy, "NoCopy"_jlg);
 struct NoCopy
 {
     NoCopy(const NoCopy&) = delete;
@@ -17,22 +15,27 @@ struct NoCopy
 
     float x;
 };
+JLPP_SYNC(NoCopy, "NoCopy"_jlg);
 
-struct Mut;
-JLPP_SYNC(Mut, "Mut"_jlg);
 struct Mut
 {
     int64_t x;
     Mut& operator=(const Mut&) = default;
 };
+JLPP_SYNC(Mut, "Mut"_jlg);
 
-struct Immut;
-JLPP_SYNC(Immut, "Immut"_jlg);
 struct Immut
 {
     const int64_t x;
     Immut& operator=(const Immut&) = delete;
 };
+JLPP_SYNC(Immut, "Immut"_jlg);
+
+struct SizeMismatch
+{
+    const int32_t x;
+};
+JLPP_SYNC(SizeMismatch, "SizeMismatch"_jlg);
 
 TEST_CASE("Boxing of primitive types")
 {
@@ -91,4 +94,11 @@ TEST_CASE("Primitive value dereferencing")
     auto primit = jl::value{12};
     CHECK_NOTHROW(
         jlpp_static_assert(!std::is_lvalue_reference_v<decltype(*primit)>));
+}
+
+TEST_CASE("Struct size mismatch check")
+{
+    jl::eval("struct SizeMismatch x::Int64 end");
+    CHECK_THROWS_AS(jl::sync_force_resolve<SizeMismatch>(),
+                    jl::test::failed_assertion);
 }
