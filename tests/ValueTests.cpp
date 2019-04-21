@@ -37,6 +37,15 @@ struct SizeMismatch
 };
 JLPP_SYNC(SizeMismatch, "SizeMismatch"_jlg);
 
+// struct NonstandardLayout
+//{
+//    int32_t x;
+//
+// private:
+//    int64_t y;
+//};
+// JLPP_SYNC(NonstandardLayout, "NonstandardLayout"_jlg); // should fail
+
 TEST_CASE("Boxing of primitive types")
 {
     CHECK(*jl::value{5} == 5);

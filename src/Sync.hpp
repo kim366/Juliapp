@@ -42,7 +42,9 @@ struct types_match_impl
         constexpr static bool synced = true;                                                       \
     };                                                                                             \
     }                                                                                              \
-    struct jlpp_dummy
+    static_assert(std::is_standard_layout_v<::cpp_type>,                                           \
+                  "The synced type " #cpp_type                                                     \
+                  " needs to have standard layout.")
 
 template<typename...>
 struct sync_force_resolve_impl;
