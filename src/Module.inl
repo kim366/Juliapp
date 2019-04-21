@@ -18,12 +18,7 @@ inline module::module(symbol name_)
 
 inline global module::operator[](symbol name_) const
 {
-    jl_binding_t* binding = nullptr;
-
-    JL_TRY { binding = jl_get_binding_wr(c_mod(), name_.c_sym(), true); }
-    JL_CATCH { throw language_error{"Failed to get binding to symbol"}; }
-
-    return binding;
+    return impl::get_binding(c_mod(), name_);
 }
 
 inline jl_module_t* module::c_mod() const
@@ -40,5 +35,20 @@ inline bool module::operator!=(const module& rhs) const
 {
     return !(rhs == *this);
 }
+
+namespace impl
+{
+
+inline global get_binding(jl_module_t* mod, symbol name_)
+{
+    jl_binding_t* binding = nullptr;
+
+    JL_TRY { binding = jl_get_binding_wr(mod, name_.c_sym(), true); }
+    JL_CATCH { throw language_error{"Failed to get binding to symbol"}; }
+
+    return binding;
+}
+
+} // namespace impl
 
 } // namespace jl

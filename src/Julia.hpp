@@ -37,6 +37,7 @@ value<ValT> make_value(ArgTs&&... args_)
 
 inline generic_value eval(std::string_view src_str_)
 {
+    impl::ensure_init();
     jl_value_t* res{jl_eval_string(src_str_.data())};
     impl::check_err();
     return res;

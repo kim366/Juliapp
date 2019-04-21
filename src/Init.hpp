@@ -46,16 +46,22 @@ inline void release_value(jl_value_t* val)
     }
 }
 
+void ensure_init();
+
 class init_guard
 {
-public:
     init_guard() noexcept { init(); }
     ~init_guard() { quit(); }
+
+    friend void impl::ensure_init();
 };
 
+inline void ensure_init()
+{
 #ifndef JLPP_MANUAL_INIT
-inline init_guard global_init_guard{};
+    static const auto guard = init_guard{};
 #endif
+}
 
 inline void root_scanner_cb(int)
 {

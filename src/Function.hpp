@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Boxing.hpp"
 #include "Module.hpp"
 #include "Symbol.hpp"
 
@@ -36,6 +37,8 @@ namespace impl
 template<typename... ArgTs>
 generic_value call(function fn_, ArgTs&&... args_)
 {
+    impl::ensure_init();
+
     if (fn_.c_fn() == nullptr)
         throw language_error{"MethodError"};
     constexpr int num_args{sizeof...(args_)};

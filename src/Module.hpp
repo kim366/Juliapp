@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GenericValue.hpp>
+#include <Init.hpp>
 #include <julia.h>
 #include <utility>
 
@@ -23,7 +24,16 @@ struct module : generic_value
     bool operator!=(const module& rhs) const;
 };
 
-const module main =
-    generic_value{reinterpret_cast<jl_value_t*>(jl_main_module)};
+namespace impl
+{
+
+global get_binding(jl_module_t* mod, symbol name_);
+
+} // namespace impl
+
+#ifndef JLPP_MANUAL_INIT
+const module main = generic_value{
+    (impl::ensure_init(), reinterpret_cast<jl_value_t*>(jl_main_module))};
+#endif
 
 } // namespace jl

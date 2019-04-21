@@ -10,7 +10,10 @@ namespace jl
 {
 
 inline global::global(jl_binding_t* binding_) : _binding{binding_} {}
-inline global::global(symbol symbol_) : global{main[symbol_]} {}
+inline global::global(symbol symbol_)
+    : global{(impl::ensure_init(), impl::get_binding(jl_main_module, symbol_))}
+{
+}
 
 inline jl_binding_t* global::c_binding()
 {
