@@ -2,6 +2,7 @@
 
 #include "Assert.hpp"
 #include "Errors.hpp"
+#include "Global.hpp"
 #include "Helpers.hpp"
 #include "Sync.hpp"
 
@@ -87,6 +88,10 @@ jl_value_t* box(ArgT&& arg_)
 
     if constexpr (std::is_convertible_v<DecayedArgT, jl_value_t*>)
         return arg_;
+    else if constexpr (std::is_base_of_v<generic_value, DecayedArgT>)
+        return arg_.c_val();
+    else if constexpr (std::is_same_v<global, DecayedArgT>)
+        return arg_.value().c_val();
     else if constexpr (std::is_same<DecayedArgT, bool>())
         return jl_box_bool(arg_);
     else if constexpr (std::is_integral_v<DecayedArgT>)

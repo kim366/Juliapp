@@ -28,16 +28,18 @@ int main()
         f(x) = println(x)
       end
      )");
-    jl::sync(jl::type<Vec2>{"NTuple{2, Float32}"});
+    //    jl::sync(jl::type<Vec2>{"NTuple{2, Float32}"});
+    //
+    //    jl::function f{"Mod"_jlm, "f"};
+    //    f(1337);
 
-    jl::function f{"Mod"_jlm, "f"};
-    f(1337);
+    //    auto jl_vec{jl::make_value<Vec2>(7.f, 1.f)};
+    //    static_assert(std::is_same_v<decltype(jl_vec), jl::value<Vec2>>);
+    //    std::printf("From C: %f\n", jl_vec->x);
+    //    jl_vec->x = 7.12345f;
+    //    std::printf("%f\n", jl_vec.get<Vec2>().x);
 
-    auto jl_vec{jl::make_value<Vec2>(7.f, 1.f)};
-    static_assert(std::is_same_v<decltype(jl_vec), jl::value<Vec2>>);
-    std::printf("From C: %f\n", jl_vec->x);
-    jl_vec->x = 7.12345f;
-    std::printf("%f\n", jl_vec.get<Vec2>().x);
+    auto integer = "Core"_jlm["Int64"];
 
     // struct S
     // {
@@ -93,8 +95,8 @@ int main()
     //    jl::array<int> arr{5, 8, 1};
     //    jl::array<int> reversed_arr{jl::call("reverse", arr)};
     //    jl::call("println", arr);
-    jl::call("println", jl_vec);
-    jl::call("println", Vec2{2, 3});
+    //    jl::call("println", jl_vec);
+    //    jl::call("println", Vec2{2, 3});
     // jl::call("println", jl_vec);
     /* TODO: Fix this call; if called instead of above a jl:: call, jl_vec gets
      * garbage collected. */

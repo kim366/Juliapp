@@ -23,3 +23,16 @@ TEST_CASE("Function returning function")
 
     CHECK(f(2).get<int>() == 6);
 }
+
+TEST_CASE("Function taking data type value")
+{
+    auto integer = "Core"_jlm["Int64"];
+
+    CHECK("sizeof"_jlf(integer.value()).get<jl::int_t>() == 8);
+}
+
+TEST_CASE("Function taking data type binding")
+{
+    auto integer = "Core"_jlm["Int64"];
+    CHECK("sizeof"_jlf(integer.value()).get<jl::int_t>() == 8);
+}
