@@ -6,7 +6,7 @@
 namespace jl
 {
 
-struct function;
+class function;
 struct module;
 
 class generic_value

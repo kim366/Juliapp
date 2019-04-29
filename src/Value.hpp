@@ -5,8 +5,8 @@
 namespace jl
 {
 
-class function;
-class module;
+struct function;
+struct module;
 
 namespace impl
 {

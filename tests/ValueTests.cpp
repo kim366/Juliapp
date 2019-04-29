@@ -101,8 +101,7 @@ TEST_CASE("References to mutable/immutable structs")
 TEST_CASE("Primitive value dereferencing")
 {
     auto primit = jl::value{12};
-    CHECK_NOTHROW(
-        jlpp_static_assert(!std::is_lvalue_reference_v<decltype(*primit)>));
+    CHECK(!std::is_lvalue_reference_v<decltype(*primit)>);
 }
 
 TEST_CASE("Struct size mismatch check")

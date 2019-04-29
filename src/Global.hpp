@@ -9,8 +9,8 @@ namespace jl
 
 class symbol;
 class generic_value;
-class function;
-class module;
+struct function;
+struct module;
 
 class global
 {

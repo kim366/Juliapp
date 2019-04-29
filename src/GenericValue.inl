@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GenericValue.hpp"
+
 #include <Boxing.hpp>
 #include <Helpers.hpp>
 #include <Init.hpp>
@@ -67,8 +69,7 @@ TargT generic_value::get() noexcept
         return *reinterpret_cast<std::decay_t<TargT>*>(_boxed_value);
 }
 
-template<typename TargT,
-         typename = std::enable_if_t<std::is_fundamental<TargT>{}>>
+template<typename TargT, typename>
 generic_value::operator TargT()
 {
     return impl::unbox<TargT>(_boxed_value);
