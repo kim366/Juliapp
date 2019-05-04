@@ -104,4 +104,22 @@ bool jl::generic_value::typeis()
     return jl_typeis(_boxed_value, impl::get_type<T>());
 }
 
+inline jl::generic_value& jl::generic_value::
+    operator=(const jl::generic_value& other_)
+{
+    this->~generic_value();
+    _boxed_value = other_._boxed_value;
+    impl::root_value(_boxed_value);
+    return *this;
+}
+
+inline jl::generic_value& jl::generic_value::
+    operator=(jl::generic_value&& other_)
+{
+    this->~generic_value();
+    _boxed_value = other_._boxed_value;
+    other_._boxed_value = nullptr;
+    return *this;
+}
+
 } // namespace jl

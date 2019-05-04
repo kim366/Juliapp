@@ -46,6 +46,9 @@ public:
     template<typename ElemT>
     explicit operator array<ElemT>() noexcept;
 
+    generic_value& operator=(const generic_value& other_);
+    generic_value& operator=(generic_value&& other_);
+
     generic_value generic() const&;
     generic_value generic() &&;
 
