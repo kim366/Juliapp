@@ -46,8 +46,7 @@ public:
     template<typename ElemT>
     explicit operator array<ElemT>() noexcept;
 
-    generic_value& operator=(const generic_value& other_);
-    generic_value& operator=(generic_value&& other_);
+    generic_value& operator=(generic_value other_);
 
     generic_value generic() const&;
     generic_value generic() &&;
@@ -57,6 +56,8 @@ public:
 
     template<typename T>
     bool typeis();
+
+    friend void swap(generic_value& first, generic_value& second);
 
 protected:
     jl_value_t* _boxed_value;

@@ -16,15 +16,15 @@ inline generic_value::generic_value(jl_value_t* boxed_value_) noexcept
 }
 
 inline generic_value::generic_value() noexcept : generic_value{nullptr} {}
+
 inline generic_value::generic_value(const generic_value& other)
     : generic_value{other.c_val()}
 {
 }
 
-inline generic_value::generic_value(generic_value&& other)
-    : _boxed_value{other.c_val()}
+inline generic_value::generic_value(generic_value&& other) : generic_value{}
 {
-    other._boxed_value = nullptr;
+    swap(*this, other);
 }
 
 inline generic_value::~generic_value()
@@ -99,27 +99,21 @@ inline generic_value generic_value::generic() &&
 }
 
 template<typename T>
-bool jl::generic_value::typeis()
+bool generic_value::typeis()
 {
     return jl_typeis(_boxed_value, impl::get_type<T>());
 }
 
-inline jl::generic_value& jl::generic_value::
-    operator=(const jl::generic_value& other_)
+inline generic_value& generic_value::operator=(generic_value other_)
 {
-    this->~generic_value();
-    _boxed_value = other_._boxed_value;
-    impl::root_value(_boxed_value);
+    swap(*this, other_);
     return *this;
 }
 
-inline jl::generic_value& jl::generic_value::
-    operator=(jl::generic_value&& other_)
+inline void swap(generic_value& first, generic_value& second)
 {
-    this->~generic_value();
-    _boxed_value = other_._boxed_value;
-    other_._boxed_value = nullptr;
-    return *this;
+    using std::swap;
+    swap(first._boxed_value, second._boxed_value);
 }
 
 } // namespace jl
