@@ -110,3 +110,19 @@ TEST_CASE("Struct size mismatch check")
     CHECK_THROWS_AS(jl::sync_force_resolve<SizeMismatch>(),
                     jl::test::failed_assertion);
 }
+
+TEST_CASE("typeis")
+{
+    try
+    {
+        jl::eval("struct Mut x::Int64 end");
+    }
+    catch (const jl::error&)
+    {
+    }
+
+    auto x = jl::value{3}.generic();
+    REQUIRE(!x.typeis<float>());
+    REQUIRE(x.typeis<int>());
+    REQUIRE(!x.typeis<Mut>());
+}

@@ -98,4 +98,10 @@ inline generic_value generic_value::generic() &&
     return generic_value{std::move(*this)};
 }
 
+template<typename T>
+bool jl::generic_value::typeis()
+{
+    return jl_typeis(_boxed_value, impl::get_type<T>());
+}
+
 } // namespace jl

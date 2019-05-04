@@ -52,6 +52,9 @@ public:
     function as_function();
     module as_module();
 
+    template<typename T>
+    bool typeis();
+
 protected:
     jl_value_t* _boxed_value;
 };
