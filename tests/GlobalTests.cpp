@@ -1,6 +1,6 @@
 #include "catch.hpp"
 
-#define JLPP_IMPL_UNIT_TESTING
+#define IMPL_JLPP_UNIT_TESTING
 #include <Julia.hpp>
 
 using namespace jl::literals;

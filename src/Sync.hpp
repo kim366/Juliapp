@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Assert.hpp"
+#include "TestingUtils.hpp"
 #include "GenericValue.hpp"
 #include "Symbol.hpp"
 
@@ -21,7 +21,7 @@ struct types_match_impl
 };
 
 #define IMPL_JLPP_ASSERT_SYNC                                                  \
-    jlpp_static_assert(::jl::impl::types_match_impl<SyncedT>::synced,          \
+    impl_jlpp_static_assert(::jl::impl::types_match_impl<SyncedT>::synced,          \
                        "Type not synced (type labelled as SyncedT)!")
 
 #define JLPP_SYNC(cpp_type, julia_type)                                                            \
@@ -33,7 +33,7 @@ struct types_match_impl
         static auto type()                                                                         \
         {                                                                                          \
             static auto type = julia_type.value().c_val();                                         \
-            jlpp_assert(                                                                           \
+            impl_jlpp_assert(                                                                           \
                 jl_datatype_size(type) == sizeof(cpp_type)                                         \
                 && "Synced type sizes do not match. Are you sure the definitions are identical?"); \
             return type;                                                                           \

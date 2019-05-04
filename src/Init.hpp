@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Assert.hpp"
+#include "TestingUtils.hpp"
 
 #include <algorithm>
 #include <julia.h>
@@ -38,7 +38,7 @@ inline void release_value(jl_value_t* val)
     {
         const auto found_val =
             std::find(rooted_values.rbegin(), rooted_values.rend(), val);
-        jlpp_assert(found_val != rooted_values.rend()
+        impl_jlpp_assert(found_val != rooted_values.rend()
                     && "Releasing unrooted value");
         rooted_values.erase(std::next(found_val).base());
     }

@@ -3,7 +3,7 @@
 #include <cassert>
 #include <stdexcept>
 
-#ifdef JLPP_IMPL_UNIT_TESTING
+#ifdef IMPL_JLPP_UNIT_TESTING
 
 namespace jl
 {
@@ -62,13 +62,25 @@ struct static_assertion_instance<false>
 } // namespace jl
 
 // clang-format off
-#define jlpp_assert(expr)                                                      \
+#define impl_jlpp_assert(expr)                                                      \
     jl::impl::test::assertion_instance{expr, #expr}
-#define jlpp_static_assert(expr, ...)                                          \
+#define impl_jlpp_static_assert(expr, ...)                                          \
     jl::impl::test::static_assertion_instance<expr>{#__VA_ARGS__}
 // clang-format on
 
 #else
-#define jlpp_assert(expr) assert(expr)
-#define jlpp_static_assert(expr, ...) static_assert(expr, __VA_ARGS__)
+#define impl_jlpp_assert(expr) assert(expr)
+#define impl_jlpp_static_assert(expr, ...) static_assert(expr, __VA_ARGS__)
 #endif
+
+#define IMPL_JLPP_IGNORE_ERROR(expr)                                           \
+    do                                                                         \
+    {                                                                          \
+        try                                                                    \
+        {                                                                      \
+            expr;                                                              \
+        }                                                                      \
+        catch (const jl::error&)                                               \
+        {                                                                      \
+        }                                                                      \
+    } while (false)

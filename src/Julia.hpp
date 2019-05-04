@@ -29,7 +29,7 @@ template<typename ValT, typename... ArgTs>
 value<ValT> make_value(ArgTs&&... args_)
 {
     jl_datatype_t* found{impl::find_synced_jl_type<ValT>()};
-    jlpp_assert(found && "Requested type not synced");
+    impl_jlpp_assert(found && "Requested type not synced");
     jl_value_t* val{jl_new_struct_uninit(found)};
     *reinterpret_cast<ValT*>(jl_data_ptr(val)) =
         ValT(std::forward<ArgTs>(args_)...);
@@ -69,7 +69,7 @@ void raise_error(symbol content_, ArgTs... args_)
 inline void init()
 {
 #ifndef JLPP_MANUAL_INIT
-    jlpp_assert(false && "Define JLPP_MANUAL_INIT before using init/quit");
+    impl_jlpp_assert(false && "Define JLPP_MANUAL_INIT before using init/quit");
 #endif
     impl::init();
 }
@@ -77,7 +77,7 @@ inline void init()
 inline void quit(int status_ = 0)
 {
 #ifndef JLPP_MANUAL_INIT
-    jlpp_assert(false && "Define JLPP_MANUAL_INIT before using init/quit");
+    impl_jlpp_assert(false && "Define JLPP_MANUAL_INIT before using init/quit");
 #endif
     impl::quit(status_);
 }

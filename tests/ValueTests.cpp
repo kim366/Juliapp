@@ -1,6 +1,6 @@
 #include "catch.hpp"
 
-#define JLPP_IMPL_UNIT_TESTING
+#define IMPL_JLPP_UNIT_TESTING
 #include <Julia.hpp>
 
 using namespace jl::literals;
@@ -84,10 +84,8 @@ TEST_CASE("Literals")
 
 TEST_CASE("References to mutable/immutable structs")
 {
-    jl::eval(R"(
-      mutable struct Mut x::Int64 end
-      struct Immut x::Int64 end
-    )");
+    IMPL_JLPP_IGNORE_ERROR(jl::eval("mutable struct Mut x::Int64 end"));
+    jl::eval("struct Immut x::Int64 end");
 
     auto mut = jl::value<Mut>{{3}};
     auto immut = jl::value<Immut>{{7}};
@@ -113,14 +111,7 @@ TEST_CASE("Struct size mismatch check")
 
 TEST_CASE("typeis")
 {
-    try
-    {
-        jl::eval("struct Mut x::Int64 end");
-    }
-    catch (const jl::error&)
-    {
-    }
-
+    IMPL_JLPP_IGNORE_ERROR(jl::eval("struct Mut x::Int64 end"));
     auto x = jl::value{3}.generic();
     REQUIRE(!x.typeis<float>());
     REQUIRE(x.typeis<int>());
@@ -129,13 +120,7 @@ TEST_CASE("typeis")
 
 TEST_CASE("Getting julia type")
 {
-    try
-    {
-        jl::eval("struct Mut x::Int64 end");
-    }
-    catch (const jl::error&)
-    {
-    }
+    IMPL_JLPP_IGNORE_ERROR(jl::eval("struct Mut x::Int64 end"));
 
     REQUIRE(jl::get_type<Mut>() == "Mut"_jlg.value());
     REQUIRE(jl::get_type<Mut>() != "Core"_jlm["Int"].value());

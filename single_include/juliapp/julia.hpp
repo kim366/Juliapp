@@ -41,7 +41,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <cassert>
 #include <stdexcept>
 
-#ifdef JLPP_IMPL_UNIT_TESTING
+#ifdef IMPL_JLPP_UNIT_TESTING
 
 namespace jl
 {
@@ -111,7 +111,6 @@ struct static_assertion_instance<false>
 #define jlpp_static_assert(expr, ...) static_assert(expr, __VA_ARGS__)
 #endif
 
-
 #include <stdexcept>
 
 namespace jl
@@ -145,7 +144,6 @@ struct load_error : error
 };
 
 } // namespace jl
-
 
 #include <julia.h>
 
@@ -240,7 +238,6 @@ private:
 
 } // namespace jl
 
-
 #include <julia.h>
 
 namespace jl
@@ -297,7 +294,6 @@ protected:
 };
 
 } // namespace jl
-
 
 #include <julia.h>
 #include <string>
@@ -435,7 +431,6 @@ void sync_force_resolve()
 
 } // namespace jl
 
-
 #include <julia.h>
 
 namespace jl
@@ -504,7 +499,7 @@ RetT unbox(jl_value_t* arg_)
                 + jl_typeof_str(reinterpret_cast<jl_value_t*>(arg_))
                 + " given, but synced with "
                 + jl_typename_str(reinterpret_cast<jl_value_t*>(
-                      find_synced_jl_type<std::decay_t<RetT>>()))
+                    find_synced_jl_type<std::decay_t<RetT>>()))
                 + '.'};
         return *reinterpret_cast<std::decay_t<RetT>*>(jl_data_ptr(arg_));
     }
@@ -601,9 +596,7 @@ struct make_arg_vec<DatT>
 
 } // namespace jl
 
-
 #include <utility>
-
 
 #include <algorithm>
 #include <julia.h>
@@ -708,7 +701,6 @@ const module main = generic_value{
 
 } // namespace jl
 
-
 #include <julia.h>
 #include <string>
 
@@ -764,7 +756,6 @@ generic_value function::operator()(ArgTs&&... args_)
 }
 
 } // namespace jl
-
 
 namespace jl
 {
@@ -833,7 +824,6 @@ global::operator TargT()
 }
 
 } // namespace jl
-
 
 namespace jl
 {
@@ -929,7 +919,6 @@ inline generic_value generic_value::generic() &&
 
 } // namespace jl
 
-
 #include <julia.h>
 
 namespace jl
@@ -963,7 +952,6 @@ inline global& global::operator=(const generic_value& value_)
 
 } // namespace jl
 
-
 namespace jl::literals
 {
 inline function operator""_jlf(const char* name_, std::size_t)
@@ -982,7 +970,6 @@ inline global operator""_jlg(const char* name_, std::size_t)
 }
 
 } // namespace jl::literals
-
 
 namespace jl
 {
@@ -1030,7 +1017,6 @@ inline global get_binding(jl_module_t* mod, symbol name_)
 } // namespace impl
 
 } // namespace jl
-
 
 namespace jl
 {
