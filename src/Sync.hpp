@@ -117,4 +117,10 @@ void sync_force_resolve()
     impl::sync_force_resolve_impl<Ts...>::resolve();
 }
 
+template<typename ElemT>
+generic_value get_type()
+{
+    return reinterpret_cast<jl_value_t*>(impl::get_type<ElemT>());
+}
+
 } // namespace jl

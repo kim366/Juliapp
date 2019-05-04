@@ -126,3 +126,17 @@ TEST_CASE("typeis")
     REQUIRE(x.typeis<int>());
     REQUIRE(!x.typeis<Mut>());
 }
+
+TEST_CASE("Getting julia type")
+{
+    try
+    {
+        jl::eval("struct Mut x::Int64 end");
+    }
+    catch (const jl::error&)
+    {
+    }
+
+    REQUIRE(jl::get_type<Mut>() == "Mut"_jlg.value());
+    REQUIRE(jl::get_type<Mut>() != "Core"_jlm["Int"].value());
+}
