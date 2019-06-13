@@ -6,9 +6,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_definitions(-Wall -Wextra -Wpedantic -Werror -Wfatal-errors)
 
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}")
 
+set(Julia_EXECUTABLE "$ENV{HOME}/Desktop/julia/usr/bin/julia-debug")
+set(Julia_LIBRARY_NAME "julia-debug")
 find_package(Julia)
 
 add_definitions(${Julia_DEFINITIONS})
@@ -20,11 +21,14 @@ add_definitions(-DJULIA_ENABLE_THREADING=1)
 
 add_executable(demo demo/demo.cpp)
 
+add_executable(cfunction demo/cfunction.cpp)
+
 add_executable(tests tests/Tests.cpp tests/ValueTests.cpp tests/FreeFunctionTests.cpp tests/FunctionTests.cpp tests/ModuleTests.cpp tests/GlobalTests.cpp)
 target_compile_options(tests PUBLIC -fprofile-arcs -ftest-coverage)
 
 include_directories(src julia/include/julia)
 
 target_link_libraries(demo ${Julia_LIBRARIES})
+target_link_libraries(cfunction ${Julia_LIBRARIES})
 target_link_libraries(tests ${Julia_LIBRARIES} gcov --coverage)
 
