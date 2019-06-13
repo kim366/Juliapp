@@ -39,7 +39,7 @@ int main()
     //    jl_vec->x = 7.12345f;
     //    std::printf("%f\n", jl_vec.get<Vec2>().x);
 
-    auto integer = "Core"_jlm["Int64"];
+    auto integer[[maybe_unused]] = "Core"_jlm["Int64"];
 
     // struct S
     // {
