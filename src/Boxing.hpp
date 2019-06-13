@@ -66,6 +66,14 @@ RetT unbox(jl_value_t* arg_)
         throw result_type_error{
             "Incorrect result type. Integral type requested"};
     }
+    else if constexpr (std::is_same_v<RetT, void*>)
+    {
+        if (jl_typeis(arg_, jl_voidpointer_type))
+            return jl_unbox_voidpointer(arg_);
+
+        throw result_type_error{
+            "Incorrect result type. Void pointer type requested"};
+    }
     else
     {
         if (!impl::types_match<std::decay_t<RetT>>(jl_typeof(arg_)))
