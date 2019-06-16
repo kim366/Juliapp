@@ -125,3 +125,10 @@ TEST_CASE("Getting julia type")
     REQUIRE(jl::get_type<Mut>() == "Mut"_jlg.value());
     REQUIRE(jl::get_type<Mut>() != "Core"_jlm["Int"].value());
 }
+
+TEST_CASE("Unboxing void pointer")
+{
+    auto x = jl::eval("Ptr{Cvoid}(Int(0x10ff))");
+
+    REQUIRE(x.get<void*>() == (void*)(0x10ff));
+}

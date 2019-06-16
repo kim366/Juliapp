@@ -64,7 +64,10 @@ template<typename TargT, std::enable_if_t<!std::is_fundamental<TargT>{}>*>
 TargT generic_value::get() noexcept
 {
     if constexpr (std::is_pointer_v<TargT>)
-        return reinterpret_cast<TargT>(_boxed_value);
+        if constexpr (std::is_same_v<TargT, void*>)
+            return impl::unbox<TargT>(_boxed_value);
+        else
+            return reinterpret_cast<TargT>(_boxed_value);
     else
         return *reinterpret_cast<std::decay_t<TargT>*>(_boxed_value);
 }
