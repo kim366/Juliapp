@@ -8,8 +8,8 @@ add_definitions(-Wall -Wextra -Wpedantic -Werror -Wfatal-errors)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}")
 
-set(Julia_EXECUTABLE "$ENV{HOME}/Desktop/julia/usr/bin/julia-debug")
-set(Julia_LIBRARY_NAME "julia-debug")
+# set(Julia_EXECUTABLE "$ENV{HOME}/Desktop/julia/usr/bin/julia-debug")
+# set(Julia_LIBRARY_NAME "julia-debug")
 find_package(Julia)
 
 add_definitions(${Julia_DEFINITIONS})
