@@ -1,9 +1,6 @@
-:warning: Do not currently use this library! It is under heavy development and will rely on changes in Julia 1.1 :warning:
-===========
-
-### You can save it for later, though :)
-
 # Juliapp
+
+Warning: there is no active development on this repository. You are free to fork it and continue work. I might one day also pick it back up
 
 This single-include header-only API wrapper for embedding Julia code within C++ was made with ease-of-use in mind with automatic type deduction, but still keeping explicitness where appropriate.
 
