@@ -1,4 +1,4 @@
-const include_regex = Regex(raw"""^#include [<"](([A-Z][a-z0-9]+)+\.(hpp|inl))[">]$""", "m")
+const include_regex = Regex(raw"""^#include "(([a-z][a-z0-9]+)+\.(hpp|inl))"$""", "m")
 
 const header = """
 /*
@@ -24,7 +24,7 @@ const footer = """
 readheader(filename) = replace(read("src/$filename", String), "#pragma once" => "")
 stripnewlines(content) = replace(content, Regex(raw"^\n\n+$", "m") => "\n")
 
-let sourcecode = readheader("Julia.hpp")
+let sourcecode = readheader("julia.hpp")
   included_headers = []
 
   while true
