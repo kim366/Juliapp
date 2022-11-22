@@ -1,2 +1,5 @@
-build/
+build*/
 julia/
+.vscode
+*.code-workspace
+compile_commands.json
