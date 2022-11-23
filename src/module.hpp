@@ -44,7 +44,11 @@ jl_module_t* module::raw() const
 
 global module::operator[](const char* name) const
 {
-    return global::from_raw(jl_get_binding_wr(raw(), jl_symbol(name), 0));
+    const auto sym = jl_symbol(name);
+    auto binding = jl_get_binding(raw(), sym);
+    auto is_writeable = !binding->constp && (binding->owner == raw() || binding->imported);
+
+    return global::from_raw(binding, is_writeable);
 }
 
 module module::from_raw(jl_module_t* raw)

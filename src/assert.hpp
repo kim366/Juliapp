@@ -71,6 +71,9 @@ struct static_assertion_instance<false>
 #else
 #define impl_jlpp_assert(expr) assert(expr)
 #define impl_jlpp_static_assert(expr, ...) static_assert(expr, __VA_ARGS__)
+
+template<int T>
+constexpr void impl_jlpp_illegal(const char*) {}
 #endif
 
 #define IMPL_JLPP_IGNORE_ERROR(expr)                                           \

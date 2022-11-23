@@ -5,15 +5,11 @@ int main()
 {
     using namespace jl::literals;
 
-    jl::eval("x::Int = 17; fn() = println(\"Hello world\")");
-    const auto x = jl::main["x"];
-    const auto y = *jl::main["x"];
+    jl::eval("module M; export fn, x; x = 22; fn(x) = println(\"Hello world $x\") end; import .M: fn, x");
+    auto x = jl::main["x"];
 
-    auto a = jl::function{jl::value::from_raw(jl_get_binding(jl_main_module, jl_symbol("fn"))->value)};
-
-    jl::eval("x = 20");
-
-   a();
-
-   std::printf("%d %d\n", jl::value_cast<int>(*x), jl::value_cast<int>(y));
+    auto a = "fn"_jlf;
+    x.set(9999);
+   a(7);
+   jl::eval("println(x)");
 }
