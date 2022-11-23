@@ -1,6 +1,7 @@
 #pragma once
 
 #include "errors.hpp"
+#include "assert.hpp"
 #include <julia/julia.h>
 
 namespace jl::impl
@@ -99,7 +100,7 @@ jl_value_t* box(const T& val)
         return jl_box_voidpointer(val);
     else
     {
-       throw result_type_error{"unsupported type"};
+        impl_jlpp_illegal<T>("the provided type could not be boxed (illegal type T)");
     }
 }
 
