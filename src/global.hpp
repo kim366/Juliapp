@@ -13,8 +13,8 @@ private:
 
 public:
     static global from_raw(jl_binding_t* val);
-    value operator*();
-//    global& operator=(const value& val);
+    value operator*() const;
+    global& operator=(const value& val);
 };
 
 global global::from_raw(jl_binding_t* val)
@@ -24,9 +24,16 @@ global global::from_raw(jl_binding_t* val)
     return result;
 }
 
-value global::operator*()
+value global::operator*() const
 {
     return value::from_raw(raw_->value);
 }
+
+//global& global::operator=(const value& val)
+//{
+//    // TODO: Base.cast
+//    jl_checked_assignment(raw_, val.raw());
+//    return *this;
+//}
 
 } // namespace jl

@@ -23,16 +23,19 @@ private:
     jl_value_t* raw_;
 
 public:
+    template<typename T>
+    value(const T& val);
+
     value(const value& other);
     value& operator=(const value& other);
 
     value(value&& other);
-    value& operator=(value&& other);
+    value& operator=(value&& other) noexcept;
 
     ~value();
 
-    static value from_raw(jl_value_t* val);
     jl_value_t *raw() const;
+    static value from_raw(jl_value_t* val);
 
 private:
     explicit value(jl_value_t* raw);
@@ -56,6 +59,12 @@ value::value(jl_value_t* raw)
     impl::root_value(raw_);
 }
 
+template<typename T>
+value::value(const T& val)
+    : value{impl::box(val)}
+{
+}
+
 value::value(const value& other)
     : value{other.raw_}
 {
@@ -74,7 +83,7 @@ value::value(value&& other)
     std::swap(other.raw_, raw_);
 }
 
-value& value::operator=(value&& other)
+value& value::operator=(value&& other) noexcept
 {
     std::swap(other.raw_, raw_);
     return *this;
