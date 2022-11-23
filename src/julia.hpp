@@ -4,3 +4,4 @@
 #include "eval.hpp"
 #include "module.hpp"
 #include "literals.hpp"
+#include "function.hpp"
