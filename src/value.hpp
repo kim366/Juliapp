@@ -32,6 +32,11 @@ public:
     value(value&& other);
     value& operator=(value&& other) noexcept;
 
+    value operator()() const;
+
+    template<typename T, typename... Ts>
+    value operator()(T&& first, Ts&&... rest) const;
+
     ~value();
 
     jl_value_t *raw() const;
@@ -87,6 +92,25 @@ value& value::operator=(value&& other) noexcept
 {
     std::swap(other.raw_, raw_);
     return *this;
+}
+
+value value::operator()() const
+{
+    return value::from_raw(jl_call0(raw()));
+}
+
+template<typename T, typename... Ts>
+value value::operator()(T&& first, Ts&&... rest) const
+{
+    value values[]{std::forward<T>(first), std::forward<Ts>(rest)...};
+    constexpr auto num_args = sizeof...(rest) + 1;
+
+    for (decltype(num_args) i = 0; i < num_args; ++i)
+        values[i] = values[i].raw();
+
+    auto result = value::from_raw(jl_call(raw(), values, num_args));
+
+    return result;
 }
 
 value::~value()
