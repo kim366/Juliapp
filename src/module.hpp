@@ -46,7 +46,7 @@ global module::operator[](const char* name) const
 {
     const auto sym = jl_symbol(name);
     auto binding = jl_get_binding(raw(), sym);
-    auto is_writeable = !binding->constp && (binding->owner == raw() || binding->imported);
+    auto is_writeable = !binding->constp && binding->owner == raw();
 
     return global::from_raw(binding, is_writeable);
 }

@@ -1,7 +1,9 @@
 #pragma once
 
-#include "errors.hpp"
+#include "analogous.hpp"
 #include "assert.hpp"
+#include "errors.hpp"
+
 #include <julia/julia.h>
 
 namespace jl::impl
@@ -58,7 +60,14 @@ T unbox(jl_value_t* val)
     }
     else
     {
-        throw result_type_error{"unsupported type"};
+        auto type = analogous<T>{}();
+        impl_jlpp_assert("The analogous type must be a DataType", jl_typeis(type.raw(), jl_datatype_type));
+        impl_jlpp_assert("Data type sizes do not match! Are you sure these are the same data types?", jl_datatype_size(type.raw()) == sizeof(T));
+
+        // TODO: use exception and print name of type, __PRETTY_FUNCTION__/__FUNCSIG__
+        impl_jlpp_assert("Mismatched type requested", jl_egal(type.raw(), jl_typeof(val)));
+        // TODO: allow also non-copies
+        return *reinterpret_cast<T*>(jl_data_ptr(val));
     }
 }
 
