@@ -34,8 +34,8 @@ public:
 
     value operator()() const;
 
-    template<typename T, typename... Ts>
-    value operator()(T&& first, Ts&&... rest) const;
+    template<typename... Ts>
+    value operator()(Ts&&... args) const;
 
     ~value();
 
@@ -99,18 +99,11 @@ value value::operator()() const
     return value::from_raw(jl_call0(raw()));
 }
 
-template<typename T, typename... Ts>
-value value::operator()(T&& first, Ts&&... rest) const
+template<typename... Ts>
+value value::operator()(Ts&&... args) const
 {
-    value values[]{std::forward<T>(first), std::forward<Ts>(rest)...};
-    constexpr auto num_args = sizeof...(rest) + 1;
-
-    for (decltype(num_args) i = 0; i < num_args; ++i)
-        values[i] = values[i].raw();
-
-    auto result = value::from_raw(jl_call(raw(), values, num_args));
-
-    return result;
+    value values[]{std::forward<Ts>(args)...};
+    return value::from_raw(jl_call(raw(), reinterpret_cast<jl_value_t**>(values), sizeof...(args)));
 }
 
 value::~value()

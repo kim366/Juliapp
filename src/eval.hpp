@@ -1,11 +1,13 @@
 #pragma once
 
+#include "value.hpp"
+
 namespace jl
 {
 
-void eval(const char* source)
+value eval(const char* source)
 {
-    jl_eval_string(source);
+    return value::from_raw(jl_eval_string(source));
 }
 
 } // namespace jl

@@ -2,6 +2,7 @@
 
 #include "value.hpp"
 #include "global.hpp"
+#include "module.hpp"
 
 namespace jl::literals
 {

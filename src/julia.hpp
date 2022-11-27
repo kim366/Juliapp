@@ -1,6 +1,8 @@
 #pragma once
 
-#include "value.hpp"
+#include "analogous.hpp"
 #include "eval.hpp"
-#include "module.hpp"
 #include "literals.hpp"
+#include "module.hpp"
+#include "predefined_types.hpp"
+#include "value.hpp"

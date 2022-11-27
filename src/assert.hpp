@@ -69,8 +69,8 @@ struct static_assertion_instance<false>
 // clang-format on
 
 #else
-#define impl_jlpp_assert(expr) assert(expr)
-#define impl_jlpp_static_assert(expr, ...) static_assert(expr, __VA_ARGS__)
+#define impl_jlpp_assert(msg, expr) assert(((void)(msg), (expr)))
+#define impl_jlpp_static_assert(msg, expr) static_assert(expr, msg)
 
 template<int T>
 constexpr void impl_jlpp_illegal(const char*) {}

@@ -38,12 +38,17 @@ inline void root_value(jl_value_t* val)
 
 inline void release_value(jl_value_t* val)
 {
+    // TODO: replace with swap(itr, vals.back()); vals.pop_back();
+    // + store address of value wrapper, ignore release of unrooted values
+    // this will happen if a pointer struct field is set from within Julia
+    // and then released/overwritten from C++
+    // do a check that this indeed happens only from struct-pointer-fields
+    // bool maybe_unrooted
     if (val != nullptr)
     {
         const auto found_val =
             std::find(rooted_values.rbegin(), rooted_values.rend(), val);
-        impl_jlpp_assert(found_val != rooted_values.rend()
-                    && "Releasing unrooted value");
+        impl_jlpp_assert("Releasing unrooted value", found_val != rooted_values.rend());
         rooted_values.erase(std::next(found_val).base());
     }
 }
