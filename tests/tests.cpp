@@ -1,12 +1,13 @@
 #include <catch2/catch_test_macros.hpp>
+#include <julia.hpp>
 
-TEST_CASE("Catch2 works")
+TEST_CASE("Raw symbol contains the given name")
 {
-    const auto input_a = 3;
-    const auto input_b = 7;
-    const auto expected = 10;
+    const auto input = "hello";
+    const auto expected = std::string{input};
+    const auto symbol = jl::symbol{input};
 
-    const auto result = input_a + input_b;
+    const auto result = jl_symbol_name(symbol.raw());
 
     REQUIRE(result == expected);
 }
