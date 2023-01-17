@@ -6,3 +6,4 @@
 #include "module.hpp"
 #include "predefined_types.hpp"
 #include "value.hpp"
+#include "symbol.hpp"
