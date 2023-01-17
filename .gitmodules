@@ -1,0 +1,8 @@
+[submodule "thirdparty/libcxxwrap-julia"]
+	path = thirdparty/libcxxwrap-julia
+	url = https://github.com/JuliaInterop/libcxxwrap-julia.git
+	branch = v0.9.3
+[submodule "thirdparty/Catch2"]
+	path = thirdparty/Catch2
+	url = https://github.com/catchorg/Catch2.git
+	branch = v3.2.1
