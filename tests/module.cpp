@@ -8,6 +8,7 @@ TEST_CASE("Module")
 {
     // before each test
     constexpr auto* EXPECTED = "Base";
+    auto* const DUMMY = jl_core_module;
     auto* const RAW = jl_base_module;
     auto* const RAW_GENERIC = reinterpret_cast<jl_value_t*>(RAW);
     const auto NUM_BACKGROUND_ROOTED = num_rooted();
@@ -16,6 +17,7 @@ TEST_CASE("Module")
     SECTION("Wrapped generic value can be converted to module")
     {
         const auto wrapped = jl::value::from_raw(RAW_GENERIC);
+
         const auto subject = jl::module{wrapped};
 
         REQUIRE(repr(subject) == EXPECTED);
@@ -24,9 +26,32 @@ TEST_CASE("Module")
     SECTION("Moved wrapped generic value can be converted to module")
     {
         auto wrapped = jl::value::from_raw(RAW_GENERIC);
+
         const auto subject = jl::module{std::move(wrapped)};
 
         REQUIRE(repr(subject) == EXPECTED);
+    }
+
+    SECTION("Wrapped generic value can be assigned to module")
+    {
+        const auto wrapped = jl::value::from_raw(RAW_GENERIC);
+        auto subject = jl::module{jl::from_raw, DUMMY};
+
+        auto& result = subject = wrapped;
+
+        REQUIRE(repr(subject) == EXPECTED);
+        REQUIRE(&result == &subject);
+    }
+
+    SECTION("Moved wrapped generic value can be assigned to module")
+    {
+        auto wrapped = jl::value::from_raw(RAW_GENERIC);
+        auto subject = jl::module{jl::from_raw, DUMMY};
+
+        auto& result = subject = std::move(wrapped);
+
+        REQUIRE(repr(subject) == EXPECTED);
+        REQUIRE(&result == &subject);
     }
 
     SECTION("Wrapped generic value constructor is explicit")
@@ -87,6 +112,15 @@ TEST_CASE("Module")
         const auto* expected = "Expected Module, got UInt8";
 
         REQUIRE_THROWS_MATCHES(jl::module{wrapped}, std::invalid_argument, Catch::Matchers::Message(expected));
+    }
+
+    SECTION("Invalid wrapped generic value assignment causes error")
+    {
+        const auto wrapped = jl::value::from_raw(jl_box_uint8(19));
+        const auto* expected = "Expected Module, got UInt8";
+        auto subject = jl::module{jl::from_raw, RAW};
+
+        REQUIRE_THROWS_MATCHES(subject = wrapped, std::invalid_argument, Catch::Matchers::Message(expected));
     }
 
     // after each test

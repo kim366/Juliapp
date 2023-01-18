@@ -11,7 +11,9 @@ class symbol : value
 public:
     symbol(const char* name);
     explicit symbol(value val);
-    explicit symbol(jl::from_raw_t, jl_sym_t* sym);
+    explicit symbol(from_raw_t, jl_sym_t* sym);
+    symbol& operator=(value val);
+
     jl_sym_t* raw() const;
 };
 

@@ -35,22 +35,6 @@ value& value::operator=(value&& other) noexcept
     return *this;
 }
 
-static std::string datatype_name(jl_value_t* type)
-{
-    return jl_string_ptr(jl_call1(impl::repr_fn, type));
-}
-
-value::value(value&& val, jl_datatype_t* expected_type)
-    : value{std::move(val)}
-{
-    if (!jl_typeis(raw(), expected_type))
-    {
-        const auto type_name = datatype_name(reinterpret_cast<jl_value_t*>(expected_type));
-        const auto other_type_name = datatype_name(jl_typeof(raw()));
-        throw std::invalid_argument{std::string{"Expected "} + type_name + ", got " + other_type_name};
-    }
-}
-
 value value::operator()() const
 {
     return value::from_raw(jl_call0(raw()));
@@ -72,6 +56,34 @@ value value::from_raw(jl_value_t* val)
 jl_value_t* value::raw() const
 {
     return raw_;
+}
+
+static std::string datatype_name(jl_value_t* type)
+{
+    return jl_string_ptr(jl_call1(impl::repr_fn, type));
+}
+
+static void expect_admissible_downcast(jl_value_t* raw, jl_datatype_t* expected_type)
+{
+    if (!jl_typeis(raw, expected_type))
+    {
+        const auto type_name = datatype_name(reinterpret_cast<jl_value_t*>(expected_type));
+        const auto other_type_name = datatype_name(jl_typeof(raw));
+        throw std::invalid_argument{std::string{"Expected "} + type_name + ", got " + other_type_name};
+    }
+}
+
+value::value(value&& val, jl_datatype_t* expected_type)
+    : value{std::move(val)}
+{
+    expect_admissible_downcast(raw(), expected_type);
+    // TODO: nake sure destructor gets called in case of throw
+}
+
+void value::downcast_assign(value&& val, jl_datatype_t* expected_type)
+{
+    expect_admissible_downcast(val.raw(), expected_type);
+    *this = std::move(val);
 }
 
 } // namespace jl

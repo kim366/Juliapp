@@ -8,7 +8,7 @@ module::module(value val)
 {
 }
 
-module::module(jl::from_raw_t, jl_module_t* mod)
+module::module(from_raw_t, jl_module_t* mod)
     : value{value::from_raw(reinterpret_cast<jl_value_t*>(mod))}
 {
 }
@@ -25,6 +25,11 @@ global module::operator[](const char* name) const
     auto is_writeable = !binding->constp && binding->owner == raw();
 
     return global::from_raw(binding, is_writeable);
+}
+module& module::operator=(value val)
+{
+    downcast_assign(std::move(val), jl_module_type);
+    return *this;
 }
 
 #ifndef JLPP_MANUAL_INIT
