@@ -3,6 +3,7 @@ project(julia-cpp LANGUAGES CXX)
 
 # C++ settings
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*,-warnings-as-errors=*)
 
 if(MSVC)
     add_compile_options(/W4 /WX)
@@ -26,5 +27,5 @@ find_package(Catch2 3 REQUIRED CONFIG)
 add_executable(demo demo/demo.cpp)
 
 # Tests target
-add_executable(tests tests/tests.cpp)
+add_executable(tests tests/symbol.cpp)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
