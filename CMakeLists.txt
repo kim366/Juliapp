@@ -3,7 +3,7 @@ project(julia-cpp LANGUAGES CXX)
 
 # C++ settings
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*,-warnings-as-errors=*)
+set(CMAKE_CXX_CLANG_TIDY clang-tidy)
 
 if(MSVC)
     add_compile_options(/W4 /WX)
@@ -19,12 +19,16 @@ find_package(Julia)
 include_directories(src ${Julia_INCLUDE_DIRS})
 link_libraries(${Julia_LIBRARY})
 
-# Catch2
-set(Catch2_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch2/dist/usr/local/lib/cmake/Catch2)
-find_package(Catch2 3 REQUIRED CONFIG)
+# Juliapp target
+add_library(juliapp SHARED src/value.cpp src/symbol.cpp src/init.cpp src/module.cpp)
+link_libraries(juliapp)
 
 # Demo target
 add_executable(demo demo/demo.cpp)
+
+# Catch2
+set(Catch2_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch2/dist/usr/local/lib/cmake/Catch2)
+find_package(Catch2 3 REQUIRED CONFIG)
 
 # Tests target
 add_executable(tests tests/symbol.cpp)

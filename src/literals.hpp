@@ -1,8 +1,9 @@
 #pragma once
 
-#include "value.hpp"
 #include "global.hpp"
 #include "module.hpp"
+#include "standard_modules.hpp"
+#include "value.hpp"
 
 namespace jl::literals
 {

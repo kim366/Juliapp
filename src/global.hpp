@@ -1,6 +1,10 @@
 #pragma once
 
+#include "assert.hpp"
+#include "externs.hpp"
+#include "init.hpp"
 #include "value.hpp"
+
 #include <julia/julia.h>
 
 namespace jl
