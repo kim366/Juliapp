@@ -4,48 +4,39 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_exception.hpp>
 
-TEST_CASE("Symbol")
+TEST_CASE("Module")
 {
     // before each test
-    constexpr auto* INPUT = "hello";
-    constexpr auto* EXPECTED = ":hello";
-    auto* RAW = jl_symbol(INPUT);
-    auto* RAW_GENERIC = reinterpret_cast<jl_value_t*>(RAW);
+    constexpr auto* EXPECTED = "Base";
+    auto* const RAW = jl_base_module;
+    auto* const RAW_GENERIC = reinterpret_cast<jl_value_t*>(RAW);
     const auto NUM_BACKGROUND_ROOTED = num_rooted();
 
-    SECTION("Raw symbol contains the given name")
-    {
-        const auto subject = jl::symbol{INPUT};
 
-        REQUIRE(repr(subject) == EXPECTED);
-    }
-
-    SECTION("Wrapped generic value can be converted to symbol")
+    SECTION("Wrapped generic value can be converted to module")
     {
         const auto wrapped = jl::value::from_raw(RAW_GENERIC);
-
-        const auto subject = jl::symbol{wrapped};
+        const auto subject = jl::module{wrapped};
 
         REQUIRE(repr(subject) == EXPECTED);
     }
 
-    SECTION("Moved wrapped generic value can be converted to symbol")
+    SECTION("Moved wrapped generic value can be converted to module")
     {
         auto wrapped = jl::value::from_raw(RAW_GENERIC);
-
-        const auto subject = jl::symbol{std::move(wrapped)};
+        const auto subject = jl::module{std::move(wrapped)};
 
         REQUIRE(repr(subject) == EXPECTED);
     }
 
     SECTION("Wrapped generic value constructor is explicit")
     {
-        static_assert(!std::is_convertible_v<jl::value, jl::symbol>);
+        static_assert(!std::is_convertible_v<jl::value, jl::module>);
     }
 
-    SECTION("Raw generic value can be converted to symbol")
+    SECTION("Raw generic value can be converted to module")
     {
-        const auto subject = jl::symbol{jl::from_raw, RAW};
+        const auto subject = jl::module{jl::from_raw, RAW};
 
         REQUIRE(repr(subject) == EXPECTED);
     }
@@ -55,7 +46,7 @@ TEST_CASE("Symbol")
         REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 0);
 
         {
-            const auto subject = jl::symbol{jl::from_raw, RAW};
+            const auto subject = jl::module{jl::from_raw, RAW};
             REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 1);
         }
 
@@ -69,7 +60,7 @@ TEST_CASE("Symbol")
         REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 1);
 
         {
-            const auto subject = jl::symbol{wrapped};
+            const auto subject = jl::module{wrapped};
             REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 2);
         }
 
@@ -83,7 +74,7 @@ TEST_CASE("Symbol")
         REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 1);
 
         {
-            const auto subject = jl::symbol{std::move(wrapped)};
+            const auto subject = jl::module{std::move(wrapped)};
             REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 1);
         }
 
@@ -93,12 +84,11 @@ TEST_CASE("Symbol")
     SECTION("Invalid wrapped generic value causes error")
     {
         const auto wrapped = jl::value::from_raw(jl_box_uint8(19));
-        const auto* expected = "Expected Symbol, got UInt8";
+        const auto* expected = "Expected Module, got UInt8";
 
-        REQUIRE_THROWS_MATCHES(jl::symbol{wrapped}, std::invalid_argument, Catch::Matchers::Message(expected));
+        REQUIRE_THROWS_MATCHES(jl::module{wrapped}, std::invalid_argument, Catch::Matchers::Message(expected));
     }
 
     // after each test
     REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED);
 }
-

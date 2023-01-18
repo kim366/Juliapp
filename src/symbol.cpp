@@ -1,7 +1,6 @@
 #include "symbol.hpp"
 
 #include "externs.hpp"
-#include "init.hpp"
 
 namespace jl
 {
@@ -12,13 +11,8 @@ symbol::symbol(const char* name)
 }
 
 symbol::symbol(value val)
-    : value{std::move(val)}
+    : value{std::move(val), jl_symbol_type}
 {
-    if (!jl_typeis(raw(), jl_symbol_type))
-    {
-        const auto* type_name = jl_string_ptr(jl_call1(impl::repr_fn, jl_typeof(raw())));
-        throw std::invalid_argument{std::string{"Expected Symbol, got "} + type_name};
-    }
 }
 
 symbol::symbol(jl::from_raw_t, jl_sym_t* sym)

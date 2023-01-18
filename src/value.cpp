@@ -1,4 +1,6 @@
 #include "value.hpp"
+
+#include "externs.hpp"
 #include "init.hpp"
 
 namespace jl
@@ -31,6 +33,22 @@ value& value::operator=(value&& other) noexcept
 {
     std::swap(other.raw_, raw_);
     return *this;
+}
+
+static std::string datatype_name(jl_value_t* type)
+{
+    return jl_string_ptr(jl_call1(impl::repr_fn, type));
+}
+
+value::value(value&& val, jl_datatype_t* expected_type)
+    : value{std::move(val)}
+{
+    if (!jl_typeis(raw(), expected_type))
+    {
+        const auto type_name = datatype_name(reinterpret_cast<jl_value_t*>(expected_type));
+        const auto other_type_name = datatype_name(jl_typeof(raw()));
+        throw std::invalid_argument{std::string{"Expected "} + type_name + ", got " + other_type_name};
+    }
 }
 
 value value::operator()() const

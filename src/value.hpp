@@ -38,6 +38,9 @@ public:
     jl_value_t *raw() const;
     static value from_raw(jl_value_t* val);
 
+protected:
+    value(value&& val, jl_datatype_t* expected_type);
+
 private:
     explicit value(jl_value_t* raw);
 };
