@@ -14,6 +14,7 @@ namespace jl::impl
 inline std::vector<jl_value_t*> rooted_values;
 inline jl_ptls_t ptls;
 inline jl_function_t* convert_fn;
+inline jl_function_t* repr_fn;
 
 void root_scanner_cb(int);
 
@@ -22,6 +23,7 @@ inline void init()
     jl_init();
     ptls = static_cast<jl_ptls_t>(jl_get_ptls_states());
     convert_fn = jl_get_function(jl_base_module, "convert");
+    repr_fn = jl_get_function(jl_base_module, "repr");
     jl_gc_set_cb_root_scanner(root_scanner_cb, true);
 }
 
