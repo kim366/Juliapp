@@ -1,40 +1,39 @@
+#include "julia.hpp"
+#include "utility.hpp"
+
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_all.hpp>
-#include <julia.hpp>
+#include <catch2/matchers/catch_matchers_exception.hpp>
+
+constexpr static auto* INPUT = "hello";
+constexpr static auto* EXPECTED = ":hello";
 
 TEST_CASE("Raw symbol contains the given name", "[symbol]")
 {
-    const auto* input = "hello";
-    const auto expected = std::string{input};
-    const auto subject = jl::symbol{input};
+    const auto subject = jl::symbol{INPUT};
 
-    const auto* result = jl_symbol_name(subject.raw());
+    const auto result = repr(subject);
 
-    REQUIRE(result == expected);
+    REQUIRE(result == EXPECTED);
 }
 
 TEST_CASE("Wrapped generic value can be converted to symbol", "[symbol]")
 {
-    const auto* input = "hello";
-    const auto expected = std::string{input};
-    const auto wrapped = jl::value::from_raw(reinterpret_cast<jl_value_t*>(jl_symbol(input)));
+    const auto wrapped = jl::value::from_raw(reinterpret_cast<jl_value_t*>(jl_symbol(INPUT)));
     const auto subject = jl::symbol{wrapped};
 
-    const auto* result = jl_symbol_name(subject.raw());
+    const auto result = repr(subject);
 
-    REQUIRE(result == expected);
+    REQUIRE(result == EXPECTED);
 }
 
 TEST_CASE("Moved wrapped generic value can be converted to symbol", "[symbol]")
 {
-    const auto* input = "hello";
-    const auto expected = std::string{input};
-    auto wrapped = jl::value::from_raw(reinterpret_cast<jl_value_t*>(jl_symbol(input)));
+    auto wrapped = jl::value::from_raw(reinterpret_cast<jl_value_t*>(jl_symbol(INPUT)));
     const auto subject = jl::symbol{std::move(wrapped)};
 
-    const auto* result = jl_symbol_name(subject.raw());
+    const auto result = repr(subject);
 
-    REQUIRE(result == expected);
+    REQUIRE(result == EXPECTED);
 }
 
 TEST_CASE("Wrapped generic value constructor is explicit", "[symbol]")
@@ -44,22 +43,18 @@ TEST_CASE("Wrapped generic value constructor is explicit", "[symbol]")
 
 TEST_CASE("Raw generic value can be converted to symbol", "[symbol]")
 {
-    const auto* input = "hello";
-    const auto expected = std::string{input};
-    auto* raw = jl_symbol(input);
+    auto* raw = jl_symbol(INPUT);
     const auto subject = jl::symbol{jl::from_raw, raw};
 
-    const auto* result = jl_symbol_name(subject.raw());
+    const auto result = repr(subject);
 
-    REQUIRE(result == expected);
+    REQUIRE(result == EXPECTED);
 }
 
 TEST_CASE("Raw generic value gets rooted and freed", "[symbol]")
 {
     const auto num_background_rooted = jl::impl::rooted_values.size();
-    const auto* input = "hello";
-    const auto expected = std::string{input};
-    auto* raw = jl_symbol(input);
+    auto* raw = jl_symbol(INPUT);
 
     REQUIRE(jl::impl::rooted_values.size() == num_background_rooted + 0);
 
@@ -74,9 +69,7 @@ TEST_CASE("Raw generic value gets rooted and freed", "[symbol]")
 TEST_CASE("Wrapped generic value gets rooted and freed", "[symbol]")
 {
     const auto num_background_rooted = jl::impl::rooted_values.size();
-    const auto* input = "hello";
-    const auto expected = std::string{input};
-    const auto wrapped = jl::value::from_raw(reinterpret_cast<jl_value_t*>(jl_symbol(input)));
+    const auto wrapped = jl::value::from_raw(reinterpret_cast<jl_value_t*>(jl_symbol(INPUT)));
 
     REQUIRE(jl::impl::rooted_values.size() == num_background_rooted + 1);
 
@@ -91,9 +84,7 @@ TEST_CASE("Wrapped generic value gets rooted and freed", "[symbol]")
 TEST_CASE("Moved wrapped generic value does not get re-rooted", "[symbol]")
 {
     const auto num_background_rooted = jl::impl::rooted_values.size();
-    const auto* input = "hello";
-    const auto expected = std::string{input};
-    auto wrapped = jl::value::from_raw(reinterpret_cast<jl_value_t*>(jl_symbol(input)));
+    auto wrapped = jl::value::from_raw(reinterpret_cast<jl_value_t*>(jl_symbol(INPUT)));
 
     REQUIRE(jl::impl::rooted_values.size() == num_background_rooted + 1);
 

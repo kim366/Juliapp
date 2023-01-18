@@ -1,0 +1,2 @@
+Checks: -checks=bugprone-*,performance-*,modernize-*,-modernize-use-trailing-return-type,readability-*,-readability-named-parameter
+WarningsAsErrors: "*"
