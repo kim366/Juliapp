@@ -40,6 +40,7 @@ public:
 
 protected:
     value(value&& val, jl_datatype_t* expected_type);
+    void downcast_assign(value&& val, jl_datatype_t* expected_type);
 
 private:
     explicit value(jl_value_t* raw);

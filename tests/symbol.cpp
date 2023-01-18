@@ -9,6 +9,7 @@ TEST_CASE("Symbol")
     // before each test
     constexpr auto* INPUT = "hello";
     constexpr auto* EXPECTED = ":hello";
+    auto* DUMMY = jl_symbol("dummy");
     auto* RAW = jl_symbol(INPUT);
     auto* RAW_GENERIC = reinterpret_cast<jl_value_t*>(RAW);
     const auto NUM_BACKGROUND_ROOTED = num_rooted();
@@ -37,6 +38,29 @@ TEST_CASE("Symbol")
 
         REQUIRE(repr(subject) == EXPECTED);
     }
+
+    SECTION("Wrapped generic value can be assigned to symbol")
+    {
+        const auto wrapped = jl::value::from_raw(RAW_GENERIC);
+        auto subject = jl::symbol{jl::from_raw, DUMMY};
+
+        auto& result = subject = wrapped;
+
+        REQUIRE(repr(subject) == EXPECTED);
+        REQUIRE(&result == &subject);
+    }
+
+    SECTION("Moved wrapped generic value can be assigned to symbol")
+    {
+        auto wrapped = jl::value::from_raw(RAW_GENERIC);
+        auto subject = jl::symbol{jl::from_raw, DUMMY};
+
+        auto& result = subject = std::move(wrapped);
+
+        REQUIRE(repr(subject) == EXPECTED);
+        REQUIRE(&result == &subject);
+    }
+
 
     SECTION("Wrapped generic value constructor is explicit")
     {
@@ -96,6 +120,15 @@ TEST_CASE("Symbol")
         const auto* expected = "Expected Symbol, got UInt8";
 
         REQUIRE_THROWS_MATCHES(jl::symbol{wrapped}, std::invalid_argument, Catch::Matchers::Message(expected));
+    }
+
+    SECTION("Invalid wrapped generic value assignment causes error")
+    {
+        const auto wrapped = jl::value::from_raw(jl_box_uint8(19));
+        const auto* expected = "Expected Symbol, got UInt8";
+        auto subject = jl::symbol{jl::from_raw, RAW};
+
+        REQUIRE_THROWS_MATCHES(subject = wrapped, std::invalid_argument, Catch::Matchers::Message(expected));
     }
 
     // after each test

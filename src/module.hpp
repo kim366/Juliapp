@@ -14,9 +14,8 @@ class module : public value
 {
 public:
     explicit module(value val);
-    explicit module(jl::from_raw_t, jl_module_t* mod);
-
-    using value::operator=;
+    explicit module(from_raw_t, jl_module_t* mod);
+    module& operator=(value val);
 
     // TODO: switch const char* to jl::symbol
     global operator[](const char* name) const;

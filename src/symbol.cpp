@@ -15,9 +15,15 @@ symbol::symbol(value val)
 {
 }
 
-symbol::symbol(jl::from_raw_t, jl_sym_t* sym)
+symbol::symbol(from_raw_t, jl_sym_t* sym)
     : value{value::from_raw(reinterpret_cast<jl_value_t*>(sym))}
 {
+}
+
+symbol& symbol::operator=(value val)
+{
+    downcast_assign(std::move(val), jl_symbol_type);
+    return *this;
 }
 
 jl_sym_t* symbol::raw() const
