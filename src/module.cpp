@@ -3,22 +3,14 @@
 namespace jl
 {
 
-module::module(const value& val)
-    : value{val}
+module::module(value val)
+    : value{std::move(val), jl_module_type}
 {
-    if (!jl_is_module(raw()))
-    {
-        jl_error("Value is not a module");
-    }
 }
 
-module::module(value&& val)
-    : value{std::move(val)}
+module::module(jl::from_raw_t, jl_module_t* mod)
+    : value{value::from_raw(reinterpret_cast<jl_value_t*>(mod))}
 {
-    if (!jl_is_module(raw()))
-    {
-        jl_error("Value is not a module");
-    }
 }
 
 jl_module_t* module::raw() const
@@ -35,14 +27,8 @@ global module::operator[](const char* name) const
     return global::from_raw(binding, is_writeable);
 }
 
-module module::from_raw(jl_module_t* raw)
-{
-    return value::from_raw(reinterpret_cast<jl_value_t*>(raw));
-}
-
 #ifndef JLPP_MANUAL_INIT
-const module main = module::from_raw(
-    (impl::ensure_init(), jl_main_module));
+const module main = module{jl::from_raw, (impl::ensure_init(), jl_main_module)};
 #endif
 // TODO: add else
 

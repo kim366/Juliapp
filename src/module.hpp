@@ -2,6 +2,7 @@
 
 #include "global.hpp"
 #include "value.hpp"
+#include "utility.hpp"
 
 #include <julia/julia.h>
 #include <utility>
@@ -12,8 +13,8 @@ namespace jl
 class module : public value
 {
 public:
-    module(const value& val);
-    module(value&& val);
+    explicit module(value val);
+    explicit module(jl::from_raw_t, jl_module_t* mod);
 
     using value::operator=;
 
@@ -21,7 +22,6 @@ public:
     global operator[](const char* name) const;
 
     jl_module_t* raw() const;
-    static module from_raw(jl_module_t* raw);
 };
 
 } // namespace jl

@@ -5,9 +5,6 @@
 namespace jl
 {
 
-value eval(const char* source)
-{
-    return value::from_raw(jl_eval_string(source));
-}
+value eval(const char* source);
 
 } // namespace jl
