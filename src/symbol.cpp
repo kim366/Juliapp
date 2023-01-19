@@ -6,7 +6,7 @@ namespace jl
 {
 
 symbol::symbol(const char* name)
-    : value{value::from_raw(reinterpret_cast<jl_value_t*>(jl_symbol(name)))}
+    : symbol{from_raw, jl_symbol(name)}
 {
 }
 
@@ -16,7 +16,7 @@ symbol::symbol(value val)
 }
 
 symbol::symbol(from_raw_t, jl_sym_t* sym)
-    : value{value::from_raw(reinterpret_cast<jl_value_t*>(sym))}
+    : value{from_raw, reinterpret_cast<jl_value_t*>(sym)}
 {
 }
 

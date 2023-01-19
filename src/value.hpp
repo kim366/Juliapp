@@ -24,7 +24,7 @@ public:
     template<typename T>
     value(const T& val);
 
-    value(from_raw_t, jl_value_t* raw);
+    explicit value(from_raw_t, jl_value_t* raw);
 
     value(const value& other);
     value& operator=(const value& other);
@@ -37,15 +37,11 @@ public:
 
     ~value();
 
-    jl_value_t *raw() const;
-    static value from_raw(jl_value_t* val);
+    jl_value_t* raw() const;
 
 protected:
     value(value&& val, jl_datatype_t* expected_type);
     void downcast_assign(value&& val, jl_datatype_t* expected_type);
-
-private:
-    explicit value(jl_value_t* raw);
 };
 
 

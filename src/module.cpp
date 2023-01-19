@@ -9,7 +9,7 @@ module::module(value val)
 }
 
 module::module(from_raw_t, jl_module_t* mod)
-    : value{value::from_raw(reinterpret_cast<jl_value_t*>(mod))}
+    : value{from_raw, reinterpret_cast<jl_value_t*>(mod)}
 {
 }
 

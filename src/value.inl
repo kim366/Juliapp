@@ -16,7 +16,8 @@ T value_cast(const value& val)
 }
 
 template<typename T>
-value::value(const T& val) : value{impl::box(val)}
+value::value(const T& val)
+    : value{from_raw, impl::box(val)}
 {
 }
 
@@ -24,8 +25,8 @@ template<typename... Ts>
 value value::operator()(Ts&&... args) const
 {
     value values[]{std::forward<Ts>(args)...};
-    return value::from_raw(jl_call(
-        raw(), reinterpret_cast<jl_value_t**>(values), sizeof...(args)));
+    return value{from_raw, jl_call(
+        raw(), reinterpret_cast<jl_value_t**>(values), sizeof...(args))};
 }
 
 } // namespace jl

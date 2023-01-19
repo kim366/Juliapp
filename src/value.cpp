@@ -13,13 +13,8 @@ value::value(from_raw_t, jl_value_t* raw)
     impl::root_value(raw_);
 }
 
-value::value(jl_value_t* raw) : raw_{raw}
-{
-    impl::root_value(raw_);
-}
-
 value::value(const value& other)
-    : value{other.raw_}
+    : value{from_raw, other.raw_}
 {
 }
 
@@ -48,11 +43,6 @@ value::~value()
     {
         impl::release_value(raw_);
     }
-}
-
-value value::from_raw(jl_value_t* val)
-{
-    return value{val};
 }
 
 jl_value_t* value::raw() const
