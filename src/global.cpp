@@ -3,12 +3,24 @@
 namespace jl
 {
 
-void global::set(const value& val)
+global::global(from_raw_t, jl_binding_t* val)
+    : raw_{val}
 {
-    // TODO: replace with exception
-    impl_jlpp_assert("global is not writeable (const or owned by a different module)", is_writeable_);
+
+}
+
+const value& global::assign(const value& val)
+{
+    if (raw()->constp)
+    {
+        throw std::logic_error{std::string{"Cannot assign to constant "} + jl_symbol_name(raw()->name)};
+    }
+
+    // TODO: handle failed conversions
     auto* converted_value = jl_call2(impl::convert_fn, jl_atomic_load_relaxed(&raw()->ty), val.raw());
     jl_checked_assignment(raw_, converted_value);
+
+    return val;
 }
 
 jl_binding_t* global::raw() const
@@ -16,22 +28,9 @@ jl_binding_t* global::raw() const
     return raw_;
 }
 
-global::global(jl_binding_t* val, bool is_writeable)
-    : raw_{val}
-    , is_writeable_{is_writeable}
-{
-}
-
-global global::from_raw(jl_binding_t* val, bool is_writeable)
-{
-    return global{val, is_writeable};
-}
-
 value global::operator*() const
 {
-    // TODO: replace with jl_binding_value once available
-    // TODO: replace jl::from_raw with from_raw once shadowing method removed
-    return value{jl::from_raw, jl_atomic_load_relaxed(&raw()->value)};
+    return value{from_raw, jl_atomic_load_relaxed(&raw()->value)};
 }
 
 } // namespace jl

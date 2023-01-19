@@ -14,18 +14,15 @@ class global
 {
 private:
     jl_binding_t* raw_;
-    bool is_writeable_;
 
 public:
+    explicit global(from_raw_t, jl_binding_t* val);
+
     value operator*() const;
 
-    void set(const value& val);
+    const value& assign(const value& val);
 
     jl_binding_t* raw() const;
-    static global from_raw(jl_binding_t* val, bool is_writeable = false);
-
-private:
-    explicit global(jl_binding_t* val, bool is_writeable);
 };
 
 } // namespace jl

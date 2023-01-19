@@ -62,7 +62,6 @@ TEST_CASE("Symbol")
         REQUIRE(&result == &subject);
     }
 
-
     SECTION("Wrapped generic value constructor is explicit")
     {
         static_assert(!std::is_convertible_v<jl::value, jl::symbol>);
