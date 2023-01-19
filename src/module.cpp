@@ -27,9 +27,7 @@ jl_module_t* module::raw() const
 global module::operator[](const symbol& sym) const
 {
     auto* binding = jl_get_binding(raw(), sym.raw());
-    auto is_writeable = !binding->constp && binding->owner == raw();
-
-    return global::from_raw(binding, is_writeable);
+    return global{from_raw, binding};
 }
 
 #ifndef JLPP_MANUAL_INIT

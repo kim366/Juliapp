@@ -1,5 +1,5 @@
 Checks: >
-  -checks=bugprone-*,
+  bugprone-*,
   performance-*,
   modernize-*,-modernize-use-trailing-return-type,-modernize-use-nodiscard
   readability-*,-readability-named-parameter

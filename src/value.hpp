@@ -10,9 +10,6 @@ namespace jl
 class value;
 
 template<typename T>
-T value_cast(value&& val);
-
-template<typename T>
 T value_cast(const value& val);
 
 class value
@@ -31,6 +28,8 @@ public:
 
     value(value&& other) noexcept;
     value& operator=(value&& other) noexcept;
+
+    value operator()() const;
 
     template<typename... Ts>
     value operator()(Ts&&... args) const;
