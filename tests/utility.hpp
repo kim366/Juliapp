@@ -4,6 +4,8 @@
 
 #include <string>
 
+#define UNUSED(x) do { (void)x; } while(0)
+
 template<typename S>
 std::string repr(S* subject)
 {
@@ -19,4 +21,11 @@ std::string repr(const S& subject)
 inline int num_rooted()
 {
     return jl::impl::rooted_values.size();
+}
+
+inline int num_rooted(jl_value_t* value)
+{
+    const auto begin = jl::impl::rooted_values.begin();
+    const auto end = jl::impl::rooted_values.end();
+    return std::count(begin, end, value);
 }

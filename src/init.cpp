@@ -25,7 +25,10 @@ void quit(int status)
 
 void root_value(jl_value_t* val)
 {
-    rooted_values.push_back(val);
+    if (val != nullptr)
+    {
+        rooted_values.push_back(val);
+    }
 }
 
 void release_value(jl_value_t* val)
