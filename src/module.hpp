@@ -3,6 +3,7 @@
 #include "global.hpp"
 #include "value.hpp"
 #include "utility.hpp"
+#include "symbol.hpp"
 
 #include <julia/julia.h>
 #include <utility>
@@ -17,8 +18,7 @@ public:
     explicit module(from_raw_t, jl_module_t* mod);
     module& operator=(value val);
 
-    // TODO: switch const char* to jl::symbol
-    global operator[](const char* name) const;
+    global operator[](const symbol& sym) const;
 
     jl_module_t* raw() const;
 };
