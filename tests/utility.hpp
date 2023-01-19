@@ -5,9 +5,15 @@
 #include <string>
 
 template<typename S>
+std::string repr(S* subject)
+{
+    return jl_string_ptr(jl_call1(jl::impl::repr_fn, reinterpret_cast<jl_value_t*>(subject)));
+}
+
+template<typename S>
 std::string repr(const S& subject)
 {
-    return jl_string_ptr(jl_call1(jl::impl::repr_fn, reinterpret_cast<jl_value_t*>(subject.raw())));
+    return repr(subject.raw());
 }
 
 inline int num_rooted()

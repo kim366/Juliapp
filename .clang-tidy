@@ -1,2 +1,7 @@
-Checks: -checks=bugprone-*,performance-*,modernize-*,-modernize-use-trailing-return-type,readability-*,-readability-named-parameter
+Checks: >
+  -checks=bugprone-*,
+  performance-*,
+  modernize-*,-modernize-use-trailing-return-type,-modernize-use-nodiscard
+  readability-*,-readability-named-parameter
+
 WarningsAsErrors: "*"

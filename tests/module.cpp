@@ -135,6 +135,26 @@ TEST_CASE("Module")
         REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 0);
     }
 
+    SECTION("Binding resolves to requested value")
+    {
+        const auto input = jl::symbol{"Int64"};
+        const auto* expected = "Int64";
+        const auto subject = jl::module(jl::from_raw, jl_base_module);
+
+        const auto binding = subject[input];
+
+        auto* result = jl_atomic_load_relaxed(&binding.raw()->value);
+        REQUIRE(repr(result) == expected);
+    }
+
+    SECTION("jl::main refers to the main module")
+    {
+        const auto* expected = "Main";
+        const auto subject = jl::main;
+
+        REQUIRE(repr(subject) == expected);
+    }
+
     // after each test
     REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED);
 }
