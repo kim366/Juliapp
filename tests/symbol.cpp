@@ -24,7 +24,7 @@ TEST_CASE("Symbol")
 
     SECTION("Wrapped generic value can be converted to symbol")
     {
-        const auto wrapped = jl::value::from_raw(RAW_GENERIC);
+        const auto wrapped = jl::value{jl::from_raw, RAW_GENERIC};
 
         const auto subject = jl::symbol{wrapped};
 
@@ -33,7 +33,7 @@ TEST_CASE("Symbol")
 
     SECTION("Moved wrapped generic value can be converted to symbol")
     {
-        auto wrapped = jl::value::from_raw(RAW_GENERIC);
+        auto wrapped = jl::value{jl::from_raw, RAW_GENERIC};
 
         const auto subject = jl::symbol{std::move(wrapped)};
 
@@ -42,7 +42,7 @@ TEST_CASE("Symbol")
 
     SECTION("Wrapped generic value can be assigned to symbol")
     {
-        const auto wrapped = jl::value::from_raw(RAW_GENERIC);
+        const auto wrapped = jl::value{jl::from_raw, RAW_GENERIC};
         auto subject = jl::symbol{jl::from_raw, DUMMY};
 
         auto& result = subject = wrapped;
@@ -53,7 +53,7 @@ TEST_CASE("Symbol")
 
     SECTION("Moved wrapped generic value can be assigned to symbol")
     {
-        auto wrapped = jl::value::from_raw(RAW_GENERIC);
+        auto wrapped = jl::value{jl::from_raw, RAW_GENERIC};
         auto subject = jl::symbol{jl::from_raw, DUMMY};
 
         auto& result = subject = std::move(wrapped);
@@ -89,7 +89,7 @@ TEST_CASE("Symbol")
 
     SECTION("Wrapped generic value gets rooted and freed")
     {
-        const auto wrapped = jl::value::from_raw(RAW_GENERIC);
+        const auto wrapped = jl::value{jl::from_raw, RAW_GENERIC};
 
         REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 1);
 
@@ -103,7 +103,7 @@ TEST_CASE("Symbol")
 
     SECTION("Moved wrapped generic value does not get re-rooted")
     {
-        auto wrapped = jl::value::from_raw(RAW_GENERIC);
+        auto wrapped = jl::value{jl::from_raw, RAW_GENERIC};
 
         REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 1);
 
@@ -117,7 +117,7 @@ TEST_CASE("Symbol")
 
     SECTION("Invalid wrapped generic value causes error")
     {
-        const auto wrapped = jl::value::from_raw(INVALID);
+        const auto wrapped = jl::value{jl::from_raw, INVALID};
         const auto* expected = "Expected Symbol, got UInt8";
 
         REQUIRE_THROWS_MATCHES(jl::symbol{wrapped}, std::invalid_argument, Catch::Matchers::Message(expected));
@@ -125,7 +125,7 @@ TEST_CASE("Symbol")
 
     SECTION("Invalid wrapped generic value assignment causes error")
     {
-        const auto wrapped = jl::value::from_raw(INVALID);
+        const auto wrapped = jl::value{jl::from_raw, INVALID};
         const auto* expected = "Expected Symbol, got UInt8";
         auto subject = jl::symbol{jl::from_raw, RAW};
 
@@ -134,7 +134,7 @@ TEST_CASE("Symbol")
 
     SECTION("Invalid wrapped generic value gets rooted and freed")
     {
-        auto wrapped = jl::value::from_raw(INVALID);
+        auto wrapped = jl::value{jl::from_raw, INVALID};
 
         REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 1);
 

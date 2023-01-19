@@ -30,7 +30,8 @@ global global::from_raw(jl_binding_t* val, bool is_writeable)
 value global::operator*() const
 {
     // TODO: replace with jl_binding_value once available
-    return value::from_raw(jl_atomic_load_relaxed(&raw()->value));
+    // TODO: replace jl::from_raw with from_raw once shadowing method removed
+    return value{jl::from_raw, jl_atomic_load_relaxed(&raw()->value)};
 }
 
 } // namespace jl
