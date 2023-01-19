@@ -34,4 +34,50 @@ TEST_CASE("Value")
 
         REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 0);
     }
+
+    SECTION("Copying wrapped value keeps underlying raw value")
+    {
+        auto* expected = INPUT;
+        const auto subject = jl::value{jl::from_raw, INPUT};
+
+        const auto copy = subject; // NOLINT(performance-unnecessary-copy-initialization)
+
+        REQUIRE(copy.raw() == expected);
+    }
+
+    SECTION("Moving wrapped value keeps underlying raw value")
+    {
+        auto* expected = INPUT;
+        auto subject = jl::value{jl::from_raw, INPUT};
+
+        const auto copy = std::move(subject);
+
+        REQUIRE(copy.raw() == expected);
+    }
+
+    SECTION("Copying wrapped value roots new value")
+    {
+        const auto subject = jl::value{jl::from_raw, INPUT};
+
+        {
+            const auto copy = subject; // NOLINT(performance-unnecessary-copy-initialization)
+
+            REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 2);
+        }
+
+        REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 1);
+    }
+
+    SECTION("Moving wrapped does not re-root")
+    {
+        auto subject = jl::value{jl::from_raw, INPUT};
+
+        {
+            const auto copy = std::move(subject);
+
+            REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 1);
+        }
+
+        REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 0);
+    }
 }
