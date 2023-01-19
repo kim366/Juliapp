@@ -6,6 +6,13 @@
 namespace jl
 {
 
+
+value::value(from_raw_t, jl_value_t* raw)
+    : raw_{raw}
+{
+    impl::root_value(raw_);
+}
+
 value::value(jl_value_t* raw) : raw_{raw}
 {
     impl::root_value(raw_);
@@ -33,11 +40,6 @@ value& value::operator=(value&& other) noexcept
 {
     std::swap(other.raw_, raw_);
     return *this;
-}
-
-value value::operator()() const
-{
-    return value::from_raw(jl_call0(raw()));
 }
 
 value::~value()

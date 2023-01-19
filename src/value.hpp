@@ -1,5 +1,7 @@
 #pragma once
 
+#include "utility.hpp"
+
 #include <julia/julia.h>
 
 namespace jl
@@ -22,13 +24,13 @@ public:
     template<typename T>
     value(const T& val);
 
+    value(from_raw_t, jl_value_t* raw);
+
     value(const value& other);
     value& operator=(const value& other);
 
     value(value&& other) noexcept;
     value& operator=(value&& other) noexcept;
-
-    value operator()() const;
 
     template<typename... Ts>
     value operator()(Ts&&... args) const;
