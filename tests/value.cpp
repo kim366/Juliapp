@@ -146,16 +146,30 @@ TEST_CASE("Value")
         REQUIRE(repr(result) == expected);
     }
 
-    SECTION("n-ary function invocation")
+    SECTION("n-ary function invocation with value arguments")
     {
         auto* raw = jl_get_function(jl_base_module, "+");
         const auto input_a = jl::value{jl::from_raw, jl_box_int64(7)};
         auto input_b = jl::value{jl::from_raw, jl_box_uint32(7u)};
-        const auto input_c = jl::value{jl::from_raw, jl_box_float64(7.f)};
+        const auto input_c = jl::value{jl::from_raw, jl_box_float64(7.)};
         const auto expected = "21.0";
         const auto subject = jl::value(jl::from_raw, raw);
 
         const auto result = subject(input_a, std::move(input_b), input_c);
+
+        REQUIRE(repr(result) == expected);
+    }
+
+    SECTION("n-ary function invocation with primitive arguments")
+    {
+        auto* raw = jl_get_function(jl_base_module, "+");
+        const auto input_a = 7;
+        const auto input_b = 7u;
+        const auto input_c = 7.;
+        const auto expected = "21.0";
+        const auto subject = jl::value(jl::from_raw, raw);
+
+        const auto result = subject(input_a, input_b, input_c);
 
         REQUIRE(repr(result) == expected);
     }
