@@ -176,7 +176,7 @@ In *Juliapp* two forms of error checking are used: `assert` and exceptions. Asse
 #### `jl::error`
 This error is never thrown, but is a base for all other exception types and can thus be caught to handle any Julia-related errors.
 
-#### `jl::result_type_error` 
+#### `jl::bad_value_cast` 
 This is thrown whenever an incorrect type is requested out of a Julia script, for example if a script returns an integral type but a floating point type was requested. Note that this error is *not* thrown when e.g. `float` was requested, but `double` was provided.
 
 #### `jl::language_error`
@@ -203,13 +203,13 @@ Initialize Julia. Your program will segfault if you do not call this function. C
 Quit Julia. Call it only once at the ed of your program, for example right before returning from `main`. An optional exit code argument may be specified signaling program failure.
 
 #### `jl::value jl::eval(const char* source_string)`
-Executes a string of Julia code. Returns the wrapped result value. May throw `jl::result_type_error` or `jl::language_error`.
+Executes a string of Julia code. Returns the wrapped result value. May throw `jl::bad_value_cast` or `jl::language_error`.
 
 #### `jl::value jl::exec_from_file(const char* file_name)`
-Load the file with the given file name and execute the code within. Note that this path is relative to the current working directory when running the executable. May throw `jl::result_type_error`, `jl::language_error` or `jl::load_error`.
+Load the file with the given file name and execute the code within. Note that this path is relative to the current working directory when running the executable. May throw `jl::bad_value_cast`, `jl::language_error` or `jl::load_error`.
 
 #### `jl::value call(const char* function_name, T... args)`
-Call a function denoted by `function_name` with the arguments provided. The function name may also contain a module name (see code above) or other manipulators, as long as it resolves to a function in the REPL. May throw `jl::result_type_error` or `jl::language_error`.
+Call a function denoted by `function_name` with the arguments provided. The function name may also contain a module name (see code above) or other manipulators, as long as it resolves to a function in the REPL. May throw `jl::bad_value_cast` or `jl::language_error`.
 
 #### `void raise_error(const char* content, T... args)`
 Raise an error within Julia. You can use printf-style formatting.

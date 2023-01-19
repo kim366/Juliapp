@@ -50,17 +50,12 @@ jl_value_t* value::raw() const
     return raw_;
 }
 
-static std::string datatype_name(jl_value_t* type)
-{
-    return jl_string_ptr(jl_call1(impl::repr_fn, type));
-}
-
 static void expect_admissible_downcast(jl_value_t* raw, jl_datatype_t* expected_type)
 {
     if (!jl_typeis(raw, expected_type))
     {
-        const auto type_name = datatype_name(reinterpret_cast<jl_value_t*>(expected_type));
-        const auto other_type_name = datatype_name(jl_typeof(raw));
+        const auto type_name = impl::datatype_name(reinterpret_cast<jl_value_t*>(expected_type));
+        const auto other_type_name = impl::datatype_name(jl_typeof(raw));
         throw std::invalid_argument{std::string{"Expected "} + type_name + ", got " + other_type_name};
     }
 }

@@ -14,49 +14,93 @@ T unbox(jl_value_t* val)
 {
     if constexpr (std::is_floating_point_v<T>)
     {
-        if (jl_typeis(val, jl_float32_type))
-            return jl_unbox_float32(val);
-        else if (jl_typeis(val, jl_float64_type))
-            return jl_unbox_float64(val);
-
-        throw result_type_error{
-            "Incorrect result type. Floating-point type requested"};
+        if constexpr (sizeof(T) == 4)
+        {
+            if (jl_typeis(val, jl_float32_type))
+                return jl_unbox_float32(val);
+            throw bad_value_cast{"Float32", val};
+        }
+        else if constexpr (sizeof(T) == 8)
+        {
+            if (jl_typeis(val, jl_float64_type))
+                return jl_unbox_float64(val);
+            throw bad_value_cast{"Float64", val};
+        }
+        else
+        {
+            impl_jlpp_illegal<T>("Unsupported floating-point type");
+        }
     }
     else if constexpr (std::is_same_v<T, bool>)
     {
         if (jl_typeis(val, jl_bool_type))
             return jl_unbox_bool(val);
-
-        throw result_type_error{
-            "Incorrect result type. Boolean type requested"};
+        throw bad_value_cast{"Bool", val};
     }
     else if constexpr (std::is_integral_v<T>)
     {
         if constexpr (std::is_signed_v<T>)
         {
-            if (jl_typeis(val, jl_int8_type))
-                return static_cast<T>(jl_unbox_int8(val));
-            else if (jl_typeis(val, jl_int16_type))
-                return static_cast<T>(jl_unbox_int16(val));
-            else if (jl_typeis(val, jl_int32_type))
-                return static_cast<T>(jl_unbox_int32(val));
-            else if (jl_typeis(val, jl_int64_type))
-                return static_cast<T>(jl_unbox_int64(val));
+            if constexpr (sizeof(T) == 1)
+            {
+                if (jl_typeis(val, jl_int8_type))
+                    return jl_unbox_int8(val);
+                throw bad_value_cast{"Int8", val};
+            }
+            else if constexpr (sizeof(T) == 2)
+            {
+                if (jl_typeis(val, jl_int16_type))
+                    return jl_unbox_int16(val);
+                throw bad_value_cast{"Int16", val};
+            }
+            else if constexpr (sizeof(T) == 4)
+            {
+                if (jl_typeis(val, jl_int32_type))
+                    return jl_unbox_int32(val);
+                throw bad_value_cast{"Int32", val};
+            }
+            else if constexpr (sizeof(T) == 8)
+            {
+                if (jl_typeis(val, jl_int64_type))
+                    return jl_unbox_int64(val);
+                throw bad_value_cast{"Int64", val};
+            }
+            else
+            {
+                impl_jlpp_illegal<T>("Unsupported signed integer type");
+            }
         }
         else
         {
-            if (jl_typeis(val, jl_uint8_type))
-                return static_cast<T>(jl_unbox_uint8(val));
-            else if (jl_typeis(val, jl_uint16_type))
-                return static_cast<T>(jl_unbox_uint16(val));
-            else if (jl_typeis(val, jl_uint32_type))
-                return static_cast<T>(jl_unbox_uint32(val));
-            else if (jl_typeis(val, jl_uint64_type))
-                return static_cast<T>(jl_unbox_uint64(val));
+            if constexpr (sizeof(T) == 1)
+            {
+                if (jl_typeis(val, jl_uint8_type))
+                    return jl_unbox_uint8(val);
+                throw bad_value_cast{"UInt8", val};
+            }
+            else if constexpr (sizeof(T) == 2)
+            {
+                if (jl_typeis(val, jl_uint16_type))
+                    return jl_unbox_uint16(val);
+                throw bad_value_cast{"UInt16", val};
+            }
+            else if constexpr (sizeof(T) == 4)
+            {
+                if (jl_typeis(val, jl_uint32_type))
+                    return jl_unbox_uint32(val);
+                throw bad_value_cast{"UInt32", val};
+            }
+            else if constexpr (sizeof(T) == 8)
+            {
+                if (jl_typeis(val, jl_uint64_type))
+                    return jl_unbox_uint64(val);
+                throw bad_value_cast{"UInt64", val};
+            }
+            else
+            {
+                impl_jlpp_illegal<T>("Unsupported unsigned integer type");
+            }
         }
-
-        throw result_type_error{
-            "Incorrect result type. Integral type requested"};
     }
     else
     {
