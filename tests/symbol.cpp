@@ -9,6 +9,7 @@ TEST_CASE("Symbol")
     // before each test
     constexpr auto* INPUT = "hello";
     constexpr auto* EXPECTED = ":hello";
+    auto* INVALID = jl_box_uint8(19); // NOLINT(readability-magic-numbers)
     auto* DUMMY = jl_symbol("dummy");
     auto* RAW = jl_symbol(INPUT);
     auto* RAW_GENERIC = reinterpret_cast<jl_value_t*>(RAW);
@@ -116,7 +117,7 @@ TEST_CASE("Symbol")
 
     SECTION("Invalid wrapped generic value causes error")
     {
-        const auto wrapped = jl::value::from_raw(jl_box_uint8(19));
+        const auto wrapped = jl::value::from_raw(INVALID);
         const auto* expected = "Expected Symbol, got UInt8";
 
         REQUIRE_THROWS_MATCHES(jl::symbol{wrapped}, std::invalid_argument, Catch::Matchers::Message(expected));
@@ -124,11 +125,22 @@ TEST_CASE("Symbol")
 
     SECTION("Invalid wrapped generic value assignment causes error")
     {
-        const auto wrapped = jl::value::from_raw(jl_box_uint8(19));
+        const auto wrapped = jl::value::from_raw(INVALID);
         const auto* expected = "Expected Symbol, got UInt8";
         auto subject = jl::symbol{jl::from_raw, RAW};
 
         REQUIRE_THROWS_MATCHES(subject = wrapped, std::invalid_argument, Catch::Matchers::Message(expected));
+    }
+
+    SECTION("Invalid wrapped generic value gets rooted and freed")
+    {
+        auto wrapped = jl::value::from_raw(INVALID);
+
+        REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 1);
+
+        REQUIRE_THROWS(jl::symbol{std::move(wrapped)});
+
+        REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED + 0);
     }
 
     // after each test

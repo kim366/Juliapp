@@ -74,12 +74,13 @@ static void expect_admissible_downcast(jl_value_t* raw, jl_datatype_t* expected_
 }
 
 value::value(value&& val, jl_datatype_t* expected_type)
+// thanks to the call to another constructor here, destructors get properly called in case of throw
     : value{std::move(val)}
 {
     expect_admissible_downcast(raw(), expected_type);
-    // TODO: nake sure destructor gets called in case of throw
 }
 
+// assignment has strong exception guarantee
 void value::downcast_assign(value&& val, jl_datatype_t* expected_type)
 {
     expect_admissible_downcast(val.raw(), expected_type);
