@@ -4,12 +4,6 @@ namespace jl
 {
 
 template<typename T>
-T value_cast(value&& val)
-{
-    return value_cast<T>(val);
-}
-
-template<typename T>
 T value_cast(const value& val)
 {
     return jl::impl::unbox<T>(val.raw());
