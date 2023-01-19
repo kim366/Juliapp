@@ -31,5 +31,5 @@ set(Catch2_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Catch2/dist/usr/local/lib/
 find_package(Catch2 3 REQUIRED CONFIG)
 
 # Tests target
-add_executable(tests tests/symbol.cpp tests/module.cpp tests/value.cpp)
+add_executable(tests tests/symbol.cpp tests/module.cpp tests/value.cpp tests/boxing.cpp)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)

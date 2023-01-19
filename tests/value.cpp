@@ -159,4 +159,7 @@ TEST_CASE("Value")
 
         REQUIRE(repr(result) == expected);
     }
+
+    // after each test
+    REQUIRE(num_rooted() == NUM_BACKGROUND_ROOTED);
 }
