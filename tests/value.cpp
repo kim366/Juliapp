@@ -133,4 +133,30 @@ TEST_CASE("Value")
         REQUIRE(num_rooted(DUMMY) == 0);
         REQUIRE(num_rooted(INPUT) == 1);
     }
+
+    SECTION("Unary function invocation with value argument")
+    {
+        auto* raw = jl_get_function(jl_base_module, "-");
+        const auto input = jl::value{jl::from_raw, jl_box_int64(7)};
+        const auto expected = "-7";
+        const auto subject = jl::value(jl::from_raw, raw);
+
+        const auto result = subject(input);
+
+        REQUIRE(repr(result) == expected);
+    }
+
+    SECTION("n-ary function invocation")
+    {
+        auto* raw = jl_get_function(jl_base_module, "+");
+        const auto input_a = jl::value{jl::from_raw, jl_box_int64(7)};
+        auto input_b = jl::value{jl::from_raw, jl_box_uint32(7u)};
+        const auto input_c = jl::value{jl::from_raw, jl_box_float64(7.f)};
+        const auto expected = "21.0";
+        const auto subject = jl::value(jl::from_raw, raw);
+
+        const auto result = subject(input_a, std::move(input_b), input_c);
+
+        REQUIRE(repr(result) == expected);
+    }
 }
