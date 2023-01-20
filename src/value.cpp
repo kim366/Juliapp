@@ -50,7 +50,6 @@ value value::operator()() const
     return value{jl::from_raw, jl_call0(raw())};
 }
 
-
 jl_value_t* value::raw() const
 {
     return raw_;
