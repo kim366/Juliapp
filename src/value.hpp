@@ -29,6 +29,7 @@ public:
     value(value&& other) noexcept;
     value& operator=(value&& other) noexcept;
 
+    // C++ disallows zero-sized arrays, so instead we have this overload
     value operator()() const;
 
     template<typename... Ts>

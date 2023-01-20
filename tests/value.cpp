@@ -134,6 +134,17 @@ TEST_CASE("Value")
         REQUIRE(num_rooted(INPUT) == 1);
     }
 
+    SECTION("Nullary function invocation")
+    {
+        auto* raw = jl_get_function(jl_base_module, "tuple");
+        const auto expected = "()";
+        const auto subject = jl::value(jl::from_raw, raw);
+
+        const auto result = subject();
+
+        REQUIRE(repr(result) == expected);
+    }
+
     SECTION("Unary function invocation with value argument")
     {
         auto* raw = jl_get_function(jl_base_module, "-");
