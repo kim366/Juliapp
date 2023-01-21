@@ -8,10 +8,6 @@ jobs:
         shell: 'script -q -e -c "bash {0}"'
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: build/_deps/catch2-build
-          key: ${{ runner.os }}-${{ hashFiles('CMakeLists.txt') }}
       - name: Set up CMake and dependencies
         run: cmake -S . -B build -D USE_SYSTEM_WIDE_JULIA=OFF
       - name: Build
