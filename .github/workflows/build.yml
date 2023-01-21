@@ -15,9 +15,9 @@ jobs:
       - name: Set up CMake and dependencies
         run: >
           cmake -S . -B build
-            -D ENABLE_TESTS=ON
-            -D ENABLE_COVERAGE=ON
-            -D DOWNLOAD_LOCAL_JULIA=ON
+          -D ENABLE_TESTS=ON
+          -D ENABLE_COVERAGE=ON
+          -D DOWNLOAD_LOCAL_JULIA=ON
       - name: Build
         run: cmake --build build -t tests -j 4
       - name: Run tests
