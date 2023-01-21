@@ -27,10 +27,9 @@ jobs:
       - name: Generate coverage report
         run: ./generate-coverage-report.sh build
       - name: Upload Coverage report
-        uses: actions/upload-artifact@v3
+        uses: codecov/codecov-action@v3
         with:
-          name: coverage-report
-          path: build/coverage-report
+          files: build/coverage.info
       - name: Verify 100% line coverage
         working-directory: build
         run: grep -P "lines\.+:" coverage-meta.txt --color=never | grep "100.0%" -q
