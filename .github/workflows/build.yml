@@ -20,6 +20,4 @@ jobs:
         run: build/tests
       - uses: codecov/codecov-action@v3
         with:
-          directory: build/CMakeFiles/juliapp.dir
-          gcov: true
-          gcov_include: src/eval.cpp.gcda
+          directory: build/
