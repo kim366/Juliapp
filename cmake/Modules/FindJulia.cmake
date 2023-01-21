@@ -13,10 +13,10 @@ if(Julia_PREFIX)
     message(STATUS "Adding path ${Julia_PREFIX} to search path")
     list(APPEND CMAKE_PREFIX_PATH ${Julia_PREFIX})
     message(STATUS "THIS BRANCH")
+else()
+    find_program(Julia_EXECUTABLE julia DOC "Julia executable")
+    message(STATUS "Found Julia executable: " ${Julia_EXECUTABLE})
 endif()
-
-find_program(Julia_EXECUTABLE julia DOC "Julia executable")
-message(STATUS "Found Julia executable: " ${Julia_EXECUTABLE})
 
 #################
 # Julia Version #
@@ -56,7 +56,7 @@ if(DEFINED ENV{JULIA_INCLUDE_DIRS})
         CACHE STRING "Location of Julia include files")
 elseif(Julia_EXECUTABLE)
     execute_process(
-        COMMAND ${Julia_EXECUTABLE} --startup-file=no -E "julia_include_dir = joinpath(match(r\"(.*)(bin)\",${JULIA_HOME_NAME}).captures[1],\"include\")\n
+        COMMAND ${Julia_EXECUTABLE} --startup-file=no -E "julia_include_dir = joinpath(match(r\"(.*)(bin)\",${JULIA_HOME_NAME}).captures[1],\"include\",\"julia\")\n
             if !isdir(julia_include_dir)  # then we're running directly from build\n
             julia_base_dir_aux = splitdir(splitdir(${JULIA_HOME_NAME})[1])[1]  # useful for running-from-build\n
             julia_include_dir = joinpath(julia_base_dir_aux, \"usr\", \"include\" )\n
@@ -72,7 +72,7 @@ elseif(Julia_EXECUTABLE)
     set(Julia_INCLUDE_DIRS ${Julia_INCLUDE_DIRS}
         CACHE PATH "Location of Julia include files")
 elseif(Julia_PREFIX)
-    set(Julia_INCLUDE_DIRS ${Julia_PREFIX}/include)
+    set(Julia_INCLUDE_DIRS ${Julia_PREFIX}/include/julia)
 endif()
 set(Julia_INCLUDE_DIRS ${Julia_INCLUDE_DIRS};$ENV{includedir})
 MESSAGE(STATUS "Julia_INCLUDE_DIRS:   ${Julia_INCLUDE_DIRS}")
@@ -151,7 +151,7 @@ endif()
 # Check for Existence of Headers #
 ##################################
 
-find_path(Julia_MAIN_HEADER julia.h HINTS ${Julia_INCLUDE_DIRS}/julia)
+find_path(Julia_MAIN_HEADER julia.h HINTS ${Julia_INCLUDE_DIRS})
 
 #######################################
 # Determine if we are on 32 or 64 bit #
