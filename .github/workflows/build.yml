@@ -21,4 +21,5 @@ jobs:
       - uses: codecov/codecov-action@v3
         with:
           gcov: true
-          directory: build/CMakeFiles/tests.dir/tests
+          directory: build/CMakeFiles/juliapp.dir
+          include: src/eval.cpp.gcda

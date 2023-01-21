@@ -46,6 +46,12 @@ add_library(juliapp SHARED src/value.cpp src/symbol.cpp src/init.cpp src/module.
 link_libraries(juliapp)
 set_target_properties(juliapp PROPERTIES CMAKE_CXX_CLANG_TIDY clang-tidy)
 
+# Coverage
+if(ENABLE_COVERAGE)
+    target_compile_options(juliapp PRIVATE --coverage -O0)
+    target_link_libraries(juliapp PRIVATE gcov)
+endif()
+
 # Demo target
 add_executable(demo demo/demo.cpp)
 
