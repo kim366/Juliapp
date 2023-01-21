@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <julia/julia.h>
+#include <julia.h>
 
 namespace jl::impl
 {

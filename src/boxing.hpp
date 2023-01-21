@@ -4,7 +4,7 @@
 #include "assert.hpp"
 #include "errors.hpp"
 
-#include <julia/julia.h>
+#include <julia.h>
 
 namespace jl::impl
 {

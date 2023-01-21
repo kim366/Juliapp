@@ -3,8 +3,8 @@
 #include "assert.hpp"
 
 #include <algorithm>
-#include <julia/julia.h>
-#include <julia/julia_gcext.h>
+#include <julia.h>
+#include <julia_gcext.h>
 #include <vector>
 
 namespace jl::impl

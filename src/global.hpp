@@ -5,7 +5,7 @@
 #include "init.hpp"
 #include "value.hpp"
 
-#include <julia/julia.h>
+#include <julia.h>
 
 namespace jl
 {

@@ -2,7 +2,7 @@
 
 #include "utility.hpp"
 
-#include <julia/julia.h>
+#include <julia.h>
 
 namespace jl
 {

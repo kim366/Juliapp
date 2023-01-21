@@ -5,7 +5,7 @@
 #include "utility.hpp"
 #include "symbol.hpp"
 
-#include <julia/julia.h>
+#include <julia.h>
 #include <utility>
 
 namespace jl
