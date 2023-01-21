@@ -9,8 +9,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set up CMake and dependencies
-        run: cmake -S . -B build -D USE_SYSTEM_WIDE_JULIA=OFF
+        env:
+          ENABLE_TESTS: ON
+          ENABLE_COVERAGE: ON
+          DOWNLOAD_LOCAL_JULIA: ON
+        run: cmake -S . -B build
       - name: Build
         run: cmake --build build -t tests -j 4
       - name: Run tests
         run: build/tests
+      - uses: codecov/codecov-action@v3
+        with:
+          gcov: true
+          directory: build/CMakeFiles/tests.dir/tests

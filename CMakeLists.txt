@@ -6,7 +6,7 @@ set(FETCHCONTENT_QUIET OFF)
 
 option(ENABLE_TESTS "Enable unit tests" ON)
 option(ENABLE_COVERAGE "Enable code coverage for unit tests" OFF)
-option(USE_SYSTEM_WIDE_JULIA "Use the Julia version installed on the system rather than downloading a local installation" ON)
+option(DOWNLOAD_LOCAL_JULIA "Download a local Julia installation rather than using the Julia version installed on the system" OFF)
 
 # C++ settings
 set(CMAKE_CXX_STANDARD 17)
@@ -18,7 +18,7 @@ else()
 endif()
 
 # Julia
-if(NOT USE_SYSTEM_WIDE_JULIA)
+if(DOWNLOAD_LOCAL_JULIA)
     cmake_policy(SET CMP0135 NEW)
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         FetchContent_Declare(
