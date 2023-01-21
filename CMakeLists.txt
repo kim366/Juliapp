@@ -50,13 +50,6 @@ set_target_properties(juliapp PROPERTIES CMAKE_CXX_CLANG_TIDY clang-tidy)
 if(ENABLE_COVERAGE)
     target_compile_options(juliapp PRIVATE --coverage -O0)
     target_link_libraries(juliapp PRIVATE gcov)
-    add_custom_command(
-            TARGET juliapp
-            POST_BUILD
-            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            COMMAND lcov --capture --directory CMakeFiles/juliapp.dir/src --include "*/src/*" --output-file coverage.info
-            COMMAND bash -c "genhtml coverage.info --branch-coverage --output-directory coverage-report | tee coverage-meta.txt"
-    )
 endif()
 
 # Demo target
@@ -77,7 +70,12 @@ if(ENABLE_TESTS)
     target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
     if(ENABLE_COVERAGE)
-        target_compile_options(tests PRIVATE --coverage -O0)
-        target_link_libraries(tests PRIVATE gcov)
+        add_custom_command(
+                TARGET tests
+                POST_BUILD
+                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                COMMAND lcov --capture --directory CMakeFiles/juliapp.dir/src --include "*/src/*" --output-file coverage.info
+                COMMAND bash -c "genhtml coverage.info --branch-coverage --output-directory coverage-report | tee coverage-meta.txt"
+        )
     endif()
 endif()
