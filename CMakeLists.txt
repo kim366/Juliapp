@@ -42,7 +42,7 @@ include_directories(src ${Julia_INCLUDE_DIRS})
 link_libraries(${Julia_LIBRARY})
 
 # Juliapp target
-add_library(juliapp SHARED src/value.cpp src/symbol.cpp src/init.cpp src/module.cpp src/eval.cpp src/global.cpp)
+add_library(juliapp SHARED src/value.cpp src/symbol.cpp src/init.cpp src/module.cpp src/eval.cpp src/global.cpp src/errors.cpp)
 link_libraries(juliapp)
 set_target_properties(juliapp PROPERTIES CMAKE_CXX_CLANG_TIDY clang-tidy)
 
@@ -50,6 +50,13 @@ set_target_properties(juliapp PROPERTIES CMAKE_CXX_CLANG_TIDY clang-tidy)
 if(ENABLE_COVERAGE)
     target_compile_options(juliapp PRIVATE --coverage -O0)
     target_link_libraries(juliapp PRIVATE gcov)
+    add_custom_command(
+            TARGET juliapp
+            POST_BUILD
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            COMMAND lcov --capture --directory CMakeFiles/juliapp.dir/src --include "*/src/*" --output-file coverage.info
+            COMMAND bash -c "genhtml coverage.info --branch-coverage --output-directory coverage-report | tee coverage-meta.txt"
+    )
 endif()
 
 # Demo target

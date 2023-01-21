@@ -8,6 +8,10 @@ jobs:
         shell: 'script -q -e -c "bash {0}"'
     steps:
       - uses: actions/checkout@v3
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: lcov
+          version: 1.0
       - name: Set up CMake and dependencies
         env:
           ENABLE_TESTS: ON
@@ -18,8 +22,11 @@ jobs:
         run: cmake --build build -t tests -j 4
       - name: Run tests
         run: build/tests
-      - uses: codecov/codecov-action@v3
+      - name: Upload Coverage report
+        uses: actions/upload-artifact@v3
         with:
-          directory: build/CMakeFiles/juliapp.dir
-          gcov: true
-          gcov_include: src/eval.cpp.gcda
+          name: coverage-report
+          path: build/coverage-report
+      - name: Verify 100% line coverage
+        working-directory: build
+        run: grep -P "lines\.+:" coverage-meta.txt --color=never | grep "100.0%" -q
