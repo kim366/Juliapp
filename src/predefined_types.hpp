@@ -1,6 +1,6 @@
 #pragma once
 
-#include <julia/julia.h>
+#include <julia.h>
 #include <cstdint>
 
 namespace jl

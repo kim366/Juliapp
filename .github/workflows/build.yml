@@ -1,0 +1,37 @@
+on:
+  push:
+    paths-ignore: '**/*.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: 'script -q -e -c "bash {0}"'
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Install global dependencies
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: lcov
+          version: 1.0
+      - name: Set up CMake and dependencies
+        run: >
+          cmake -S . -B build
+          -D ENABLE_TESTS=ON
+          -D ENABLE_COVERAGE=ON
+          -D DOWNLOAD_LOCAL_JULIA=ON
+      - name: Build
+        run: cmake --build build -t tests -j 4
+      - name: Run tests
+        run: build/tests
+      - name: Generate coverage report
+        run: ./generate-coverage-report.sh build
+      - name: Upload Coverage report
+        uses: codecov/codecov-action@v3
+        with:
+          files: build/coverage.info
+      - name: Verify 100% line coverage
+        working-directory: build
+        run: grep -P "lines\.+:" coverage-meta.txt --color=never | grep "100.0%" -q
