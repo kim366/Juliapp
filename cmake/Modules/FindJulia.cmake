@@ -72,7 +72,7 @@ elseif(Julia_EXECUTABLE)
     set(Julia_INCLUDE_DIRS ${Julia_INCLUDE_DIRS}
         CACHE PATH "Location of Julia include files")
 elseif(Julia_PREFIX)
-    set(Julia_INCLUDE_DIRS ${Julia_PREFIX}/include/julia)
+    set(Julia_INCLUDE_DIRS ${Julia_PREFIX}/include)
 endif()
 set(Julia_INCLUDE_DIRS ${Julia_INCLUDE_DIRS};$ENV{includedir})
 MESSAGE(STATUS "Julia_INCLUDE_DIRS:   ${Julia_INCLUDE_DIRS}")
