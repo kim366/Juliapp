@@ -56,7 +56,7 @@ if(DEFINED ENV{JULIA_INCLUDE_DIRS})
         CACHE STRING "Location of Julia include files")
 elseif(Julia_EXECUTABLE)
     execute_process(
-        COMMAND ${Julia_EXECUTABLE} --startup-file=no -E "julia_include_dir = joinpath(match(r\"(.*)(bin)\",${JULIA_HOME_NAME}).captures[1],\"include\",\"julia\")\n
+        COMMAND ${Julia_EXECUTABLE} --startup-file=no -E "julia_include_dir = joinpath(match(r\"(.*)(bin)\",${JULIA_HOME_NAME}).captures[1],\"include\")\n
             if !isdir(julia_include_dir)  # then we're running directly from build\n
             julia_base_dir_aux = splitdir(splitdir(${JULIA_HOME_NAME})[1])[1]  # useful for running-from-build\n
             julia_include_dir = joinpath(julia_base_dir_aux, \"usr\", \"include\" )\n
