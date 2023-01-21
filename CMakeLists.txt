@@ -68,14 +68,4 @@ if(ENABLE_TESTS)
     # Tests target
     add_executable(tests tests/symbol.cpp tests/module.cpp tests/value.cpp tests/boxing.cpp tests/global.cpp tests/eval.cpp)
     target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
-
-    if(ENABLE_COVERAGE)
-        add_custom_command(
-                TARGET tests
-                POST_BUILD
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                COMMAND lcov --capture --directory CMakeFiles/juliapp.dir/src --include "*/src/*" --output-file coverage.info
-                COMMAND bash -c "genhtml coverage.info --branch-coverage --output-directory coverage-report | tee coverage-meta.txt"
-        )
-    endif()
 endif()
