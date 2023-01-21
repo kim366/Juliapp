@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.13)
 project(julia-cpp LANGUAGES CXX)
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
 include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 
@@ -47,8 +47,10 @@ link_libraries(juliapp)
 set_target_properties(juliapp PROPERTIES CMAKE_CXX_CLANG_TIDY clang-tidy)
 
 # Coverage
-find_package(codecov)
-add_coverage(juliapp)
+if(ENABLE_COVERAGE)
+    target_compile_options(juliapp PRIVATE --coverage -O0)
+    target_link_libraries(juliapp PRIVATE gcov)
+endif()
 
 # Demo target
 add_executable(demo demo/demo.cpp)
@@ -66,4 +68,9 @@ if(ENABLE_TESTS)
     # Tests target
     add_executable(tests tests/symbol.cpp tests/module.cpp tests/value.cpp tests/boxing.cpp tests/global.cpp tests/eval.cpp)
     target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+
+    if(ENABLE_COVERAGE)
+        target_compile_options(tests PRIVATE --coverage -O0)
+        target_link_libraries(tests PRIVATE gcov)
+    endif()
 endif()
