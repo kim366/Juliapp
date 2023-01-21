@@ -1,0 +1,13 @@
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up CMake and dependencies
+        run: cmake -S . -B build -D USE_SYSTEM_WIDE_JULIA=OFF
+      - name: Build
+        run: cmake --build -t tests
+      - name: Run tests
+        run: build/tests
