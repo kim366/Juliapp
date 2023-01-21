@@ -13,10 +13,10 @@ if(Julia_PREFIX)
     message(STATUS "Adding path ${Julia_PREFIX} to search path")
     list(APPEND CMAKE_PREFIX_PATH ${Julia_PREFIX})
     message(STATUS "THIS BRANCH")
-else()
-    find_program(Julia_EXECUTABLE julia DOC "Julia executable")
-    message(STATUS "Found Julia executable: " ${Julia_EXECUTABLE})
 endif()
+
+find_program(Julia_EXECUTABLE julia DOC "Julia executable")
+message(STATUS "Found Julia executable: " ${Julia_EXECUTABLE})
 
 #################
 # Julia Version #
