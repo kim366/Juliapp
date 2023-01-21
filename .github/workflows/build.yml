@@ -8,6 +8,6 @@ jobs:
       - name: Set up CMake and dependencies
         run: cmake -S . -B build -D USE_SYSTEM_WIDE_JULIA=OFF
       - name: Build
-        run: cmake --build build -t tests
+        run: cmake --build build -t tests -j 4
       - name: Run tests
         run: build/tests
