@@ -151,7 +151,7 @@ endif()
 # Check for Existence of Headers #
 ##################################
 
-find_path(Julia_MAIN_HEADER julia.h HINTS ${Julia_INCLUDE_DIRS})
+find_path(Julia_MAIN_HEADER julia.h HINTS ${Julia_INCLUDE_DIRS}/julia)
 
 #######################################
 # Determine if we are on 32 or 64 bit #
