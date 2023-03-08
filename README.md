@@ -6,4 +6,5 @@
 
 Embed Julia in C++ with idiomatic and intuitive code.
 
-This library is currently under development and a first release will soon be available.
+Development has been halted as a similar enough project has been created in the meantime: https://github.com/Clemapfel/jluna
+
